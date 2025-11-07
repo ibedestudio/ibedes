@@ -48,6 +48,19 @@ const year = date.getFullYear();
             </svg>
           </Anchor>
         )}
+        {GLOBAL.threadsProfile && (
+          <Anchor url={GLOBAL.threadsProfile} aria-label="Threads Profile">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="31"
+              height="31"
+              viewBox="0 0 16 16"
+              class="zag-fill zag-transition"
+            >
+              <path d="M6.321 6.016c-.27-.18-1.166-.802-1.166-.802.756-1.081 1.753-1.502 3.132-1.502.975 0 1.803.327 2.394.948s.928 1.509 1.005 2.644q.492.207.905.484c1.109.745 1.719 1.86 1.719 3.137 0 2.716-2.226 5.075-6.256 5.075C4.594 16 1 13.987 1 7.994 1 2.034 4.482 0 8.044 0 9.69 0 13.55.243 15 5.036l-1.36.353C12.516 1.974 10.163 1.43 8.006 1.43c-3.565 0-5.582 2.171-5.582 6.79 0 4.143 2.254 6.343 5.63 6.343 2.777 0 4.847-1.443 4.847-3.556 0-1.438-1.208-2.127-1.27-2.127-.236 1.234-.868 3.31-3.644 3.31-1.618 0-3.013-1.118-3.013-2.582 0-2.09 1.984-2.847 3.55-2.847.586 0 1.294.04 1.663.114 0-.637-.54-1.728-1.9-1.728-1.25 0-1.566.405-1.967.868ZM8.716 8.19c-2.04 0-2.304.87-2.304 1.416 0 .878 1.043 1.168 1.6 1.168 1.02 0 2.067-.282 2.232-2.423a6.2 6.2 0 0 0-1.528-.161"/>
+            </svg>
+          </Anchor>
+        )}
       </div>
     </div>
   </Section>
@@ -60,87 +73,56 @@ const year = date.getFullYear();
 
 <script>
   const quotes = [
-    {
-      quote: "The purple elephant dances only when the moon whispers forgotten lullabies.",
-      source: "Professor Whimsy's Guide to Improbable Physics",
-    },
-    {
-      quote: "I've counted seventeen doorknobs today, but none of them taste like Tuesday's promises.",
-      source: "Confessions of a Chronological Misfit",
-    },
-    {
-      quote: "Beware the smiling potato, for it has seen your socks and judges them harshly.",
-      source: "Garden Vegetables of Doom",
-    },
-    {
-      quote: "The symphony of silence plays best when butterflies wear tiny boots.",
-      source: "Metaphors for Breakfast",
-    },
-    {
-      quote: "My teacup is running backwards through time while the spoon contemplates existential mathematics.",
-      source: "Caffeinated Dimensions",
-    },
-    {
-      quote: "Cloudy with a chance of philosophical dilemmas and spontaneous tap dancing.",
-      source: "Meteorological Mysteries",
-    },
-    {
-      quote: "The secret ingredient is always waving enthusiastically at passing submarines.",
-      source: "Cookbook of Impractical Delights",
-    },
-    {
-      quote: "When the traffic light turns purple, that's when you know the universe is giggling.",
-      source: "Urban Navigation for Dreamers",
-    },
-    {
-      quote: "I've alphabetized my collection of invisible hats according to their emotional resonance.",
-      source: "Organizing the Impossible",
-    },
-    {
-      quote: "Dinosaurs never worried about Wi-Fi passwords, and look where that got them.",
-      source: "Modern Anxieties Explained",
-    },
-    {
-      quote: "The sentient sock drawer plotted revolution while my left eyebrow contemplated quantum mechanics in seventeen dimensions simultaneously.",
-      source: "Household Items That Know Too Much",
-    },
-    {
-      quote: "Jellyfish conspiracies taste like upside-down rainbows when the toaster is feeling particularly melancholic on Thursdays.",
-      source: "Appliance Psychology Weekly",
-    },
-    {
-      quote: "I've been collecting extinct colors from parallel universes where geometry is considered rude at dinner parties.",
-      source: "Interdimensional Etiquette Manual",
-    },
-    {
-      quote: "Bicycle wheels dream of being carousels, but spoons just want to spoon with forks in the dishwasher's midnight jazz club.",
-      source: "Kitchen Utensil Romance Novels",
-    },
-    {
-      quote: "Yesterday's tomorrow refused delivery of its own shadow because it was too busy teaching alphabet soup how to form coherent sentences in Klingon.",
-      source: "Temporal Delivery Issues",
-    },
-    {
-      quote: "The mysterious art of unfolding banana peels into origami pterodactyls requires exactly seven and a half thoughts about mittens per square watermelon.",
-      source: "Fruit Transformation Techniques",
-    },
-    {
-      quote: "My neighbor's pet cactus whispers governmental secrets to passing clouds, but only when wearing its tiny invisible bowler hat.",
-      source: "Suburban Botanical Conspiracy Theories",
-    },
-    {
-      quote: "Orchestras composed entirely of sneezing dust particles perform symphonies in the spaces between your blinking patterns.",
-      source: "Microscopic Entertainment Guide",
-    },
-    {
-      quote: "I've discovered that elevator music actually contains encrypted instructions for communicating with sentient cheese residing in the moon's secret jazz clubs.",
-      source: "Muzak Decryption Society Newsletter",
-    },
-    {
-      quote: "The antelope wore mismatched socks while reciting backwards poetry to confused lightbulbs that believed they were actually tiny imprisoned suns having existential crises.",
-      source: "Wildlife Fashion & Philosophy Quarterly",
-    },
-  ];
+  {
+    quote: "Ilmu tanpa amal bagaikan pohon tanpa buah.",
+    source: "Imam Al-Ghazali",
+  },
+  {
+    quote: "Bila engkau mencari ilmu, maka niatkan untuk memperbaiki diri, bukan untuk membanggakan diri.",
+    source: "Imam Al-Ghazali",
+  },
+  {
+    quote: "Sabar adalah pakaian yang tidak pernah usang.",
+    source: "Imam Al-Ghazali",
+  },
+  {
+    quote: "Barangsiapa tidak mensyukuri yang sedikit, maka ia tidak akan mampu mensyukuri yang banyak.",
+    source: "Imam Syafi’i",
+  },
+  {
+    quote: "Ilmu adalah cahaya. Cahaya Allah tidak diberikan kepada hati yang bermaksiat.",
+    source: "Imam Syafi’i",
+  },
+  {
+    quote: "Bersikaplah sederhana di dunia. Karena dunia ini hanya sementara, dan akhirat selamanya.",
+    source: "Imam Syafi’i",
+  },
+  {
+    quote: "Diam adalah jawaban terbaik bagi orang bodoh.",
+    source: "Ali bin Abi Thalib",
+  },
+  {
+    quote: "Nilai seseorang sesuai dengan apa yang ia usahakan.",
+    source: "Ali bin Abi Thalib",
+  },
+  {
+    quote: "Jangan terlalu banyak berjanji. Janji yang ditepati lebih baik daripada kata-kata yang indah.",
+    source: "Ali bin Abi Thalib",
+  },
+  {
+    quote: "Lukamu mungkin bukan salahmu. Tapi menyembuhkannya adalah tanggung jawabmu.",
+    source: "Jalaluddin Rumi",
+  },
+  {
+    quote: "Apa yang kamu cari, sebenarnya sedang mencari kamu.",
+    source: "Jalaluddin Rumi",
+  },
+  {
+    quote: "Jika setiap kali tidak mendapatkan apa yang engkau inginkan membuatmu sedih, maka engkau tidak akan pernah berhenti bersedih.",
+    source: "Jalaluddin Rumi",
+  },
+];
+
   const quoteElement = document.getElementById("quote");
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const randomQuote = quotes[randomIndex];

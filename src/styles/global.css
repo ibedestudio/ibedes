@@ -126,7 +126,8 @@
     text-underline-offset: var(--zag-offset);
   }
 
-  .opsz {
-    font-variation-settings: "opsz" 72;
-  }
+.opsz {
+  font-variation-settings: "opsz" 72;
+}
+
 }

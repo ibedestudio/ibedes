@@ -1,6 +1,7 @@
 ---
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
+import { GLOBAL } from "../lib/variables";
 import "../styles/global.css";
 ---
 
@@ -20,6 +21,12 @@ import "../styles/global.css";
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Doto:wght@100..900&family=Jersey+20+Charted&display=swap"
+      rel="stylesheet"
+    />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <link rel="preconnect" href="https://fonts.bunny.net" />
@@ -30,6 +37,12 @@ import "../styles/global.css";
     <slot name="head" />
   </head>
   <body class="zag-bg zag-text zag-transition font-mono">
+    <div class="retro-marquee" aria-hidden="true">
+      <div class="retro-marquee__track">
+        <span>{GLOBAL.username} • Keep building • Stay curious • Nikmati perjalanan belajar •</span>
+        <span>{GLOBAL.username} • Keep building • Stay curious • Nikmati perjalanan belajar •</span>
+      </div>
+    </div>
     <Header />
     <main>
       <slot />

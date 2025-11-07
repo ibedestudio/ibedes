@@ -126,8 +126,48 @@
     text-underline-offset: var(--zag-offset);
   }
 
-.opsz {
-  font-variation-settings: "opsz" 72;
-}
+  .opsz {
+    font-variation-settings: "opsz" 72;
+  }
+
+  .retro-marquee {
+    width: 100%;
+    overflow: hidden;
+    border-bottom: 2px solid var(--color-zag-dark);
+    background: rgb(20, 20, 20);
+    color: #ffffff;
+    padding: 0.15rem 0;
+    font-family: "Doto", var(--font-display), var(--font-mono);
+    text-transform: uppercase;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    position: relative;
+    z-index: 10;
+    :where(.dark, .dark *) & {
+      background: #ffffff;
+      color: rgb(20, 20, 20);
+      border-color: var(--color-zag-light);
+    }
+  }
+
+  .retro-marquee__track {
+    display: inline-flex;
+    gap: 2rem;
+    white-space: nowrap;
+    animation: retro-scroll 18s linear infinite;
+  }
+
+  .retro-marquee__track span {
+    display: inline-block;
+  }
+
+  @keyframes retro-scroll {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    100% {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
 
 }

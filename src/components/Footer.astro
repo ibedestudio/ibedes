@@ -32,7 +32,7 @@ const year = date.getFullYear();
         >
         <p id="quote" class="zag-text zag-transition"></p>
       </div>
-      <div class="flex flex-col gap-4 min-w-32">
+      <div class="flex flex-row sm:flex-col gap-4">
         {GLOBAL.githubProfile && (
           <Anchor url={GLOBAL.githubProfile} aria-label="GitHub Profile">
             <svg
@@ -48,11 +48,6 @@ const year = date.getFullYear();
             </svg>
           </Anchor>
         )}
-        <div class="flex flex-col gap-0.5">
-          <span class="text-[0.6rem] uppercase tracking-[0.2em] zag-muted">Pengunjung</span>
-          <span id="visitor-count" class="text-base font-semibold leading-tight">—</span>
-          <span class="text-[0.6rem] zag-muted">Terima kasih sudah mampir!</span>
-        </div>
       </div>
     </div>
   </Section>
@@ -152,22 +147,4 @@ const year = date.getFullYear();
   if (quoteElement) {
     quoteElement.textContent = randomQuote.quote;
   }
-
-  const visitorCounterElement = document.getElementById("visitor-count");
-  const updateVisitorCounter = async () => {
-    if (!visitorCounterElement) return;
-    try {
-      const res = await fetch("https://api.countapi.xyz/hit/ibedes.xyz/blog");
-      const data = await res.json();
-      if (typeof data.value === "number") {
-        visitorCounterElement.textContent = data.value.toLocaleString("id-ID");
-      } else {
-        visitorCounterElement.textContent = "N/A";
-      }
-    } catch (error) {
-      visitorCounterElement.textContent = "offline";
-    }
-  };
-
-  updateVisitorCounter();
 </script>

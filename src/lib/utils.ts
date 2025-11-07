@@ -59,8 +59,10 @@ export const processContentInDir = async <T extends object, K>(
  * @param maxLength the maximum length of the shortened content (default is 20)
  * @returns a shortened version of the content
  */
-export const getShortDescription = (content: string, maxLength = 20) => {
-  const splitByWord = content.split(" ");
+export const getShortDescription = (content: string = "", maxLength = 20) => {
+  const trimmed = content.trim();
+  if (!trimmed) return "";
+  const splitByWord = trimmed.split(/\s+/);
   const length = splitByWord.length;
   return length > maxLength ? splitByWord.slice(0, maxLength).join(" ") + "..." : content;
 };

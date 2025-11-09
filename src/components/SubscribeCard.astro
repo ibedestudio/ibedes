@@ -1,48 +1,153 @@
 ---
+import { GLOBAL } from "../lib/variables";
+
 export interface Props {
   title?: string;
   description?: string;
   buttonText?: string;
-  formAction: string;
   successMessage?: string;
+  toastMessage?: string;
+  placeholder?: string;
+  formAction?: string;
+  class?: string;
 }
 
+const defaults = {
+  title: "Gabung Newsletter",
+  description:
+    "Dapatkan tulisan terbaru, catatan projek, dan eksperimen langsung di inbox tanpa spam.",
+  buttonText: "Berlangganan",
+  successMessage: "Tipis aja, cuma 1-2 email per bulan.",
+  toastMessage: "Berhasil! Cek inbox kamu untuk konfirmasi.",
+  placeholder: "nama@emailkamu.com",
+  formAction: undefined,
+  ...(GLOBAL.newsletter ?? {}),
+};
+
 const {
-  title = "Gabung Newsletter",
-  description = "Dapatkan tulisan baru, catatan, dan eksperimen sebelum orang lain.",
-  buttonText = "Berlangganan",
-  formAction,
-  successMessage = "Terima kasih! Cek inbox kamu.",
+  title = defaults.title,
+  description = defaults.description,
+  buttonText = defaults.buttonText,
+  successMessage = defaults.successMessage,
+  toastMessage = defaults.toastMessage,
+  placeholder = defaults.placeholder,
+  formAction = defaults.formAction,
+  class: className,
 } = Astro.props;
+
+const iframeTarget = `buttondown-frame-${Math.random()
+  .toString(36)
+  .slice(2, 10)}`;
 ---
 
-<section class="zag-border-b zag-transition rounded-2xl border p-6 bg-white/70 dark:bg-zinc-900/60 shadow-lg">
-  <h2 class="font-display text-xl mb-2">{title}</h2>
-  <p class="zag-muted mb-4">{description}</p>
+<section
+  data-subscribe-card
+  class:list={[
+    "relative overflow-hidden rounded-3xl border-2 border-black/70 dark:border-white/70 bg-white/80 dark:bg-zinc-900/70 shadow-[6px_6px_0_rgba(0,0,0,0.6)] dark:shadow-[6px_6px_0_rgba(255,255,255,0.4)] p-6 md:p-8 max-w-2xl mx-auto",
+    className,
+  ]}
+>
+  <div class="flex flex-col gap-3">
+    <h2 class="font-display text-xl sm:text-2xl">{title}</h2>
+    <p class="zag-muted leading-relaxed">{description}</p>
+  </div>
 
   <form
     method="post"
     action={formAction}
-    class="flex flex-col gap-3"
-    target="_blank"
-    rel="noopener noreferrer"
+    target={iframeTarget}
+    class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4"
+    data-subscribe-form
   >
     <input
       type="email"
       name="email"
       required
-      placeholder="nama@emailkamu.com"
-      class="rounded-lg border-2 border-black/40 dark:border-white/60 bg-transparent px-4 py-3 font-mono focus:outline-2 focus:outline-offset-2 focus:outline-emerald-500"
+      placeholder={placeholder}
+      aria-label="Email"
+      class="w-full rounded-xl border-[3px] border-black/60 dark:border-white/70 bg-transparent px-4 py-3 font-mono focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 dark:focus-visible:outline-emerald-300"
+      autocomplete="email"
+      inputmode="email"
     />
     <button
       type="submit"
-      class="-zag-bg -zag-text font-display py-3 rounded-lg uppercase tracking-widest"
+      class="w-full sm:w-auto min-h-[48px] rounded-xl -zag-bg -zag-text font-display tracking-[0.2em] px-6 py-3 uppercase flex items-center justify-center text-center"
     >
       {buttonText}
     </button>
-    <p class="text-xs zag-muted text-center">{successMessage}</p>
   </form>
-  
+  <iframe
+    name={iframeTarget}
+    class="hidden"
+    tabindex="-1"
+    title="Buttondown subscribe"
+    aria-hidden="true"
+  ></iframe>
 
+  <p class="text-xs zag-muted mt-3 text-center sm:text-left">
+    {successMessage}
+  </p>
 
+  <div
+    data-subscribe-toast
+    class="absolute inset-0 flex items-center justify-center bg-neutral-950/85 text-white text-center px-6 transition-opacity duration-300 opacity-0 pointer-events-none rounded-[inherit] data-[visible=true]:opacity-100 data-[visible=true]:pointer-events-auto"
+    aria-live="assertive"
+    aria-atomic="true"
+  >
+    <div class="flex flex-col gap-4 items-center">
+      <p class="font-display text-lg tracking-[0.2em]">{toastMessage}</p>
+      <button
+        type="button"
+        data-dismiss-toast
+        class="px-4 py-2 rounded-lg border-2 border-white/80 font-mono text-xs uppercase tracking-[0.2em]"
+      >
+        Tutup
+      </button>
+    </div>
+  </div>
+
+  <script is:inline>
+    (() => {
+      if (typeof window === "undefined") return;
+      const script = document.currentScript;
+      const card = script?.closest?.("[data-subscribe-card]");
+      if (!card) return;
+      const form = card.querySelector("[data-subscribe-form]");
+      const toast = card.querySelector("[data-subscribe-toast]");
+      const dismissBtn = card.querySelector("[data-dismiss-toast]");
+      if (!form || !toast) return;
+      const targetName = form.getAttribute("target");
+      const iframe = targetName
+        ? card.querySelector(`iframe[name="${targetName}"]`)
+        : null;
+      let hideTimer;
+      const hideToast = () => {
+        toast.setAttribute("data-visible", "false");
+        if (hideTimer) {
+          window.clearTimeout(hideTimer);
+          hideTimer = undefined;
+        }
+      };
+      const showToast = () => {
+        toast.setAttribute("data-visible", "true");
+        form.reset();
+        if (hideTimer) window.clearTimeout(hideTimer);
+        hideTimer = window.setTimeout(hideToast, 3500);
+      };
+      form.addEventListener("submit", () => {
+        if (!iframe) {
+          showToast();
+          return;
+        }
+        const handleLoad = () => {
+          iframe.removeEventListener("load", handleLoad);
+          showToast();
+        };
+        iframe.addEventListener("load", handleLoad);
+      });
+      dismissBtn?.addEventListener("click", () => {
+        hideToast();
+      });
+    })();
+  </script>
 </section>

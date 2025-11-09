@@ -1,0 +1,157 @@
+---
+import { GLOBAL } from "../lib/variables";
+
+export interface Props {
+  title: string;
+  url: string;
+  class?: string;
+}
+
+const { title, url, class: className } = Astro.props;
+
+const normalizeUrl = (rawUrl: string) => {
+  if (!rawUrl) return GLOBAL.rootUrl;
+  if (rawUrl.startsWith("http")) return rawUrl;
+  if (rawUrl.startsWith("/")) return `${GLOBAL.rootUrl}${rawUrl}`;
+  return `${GLOBAL.rootUrl}/${rawUrl}`;
+};
+
+const absoluteUrl = normalizeUrl(url);
+const encodedUrl = encodeURIComponent(absoluteUrl);
+const encodedTitle = encodeURIComponent(title);
+
+const shareTargets = [
+  {
+    label: "WhatsApp",
+    href: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
+    aria: "Bagikan melalui WhatsApp",
+  },
+  {
+    label: "X",
+    href: `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`,
+    aria: "Bagikan melalui X (Twitter)",
+  },
+  {
+    label: "LinkedIn",
+    href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+    aria: "Bagikan melalui LinkedIn",
+  },
+  {
+    label: "Facebook",
+    href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+    aria: "Bagikan melalui Facebook",
+  },
+  {
+    label: "Threads",
+    href: `https://www.threads.net/intent/post?text=${encodedTitle}%20${encodedUrl}`,
+    aria: "Bagikan melalui Threads",
+  },
+];
+
+---
+
+<section
+  class:list={[
+        "rounded-3xl border-2 border-black/70 dark:border-white/60 bg-white/70 dark:bg-zinc-900/70 p-6 flex flex-col gap-4",
+
+    className,
+  ]}
+  data-share-section
+  data-share-url={absoluteUrl}
+  data-share-title={title}
+>
+  <div class="flex flex-col gap-1">
+    <p class="font-display text-xs uppercase tracking-[0.25em] zag-muted">
+      Bagikan
+    </p>
+    <p class="text-xl">Biar temanmu juga ikut baca tulisan ini.</p>
+  </div>
+
+  <div class="flex flex-wrap gap-3">
+    {
+      shareTargets.map((target) => (
+        <a
+          href={target.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="px-4 py-2 rounded-2xl border-2 border-black/50 dark:border-white/50 font-mono text-xs uppercase tracking-[0.2em] zag-transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+          aria-label={target.aria}
+        >
+          {target.label}
+        </a>
+      ))
+    }
+    <button
+      type="button"
+      data-share-copy
+      class="px-4 py-2 rounded-2xl border-2 border-dashed border-black/50 dark:border-white/50 font-mono text-xs uppercase tracking-[0.2em] zag-transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+    >
+      Salin Link
+    </button>
+    <button
+      type="button"
+      data-web-share
+      class="px-4 py-2 rounded-2xl border-2 border-black/70 dark:border-white/70 font-mono text-xs uppercase tracking-[0.2em] zag-transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+    >
+      Share via…
+    </button>
+  </div>
+
+  <p
+    data-copy-feedback
+    class="text-xs font-mono uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-300 opacity-0 transition-opacity duration-300"
+  >
+    Link sudah tersalin!
+  </p>
+
+  <script is:inline>
+    (() => {
+      if (typeof window === "undefined") return;
+      const script = document.currentScript;
+      const section = script?.closest?.("[data-share-section]");
+      if (!section) return;
+      const copyBtn = section.querySelector("[data-share-copy]");
+      const feedback = section.querySelector("[data-copy-feedback]");
+      const shareBtn = section.querySelector("[data-web-share]");
+      const shareUrl = section.getAttribute("data-share-url") ?? window.location.href;
+      const shareTitle = section.getAttribute("data-share-title") ?? document.title;
+
+      const showFeedback = () => {
+        if (!feedback) return;
+        feedback.setAttribute("data-visible", "true");
+        feedback.style.opacity = "1";
+        window.setTimeout(() => {
+          feedback.style.opacity = "0";
+          feedback.removeAttribute("data-visible");
+        }, 2000);
+      };
+
+      copyBtn?.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          showFeedback();
+        } catch (error) {
+          console.error("Gagal menyalin tautan:", error);
+        }
+      });
+
+      if (!("share" in navigator)) {
+        shareBtn?.remove();
+      } else {
+        shareBtn?.addEventListener("click", async () => {
+          try {
+            await navigator.share({
+              title: shareTitle,
+              text: shareTitle,
+              url: shareUrl,
+            });
+          } catch (error) {
+            if (error?.name !== "AbortError") {
+              console.error("Gagal membuka Web Share API:", error);
+            }
+          }
+        });
+      }
+    })();
+  </script>
+</section>

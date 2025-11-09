@@ -36,9 +36,15 @@ export const GLOBAL = {
   // Menu items
   menu: {
     home: "/",
+    services: "/services",
     projects: "/projects",
     blog: "/blog",
   },
+
+  contactEmail: "ibedestudio@gmail.com",
+  contactPhone: "0823-1777-7008",
+  contactWhatsApp: "https://wa.link/b1hzai",
+  contactLocation: "Bandung, Indonesia",
 
   // Newsletter / subscribe card copy
   newsletter: {

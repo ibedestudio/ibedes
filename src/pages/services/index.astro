@@ -1,0 +1,225 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Section from "../../components/common/Section.astro";
+import { GLOBAL } from "../../lib/variables";
+import { SERVICES } from "../../lib/services";
+
+const contactPhone = GLOBAL.contactPhone ?? "0823-1777-7008";
+const whatsappLink = GLOBAL.contactWhatsApp ?? "https://wa.link/b1hzai";
+const contactLocation = GLOBAL.contactLocation ?? "Bandung, Indonesia";
+const phoneHref = `tel:${contactPhone.replace(/\D+/g, "")}`;
+
+const heroContent = {
+  title: "Bisnis jalan terus, digitalnya kami yang urus.",
+  subtitle: "Social media, website, dan kampanye digital yang ringan tapi berdampak.",
+  tagline: "Teknologi memudahkan langkahmu.",
+};
+
+const heroActions = [
+  { label: "Lihat Layanan", href: "#layanan", variant: "primary" },
+  { label: "Konsultasi Gratis", href: "#hubungi", variant: "secondary" },
+];
+
+const services = SERVICES.map((service) => ({
+  title: service.title,
+  description: service.summary,
+  url: `/services/${service.slug}`,
+}));
+
+const benefits = [
+  {
+    title: "Harga Fleksibel",
+    description: "Menyesuaikan paket dengan kebutuhan dan anggaranmu saat ini.",
+  },
+  {
+    title: "Tim Profesional",
+    description: "Ditangani langsung oleh praktisi digital yang terbiasa bantu UMKM dan kreator.",
+  },
+  {
+    title: "Fokus Pada Hasil",
+    description: "Semua strategi dirancang agar visibilitas dan penjualan bisnismu meningkat.",
+  },
+];
+
+const contactChannels = [
+  { label: "Telepon", value: contactPhone, href: phoneHref },
+  { label: "Lokasi", value: contactLocation },
+];
+
+---
+
+<Layout>
+  <Fragment slot="head">
+    <title>Ibedes Studio - Penawaran Jasa</title>
+    <meta
+      name="description"
+      content="Digital agency untuk bisnismu: social media, website, periklanan digital, konsultasi pemasaran, dan KOL specialist dengan harga fleksibel."
+    />
+    <meta property="og:title" content="Ibedes Studio - Penawaran Jasa" />
+    <meta
+      property="og:description"
+      content="Solusi digitalisasi lengkap untuk UMKM, brand lokal, dan kreator. Pilih layanan social media, website, ads, konsultasi, hingga KOL specialist."
+    />
+    <meta property="og:image" content={`${GLOBAL.rootUrl}/${GLOBAL.profileImage}`} />
+    <meta property="og:url" content={`${GLOBAL.rootUrl}/services`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Ibedes Studio - Penawaran Jasa" />
+    <meta
+      name="twitter:description"
+      content="Solusi digitalisasi lengkap untuk UMKM, brand lokal, dan kreator."
+    />
+    <meta name="twitter:image" content={`${GLOBAL.rootUrl}/${GLOBAL.profileImage}`} />
+    <meta http-equiv="content-language" content="id" />
+    <meta name="language" content="Indonesia" />
+    <link rel="canonical" href={`${GLOBAL.rootUrl}/services`} />
+  </Fragment>
+
+  <Section class="py-16">
+    <div id="hero" class="space-y-5">
+      <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">
+        Ibedes Studio
+      </p>
+      <h1 class="font-display text-3xl sm:text-4xl leading-tight">
+        {heroContent.title}
+      </h1>
+      <p class="text-lg sm:text-xl max-w-2xl">{heroContent.subtitle}</p>
+      <p class="text-sm zag-muted">{heroContent.tagline}</p>
+      <div class="flex flex-wrap gap-3 pt-2">
+        {
+          heroActions.map((action) => (
+            <a
+              href={action.href}
+              class:list={[
+                "cta-button",
+                action.variant === "primary"
+                  ? "cta-button--primary"
+                  : "cta-button--secondary",
+                "w-full sm:w-auto",
+              ]}
+            >
+              {action.label}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </Section>
+
+  <Section class="py-12 space-y-6">
+    <div id="layanan" class="space-y-2">
+      <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">
+        Layanan Kami
+      </p>
+      <h2 class="text-2xl sm:text-3xl font-display">
+        Solusi digital yang siap dipakai
+      </h2>
+      <p class="text-base max-w-2xl">
+        Semua layanan bisa disesuaikan dengan kebutuhan dan budget. Tinggal pilih mana yang paling mendesak, atau gabungkan beberapa layanan dalam satu paket.
+      </p>
+    </div>
+    <div class="-mx-4 px-4 md:m-0 md:p-0 space-y-2">
+      <p class="text-xs uppercase tracking-[0.35em] zag-muted md:hidden pl-1">
+        <span aria-hidden="true">⇆</span> Swipe untuk lihat semua
+      </p>
+      <div class="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible md:snap-none">
+        {services.map((service) => (
+          <article class="min-w-[260px] snap-start rounded-2xl border border-black/20 dark:border-white/30 p-5 flex flex-col gap-3 md:min-w-0">
+            <h3 class="text-xl font-display">{service.title}</h3>
+            <p class="text-sm sm:text-base flex-1 leading-relaxed">{service.description}</p>
+            <a
+              href={service.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="service-link text-xs uppercase tracking-[0.25em] font-display"
+            >
+              <span>Pelajari lebih lanjut</span>
+              <span class="service-link__arrow" aria-hidden="true">
+                <svg viewBox="0 0 32 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M1 6h24"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M22 1l6 5-6 5"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </Section>
+
+  <Section class="py-12 space-y-6">
+    <div id="benefit" class="space-y-2">
+      <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">
+        Kenapa Ibedes Studio?
+      </p>
+      <h2 class="text-2xl font-display">Yang kamu dapatkan</h2>
+    </div>
+    <div class="grid gap-5 md:grid-cols-3">
+      {benefits.map((benefit) => (
+        <div class="rounded-2xl border border-dashed border-black/25 dark:border-white/25 p-4 space-y-2">
+          <h3 class="text-lg font-display">{benefit.title}</h3>
+          <p class="text-sm leading-relaxed">{benefit.description}</p>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section class="py-16">
+    <div id="hubungi" class="space-y-6">
+      <div class="space-y-3">
+        <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">
+          Kontak
+        </p>
+        <h2 class="text-2xl sm:text-3xl font-display">
+          Konsultasi singkat sebelum mulai
+        </h2>
+        <p class="text-base sm:text-lg max-w-2xl">
+          Ceritakan kondisi bisnismu lewat WhatsApp atau telpon singkat. Kami bantu rekomendasikan layanan prioritas dan estimasi waktunya.
+        </p>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-3">
+        {contactChannels.map((channel) => (
+          <div class="rounded-2xl border border-black/20 dark:border-white/30 p-4">
+            <p class="text-xs uppercase tracking-[0.25em] zag-muted">{channel.label}</p>
+            {
+              channel.href ? (
+                <a
+                  href={channel.href}
+                  class="text-lg mt-2 inline-flex underline zag-offset"
+                  target={channel.href.startsWith("http") ? "_blank" : "_self"}
+                  rel={channel.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                >
+                  {channel.value}
+                </a>
+              ) : (
+                <p class="text-lg mt-2">{channel.value}</p>
+              )
+            }
+          </div>
+        ))}
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <a
+          href={whatsappLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="cta-button cta-button--primary w-full sm:w-auto"
+        >
+          Mulai via WhatsApp
+        </a>
+      </div>
+    </div>
+  </Section>
+</Layout>

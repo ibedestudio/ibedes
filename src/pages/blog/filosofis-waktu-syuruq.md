@@ -1,13 +1,18 @@
 ---
 layout: ../../layouts/BlogLayout.astro
-title: "Filosofisnya Waktu Syurūq"
-description: "Renungan tentang syurūq sebagai transisi dari gelap menuju terang, waktu ketika hati manusia menjadi paling lembut dan paling mudah menerima ketenangan."
-tags: ["Refleksi", "Spiritual", "Sufistik", "Syuruk", "Dzikir"]
+title: Filosofisnya Waktu Syurūq
+description: Renungan tentang syurūq sebagai transisi dari gelap menuju terang, waktu ketika hati manusia menjadi paling lembut dan paling mudah menerima ketenangan.
+tags:
+  - Refleksi
+  - Spiritual
+  - Sufistik
+  - Syuruk
+  - Dzikir
 time: 8
 featured: true
-timestamp: "2025-11-10"
-filename: "filosofis-waktu-syuruq"
-url: "/blog/filosofis-waktu-syuruq"
+timestamp: 2025-11-11
+filename: filosofis-waktu-syuruq
+url: /blog/filosofis-waktu-syuruq
 ---
 
 <figure class="max-w-xl mx-auto my-8">

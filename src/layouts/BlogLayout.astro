@@ -12,6 +12,7 @@ import Prose from "../components/Prose.astro";
 import Layout from "./Layout.astro";
 import SubscribeCard from "../components/SubscribeCard.astro";
 import ShareActions from "../components/ShareActions.astro";
+import ArticleEngagement from "../components/ArticleEngagement.astro";
 
 type Props = MarkdownLayoutProps<ArticleFrontmatter>;
 
@@ -58,6 +59,10 @@ const sourceUrl = generateSourceUrl(frontmatter.filename, "blog");
 
     <div class="my-12">
       <ShareActions title={frontmatter.title} url={frontmatter.url ?? sourceUrl} />
+    </div>
+
+    <div class="my-12">
+      <ArticleEngagement slug={frontmatter.filename} title={frontmatter.title} />
     </div>
 
     <div class="my-12">

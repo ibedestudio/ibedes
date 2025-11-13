@@ -295,7 +295,25 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
       updateLikeUI();
       floatingControls.forEach((el) => {
         el.hidden = false;
+        el.classList.add("engagement-floating-container", "engagement-floating--hidden");
       });
+
+      const updateFloatingVisibility = () => {
+        const doc = document.documentElement;
+        const scrollTop = doc.scrollTop || document.body.scrollTop || 0;
+        const scrollHeight = doc.scrollHeight || document.body.scrollHeight || 0;
+        const clientHeight = doc.clientHeight || window.innerHeight || 1;
+        const maxScroll = Math.max(1, scrollHeight - clientHeight);
+        const progress = scrollHeight <= clientHeight ? 1 : scrollTop / maxScroll;
+        const shouldShow = progress >= 0.3;
+        floatingControls.forEach((el) => {
+          el.classList.toggle("engagement-floating--visible", shouldShow);
+          el.classList.toggle("engagement-floating--hidden", !shouldShow);
+        });
+      };
+
+      updateFloatingVisibility();
+      window.addEventListener("scroll", updateFloatingVisibility, { passive: true });
 
       const scrollToComments = () => {
         const target = form ?? commentList ?? root;
@@ -590,6 +608,25 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
 </section>
 
 <style>
+  .engagement-floating-container {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 220ms ease, transform 260ms ease;
+    pointer-events: none;
+  }
+
+  .engagement-floating--visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .engagement-floating--hidden {
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+  }
+
   .engagement-fab {
     position: fixed;
     bottom: 2rem;

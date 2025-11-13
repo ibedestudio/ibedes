@@ -3,8 +3,37 @@ import { GLOBAL } from "../../lib/variables";
 import Layout from "../../layouts/Layout.astro";
 import ArticleSnippet from "../../components/ArticleSnippet.astro";
 import Section from "../../components/common/Section.astro";
-import { articles } from "../../lib/list";
+import { getArticles } from "../../lib/list";
 import SubscribeCard from "../../components/SubscribeCard.astro";
+
+const collator = new Intl.Collator("id", { sensitivity: "base" });
+const articles = await getArticles();
+
+type ArticleWithSearch = typeof articles[number] & {
+  normalizedTags: string[];
+  searchText: string;
+};
+
+const searchableArticles: ArticleWithSearch[] = articles.map((article) => {
+  const normalizedTags = (article.tags ?? []).map((tag) => tag.toLowerCase());
+  const searchText = [
+    article.title,
+    article.description,
+    normalizedTags.join(" "),
+  ]
+    .join(" ")
+    .toLowerCase();
+  return {
+    ...article,
+    normalizedTags,
+    searchText,
+  };
+});
+
+const totalArticles = searchableArticles.length;
+const allTags = Array.from(
+  new Set(articles.flatMap((article) => article.tags ?? [])),
+).sort((a, b) => collator.compare(a, b));
 
 ---
 
@@ -34,26 +63,205 @@ import SubscribeCard from "../../components/SubscribeCard.astro";
     <link rel="canonical" href={`${GLOBAL.rootUrl}/blog`} />
   </Fragment>
   <Section class="my-8">
-    <div class="flex items-center gap-4 pt-8 pb-16">
-      <h1 class="font-display text-3xl sm:text-4xl leading-loose">{GLOBAL.articlesName}</h1>
+    <div class="flex flex-col gap-4 pt-8 pb-8">
+      <div class="flex items-center gap-4">
+        <h1 class="font-display text-3xl sm:text-4xl leading-loose">{GLOBAL.articlesName}</h1>
+      </div>
+      <p class="zag-muted max-w-2xl">
+        Telusuri arsip tulisan lewat pencarian cepat atau saring berdasarkan topik favoritmu.
+      </p>
+    </div>
+    <div class="flex flex-col gap-6 pb-8">
+      <div class="flex flex-col gap-2">
+        <label for="blog-search" class="text-sm font-semibold tracking-wide uppercase text-zag-dark/80 dark:text-zag-light/80">
+          Cari artikel
+        </label>
+        <div
+          class="flex items-center gap-2 rounded-2xl border-2 border-black/50 dark:border-white/60 bg-white/70 dark:bg-zinc-900/60 px-4 py-3"
+        >
+          <svg viewBox="0 0 24 24" class="w-5 h-5 text-zag-dark/70 dark:text-zag-light/70" aria-hidden="true">
+            <path
+              d="M15.5 14h-.79l-.28-.27A6 6 0 1 0 14 15.5l.27.28v.79l5 5 1.5-1.5-5-5zm-5.5 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"
+              fill="currentColor"
+            />
+          </svg>
+          <input
+            id="blog-search"
+            type="search"
+            placeholder="Ketik kata kunci…"
+            class="w-full bg-transparent border-none focus:outline-none font-mono"
+            data-blog-search
+            aria-label="Cari artikel blog"
+          />
+        </div>
+      </div>
+      {allTags.length > 0 && (
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center justify-between gap-4">
+            <p class="text-sm font-semibold tracking-wide uppercase text-zag-dark/80 dark:text-zag-light/80">
+              Filter topik
+            </p>
+            <button
+              type="button"
+              data-tag-reset
+              class="text-xs font-mono uppercase tracking-[0.3em] text-zag-dark/70 dark:text-zag-light/70 underline underline-offset-4 transition-opacity"
+            >
+              Reset
+            </button>
+          </div>
+          <div class="relative" data-tag-scroll>
+            <div
+              class="flex flex-nowrap md:flex-wrap gap-2 overflow-x-auto md:overflow-visible pb-3 -mx-4 px-4 md:mx-0 md:px-0 scroll-smooth"
+              data-tag-list
+              data-tag-scroll-container
+              style="scrollbar-width: none;"
+            >
+              {allTags.map((tag) => (
+                <button
+                  type="button"
+                  data-tag-button={tag.toLowerCase()}
+                  class="px-4 py-2 rounded-full border-2 border-black/20 dark:border-white/30 bg-white/60 dark:bg-zinc-900/60 text-sm font-medium transition-all shrink-0 data-[active=true]:border-black data-[active=true]:dark:border-white data-[active=true]:bg-black data-[active=true]:dark:bg-white data-[active=true]:text-white data-[active=true]:dark:text-black"
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+            <span
+              aria-hidden="true"
+              data-scroll-fade="left"
+              class="pointer-events-none absolute inset-y-4 left-0 w-10 bg-gradient-to-r from-white/95 via-white/70 to-transparent dark:from-zinc-950/95 dark:via-zinc-950/60 md:hidden opacity-0 data-[visible=true]:opacity-100 transition-opacity"
+            ></span>
+            <span
+              aria-hidden="true"
+              data-scroll-fade="right"
+              class="pointer-events-none absolute inset-y-4 right-0 w-10 bg-gradient-to-l from-white/95 via-white/70 to-transparent dark:from-zinc-950/95 dark:via-zinc-950/60 md:hidden opacity-0 data-[visible=true]:opacity-100 transition-opacity"
+            ></span>
+          </div>
+        </div>
+      )}
+      <p class="text-sm zag-muted">
+        Menampilkan <span data-results-count>{totalArticles}</span> dari {totalArticles} tulisan.
+      </p>
     </div>
     <ul>
       {
-        articles.map((project) => (
-          <li>
+        searchableArticles.map((article) => (
+          <li
+            data-article-item
+            data-text={article.searchText}
+            data-tags={article.normalizedTags.join("|")}
+          >
             <ArticleSnippet
-              title={project.title}
-              description={project.description}
-              duration={`${project.time} min`}
-              url={project.filename}
-              timestamp={project.timestamp}
+              title={article.title}
+              description={article.description}
+              duration={`${article.time} min`}
+              url={article.filename}
+              timestamp={article.timestamp}
             />
           </li>
         ))
       }
     </ul>
+    <p class="zag-muted italic mt-6" data-empty-state hidden>
+      Waduh, belum ada tulisan yang cocok dengan kombinasi filter dan kata kunci itu.
+    </p>
     <div class="mt-12">
       <SubscribeCard />
     </div>
   </Section>
 </Layout>
+
+<script type="module" is:inline>
+  (() => {
+    if (typeof window === "undefined") return;
+    const searchInput = document.querySelector("[data-blog-search]");
+    const tagButtons = Array.from(document.querySelectorAll("[data-tag-button]"));
+    const resetButton = document.querySelector("[data-tag-reset]");
+    const articles = Array.from(document.querySelectorAll("[data-article-item]"));
+    const resultCount = document.querySelector("[data-results-count]");
+    const emptyState = document.querySelector("[data-empty-state]");
+    const scrollContainer = document.querySelector("[data-tag-scroll-container]");
+    const fadeLeft = document.querySelector("[data-scroll-fade='left']");
+    const fadeRight = document.querySelector("[data-scroll-fade='right']");
+    if (!searchInput || articles.length === 0 || !resultCount) return;
+
+    const activeTags = new Set();
+    const total = articles.length;
+    resultCount.textContent = total.toString();
+
+    const toggleChipState = (button, isActive) => {
+      if (!button) return;
+      button.dataset.active = isActive ? "true" : "false";
+    };
+
+    const updateResetState = () => {
+      if (!resetButton) return;
+      resetButton.classList.toggle("opacity-40", activeTags.size === 0);
+    };
+
+    updateResetState();
+
+    const applyFilters = () => {
+      const query = searchInput.value.trim().toLowerCase();
+      let visible = 0;
+
+      articles.forEach((item) => {
+        const text = item.dataset.text ?? "";
+        const tags = (item.dataset.tags ?? "").split("|").filter(Boolean);
+        const matchesQuery = !query || text.includes(query);
+        const matchesTags =
+          activeTags.size === 0 || tags.some((tag) => activeTags.has(tag));
+        const shouldShow = matchesQuery && matchesTags;
+        item.hidden = !shouldShow;
+        if (shouldShow) visible += 1;
+      });
+
+      resultCount.textContent = visible.toString();
+      if (emptyState) emptyState.hidden = visible !== 0;
+    };
+
+    searchInput.addEventListener("input", () => {
+      applyFilters();
+    });
+
+    tagButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const tagValue = button.dataset.tagButton;
+        if (!tagValue) return;
+        const isActive = activeTags.has(tagValue);
+        if (isActive) {
+          activeTags.delete(tagValue);
+        } else {
+          activeTags.add(tagValue);
+        }
+        toggleChipState(button, !isActive);
+        updateResetState();
+        applyFilters();
+      });
+    });
+
+    resetButton?.addEventListener("click", () => {
+      if (activeTags.size === 0) return;
+      activeTags.clear();
+      tagButtons.forEach((button) => toggleChipState(button, false));
+      updateResetState();
+      applyFilters();
+    });
+
+    const updateScrollHints = () => {
+      if (!scrollContainer) return;
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
+      const maxScroll = Math.max(scrollWidth - clientWidth - 1, 0);
+      if (fadeLeft) {
+        fadeLeft.dataset.visible = scrollLeft > 4 ? "true" : "false";
+      }
+      if (fadeRight) {
+        fadeRight.dataset.visible = scrollLeft < maxScroll ? "true" : "false";
+      }
+    };
+
+    scrollContainer?.addEventListener("scroll", updateScrollHints, { passive: true });
+    window.addEventListener("resize", updateScrollHints);
+    updateScrollHints();
+  })();
+</script>

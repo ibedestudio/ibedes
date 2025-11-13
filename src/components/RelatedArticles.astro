@@ -1,0 +1,46 @@
+---
+import type { ArticleFrontmatter } from "../lib/types";
+import ArticleSnippet from "./ArticleSnippet.astro";
+
+type Props = {
+  articles?: Array<ArticleFrontmatter>;
+  title?: string;
+  description?: string;
+};
+
+const {
+  articles = [],
+  title = "Artikel terkait",
+  description = "Ada beberapa tulisan lain yang seirama buat kamu lanjut baca.",
+} = Astro.props as Props;
+
+if (articles.length === 0) {
+  return null;
+}
+---
+
+<section class="rounded-3xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-zinc-900/60 p-6 md:p-8">
+  <div class="flex flex-col gap-2 mb-6">
+    <p class="text-xs uppercase font-mono tracking-[0.3em] text-zag-dark/70 dark:text-zag-light/60">
+      {title}
+    </p>
+    {description ? (
+      <p class="zag-muted leading-relaxed max-w-2xl">
+        {description}
+      </p>
+    ) : null}
+  </div>
+  <ul class="space-y-6">
+    {articles.map((article) => (
+      <li>
+        <ArticleSnippet
+          title={article.title}
+          description={article.description}
+          duration={`${article.time} min`}
+          url={article.filename}
+          timestamp={article.timestamp}
+        />
+      </li>
+    ))}
+  </ul>
+</section>

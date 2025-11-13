@@ -13,6 +13,8 @@ import Layout from "./Layout.astro";
 import SubscribeCard from "../components/SubscribeCard.astro";
 import ShareActions from "../components/ShareActions.astro";
 import ArticleEngagement from "../components/ArticleEngagement.astro";
+import RelatedArticles from "../components/RelatedArticles.astro";
+import { getArticles } from "../lib/list";
 
 type Props = MarkdownLayoutProps<ArticleFrontmatter>;
 
@@ -20,6 +22,38 @@ const { frontmatter } = Astro.props;
 const shortDescription = getShortDescription(frontmatter.description);
 const articleDate = processArticleDate(frontmatter.timestamp);
 const sourceUrl = generateSourceUrl(frontmatter.filename, "blog");
+const currentArticlePath = `/blog/${frontmatter.filename}`;
+const tagSet = new Set(Array.isArray(frontmatter.tags) ? frontmatter.tags : []);
+const articles = await getArticles();
+
+const scoredArticles = articles
+  .filter((article) => article.filename !== currentArticlePath)
+  .map((article) => {
+    const overlap = article.tags
+      ? article.tags.reduce(
+          (count, tag) => (tagSet.has(tag) ? count + 1 : count),
+          0,
+        )
+      : 0;
+    return { article, overlap };
+  })
+  .sort((a, b) => {
+    if (tagSet.size && a.overlap !== b.overlap) {
+      return b.overlap - a.overlap;
+    }
+    const dateA = new Date(a.article.timestamp).getTime();
+    const dateB = new Date(b.article.timestamp).getTime();
+    return dateB - dateA;
+  });
+
+const prioritized = tagSet.size
+  ? scoredArticles.filter(({ overlap }) => overlap > 0)
+  : scoredArticles;
+const fallback =
+  tagSet.size && prioritized.length < 3
+    ? scoredArticles.filter(({ overlap }) => overlap === 0)
+    : [];
+const relatedArticles = [...prioritized.slice(0, 3), ...fallback].slice(0, 3).map(({ article }) => article);
 ---
 
 <Layout>
@@ -65,11 +99,17 @@ const sourceUrl = generateSourceUrl(frontmatter.filename, "blog");
       <ArticleEngagement slug={frontmatter.filename} title={frontmatter.title} />
     </div>
 
-    <div class="my-12">
-      <SubscribeCard />
-    </div>
+    {
+      relatedArticles.length > 0 && (
+        <div class="my-12">
+          <RelatedArticles articles={relatedArticles} />
+        </div>
+      )
+    }
 
-  <p class="pt-8">~{GLOBAL.username}</p>
+   
+
+ 
 
 
   </div>

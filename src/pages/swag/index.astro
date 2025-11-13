@@ -3,6 +3,14 @@ import Layout from "../../layouts/Layout.astro";
 import Section from "../../components/common/Section.astro";
 import { GLOBAL } from "../../lib/variables";
 
+import tee99Full from "../../assets/swag/ibedes_99AI_back_full.png";
+import tee99SideLeft from "../../assets/swag/ibedes_99AI_back_side_left.png";
+import tee99SideRight from "../../assets/swag/ibedes_99AI_back_side_right.png";
+import teeSoftFull from "../../assets/swag/ibedes_software_back_full.png";
+import teeSoftSideLeft from "../../assets/swag/ibedes_software_back_side_left.png";
+import teeSoftSideRight from "../../assets/swag/ibedes_software_back_side_right.png";
+
+
 const contactPhone = GLOBAL.contactPhone ?? "";
 const whatsappLink = GLOBAL.contactWhatsApp ?? "";
 const phoneDigits = contactPhone.replace(/\D+/g, "");
@@ -46,155 +54,55 @@ const showcaseImages: ShowcaseItem[] = [
     label: "Drop 01 • Sticker Pack",
     description: "Preview ragam stiker vinyl dengan laminasi doff + UV protection."
   },
-  {
-    src: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1400&q=80",
-    alt: "Topi bordir stitch kontras",
-    label: "Contrast Stitch Cap",
-    description: "Bordir timbul + jahitan kontras di panel depan dan samping."
-  },
-  {
-    src: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1400&q=80",
-    alt: "Night Runner Tee dengan efek glow",
-    label: "Night Runner Tee",
-    description: "Sablon glow-in-the-dark terlihat jelas meski ruangan minim cahaya."
-  },
-  {
-    src: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1400&q=80",
-    alt: "Signal Hoodie dengan hidden pocket",
-    label: "Signal Hoodie",
-    description: "Pocket samping + zipper tersembunyi untuk gadget dan kartu."
-  },
+  
 ];
 
 const swagItems: SwagItem[] = [
   {
-    name: "Contrast Stitch Cap",
+    name: "99AI Circuit Tee",
     description:
-      "Topi 5 panel warna charcoal dengan bordir logo ibedes + jahitan kontras. Cocok buat harian dan gampang dipadu padan.",
-    price: "Rp160.000",
-    status: "preorder",
-    statusNote: "Batch #1 preorder sampai 15 Juni",
-    batch: "Estimasi kirim 22–24 Juni 2025",
+      "Kaos oversized dengan grafis punggung besar bertema AI circuit. Cutting relaxed dengan bahan 24s combed adem.",
+    price: "Rp249.000",
+    status: "ready",
+    statusNote: "Ready stok terbatas, restock tiap 3 minggu",
+    batch: "Siap kirim 1-2 hari kerja dengan bonus stiker.",
     details: [
-      "Material twill premium + strap belakang metal",
-      "Bordir timbul logo ibedes & tagline",
-      "Bonus sticker pack mini di setiap paket",
+      "Bahan combed 24s, jahitan rantai di pundak",
+      "Grafis belakang high-density ink + highlight neon",
+      "Ukuran S-XL, chart lengkap via WhatsApp",
     ],
-    shipping: "Dikirim dari Bandung, bubble wrap + dustbag tipis.",
-    image:
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80",
-    imageAlt: "Topi hitam dengan bordir putih di meja kayu",
+    shipping: "Packing polybag tebal + silica gel.",
+    image: tee99Full.src,
+    imageAlt: "Detail punggung 99AI Circuit Tee",
     gallery: [
-      {
-        src: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=900&q=80",
-        alt: "Topi hitam bordir tampak depan",
-      },
-      {
-        src: "https://images.unsplash.com/photo-1475180098004-ca77a66827be?auto=format&fit=crop&w=900&q=80",
-        alt: "Detail jahitan kontras dan strap metal",
-      },
-      {
-        src: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=900&q=80",
-        alt: "Packaging dustbag dan sticker pack",
-      },
+      { src: tee99Full.src, alt: "Tampilan penuh grafis 99AI Circuit" },
+      { src: tee99SideLeft.src, alt: "Detail sisi kiri 99AI Circuit" },
+      { src: tee99SideRight.src, alt: "Detail sisi kanan 99AI Circuit" },
     ],
   },
   {
-    name: "Night Runner Tee",
+    name: "Software Glow Tee",
     description:
-      "Kaos oversized 24s combed warna hitam dengan desain glow-in-the-dark bertema circuit board.",
-    price: "Rp215.000",
+      "T-shirt hitam dengan tipografi retro 'software' yang menyala lembut saat gelap. Dibuat untuk temani sesi ngoding malam.",
+    price: "Rp259.000",
     status: "preorder",
-    statusNote: "Preorder tutup 20 Juni",
-    batch: "Produksi & kirim 28 Juni – 2 Juli",
+    statusNote: "Preorder batch #2 tutup 30 Juni",
+    batch: "Produksi 7 hari, kirim 8 Juli 2025.",
     details: [
-      "Sablon kombinasi plastisol + UV ink",
-      "Ukuran S sampai XXL (chart tersedia via WA)",
-      "Kerah rib double stitch supaya awet",
+      "Sablon kombinasi puff + glow ink",
+      "Label woven custom + hangtag edisi terbatas",
+      "Free sticker pack + kartu ucapan",
     ],
-    shipping: "Include polybag, silica gel, dan kartu ucapan.",
-    image:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80",
-    imageAlt: "Kaos hitam dengan desain grafis digantung di hanger kayu",
+    shipping: "Kirim dari Bandung via JNE/SiCepat (pilih saat order).",
+    image: teeSoftFull.src,
+    imageAlt: "Software Glow Tee tampak belakang",
     gallery: [
-      {
-        src: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80",
-        alt: "Night Runner Tee full body",
-      },
-      {
-        src: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=900&q=80",
-        alt: "Detail glow-in-the-dark print",
-      },
-      {
-        src: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=80",
-        alt: "Tekstur kain combed 24s",
-      },
+      { src: teeSoftFull.src, alt: "Tampilan penuh Software Glow Tee" },
+      { src: teeSoftSideLeft.src, alt: "Detail sisi kiri Software Glow" },
+      { src: teeSoftSideRight.src, alt: "Detail sisi kanan Software Glow" },
     ],
   },
-  {
-    name: "Signal Hoodie",
-    description:
-      "Hoodie fleece 280gsm warna coal dengan print tipografi besar + hidden pocket untuk gadget.",
-    price: "Rp385.000",
-    status: "preorder",
-    statusNote: "Preorder dibuka terbatas 30 pcs",
-    batch: "Produksi 3 minggu setelah pembayaran, update progres via WA.",
-    details: [
-      "Print puff + reflective ink",
-      "Pocket samping + hidden zipper kiri",
-      "Liner dalam lembut, nyaman buat kerja malam",
-    ],
-    shipping: "Packing dus tebal + vacuum bag, bisa request gift wrap.",
-    image:
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80",
-    imageAlt: "Hoodie abu-abu dengan desain minimal di studio",
-    gallery: [
-      {
-        src: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80",
-        alt: "Signal hoodie tampak depan",
-      },
-      {
-        src: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=900&q=80",
-        alt: "Detail pocket samping dan zipper",
-      },
-      {
-        src: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80",
-        alt: "Tekstur liner fleece 280gsm",
-      },
-    ],
-  },
-  {
-    name: "Sticker Pack Vol.01",
-    description:
-      "10 stiker vinyl anti air dengan tema retro device, neon grid, dan quotes favorit ibedes.",
-    price: "Rp55.000",
-    status: "preorder",
-    statusNote: "Diproduksi sekaligus dengan batch apparel",
-    batch: "Kirim bareng item lain (estimasi akhir Juni).",
-    details: [
-      "Ukuran campur 4–8 cm",
-      "Laminasi doff + UV protection",
-      "Full-cut, mudah ditempel di laptop/botol",
-    ],
-    shipping: "Free mailing card + bonus 2 stiker random.",
-    image:
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80",
-    imageAlt: "Sticker retro warna-warni tersebar di meja",
-    gallery: [
-      {
-        src: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80",
-        alt: "Sticker pack display",
-      },
-      {
-        src: "https://images.unsplash.com/photo-1454165205744-3b78555e5572?auto=format&fit=crop&w=900&q=80",
-        alt: "Detail laminasi doff",
-      },
-      {
-        src: "https://images.unsplash.com/photo-1494173853739-c21f58b16055?auto=format&fit=crop&w=900&q=80",
-        alt: "Sticker ditempel di laptop",
-      },
-    ],
-  },
+  
 ];
 
 const howToOrder = [
@@ -259,49 +167,6 @@ const buildOrderLink = (item: SwagItem) => {
     </div>
   </Section>
 
-  <Section class="py-12 space-y-6">
-    <div class="space-y-2">
-      <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">Swag Showcase</p>
-      <h2 class="text-2xl font-display">Slide detail produk</h2>
-      <p class="text-sm text-zag-dark/70 dark:text-zag-light/80 max-w-2xl">
-        Geser untuk melihat detail material, jahitan, dan finishing favorit. Semua foto diambil langsung dari sample produksi terbaru.
-      </p>
-    </div>
-
-    <div class="swag-showcase" data-showcase-slider>
-      <button type="button" class="swag-showcase__nav" data-showcase-prev aria-label="Slide sebelumnya">
-        ←
-      </button>
-      <div class="swag-showcase__viewport">
-        <ul class="swag-showcase__track" data-showcase-track>
-          {showcaseImages.map((slide) => (
-            <li class="swag-showcase__slide">
-              <img src={slide.src} alt={slide.alt} loading="lazy" />
-              <div class="swag-showcase__caption">
-                <p class="swag-showcase__label">{slide.label}</p>
-                <p class="swag-showcase__desc">{slide.description}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <button type="button" class="swag-showcase__nav" data-showcase-next aria-label="Slide selanjutnya">
-        →
-      </button>
-
-      <div class="swag-showcase__dots" data-showcase-dots>
-        {showcaseImages.map((_, index) => (
-          <button
-            type="button"
-            class="swag-showcase__dot"
-            data-showcase-dot={index}
-            aria-label={`Slide ${index + 1}`}
-          ></button>
-        ))}
-      </div>
-      <p class="swag-showcase__hint">Geser untuk lihat detail produk</p>
-    </div>
-  </Section>
 
   <Section class="py-10 space-y-8">
     <div class="space-y-2">
@@ -325,6 +190,7 @@ const buildOrderLink = (item: SwagItem) => {
                 ←
               </button>
               <div class="swag-card-gallery__viewport" data-gallery-viewport>
+                <span class="swag-card-gallery__badge" data-gallery-badge aria-live="polite"></span>
                 <ul class="swag-card-gallery__track" data-gallery-track>
                   {gallery.map((image) => (
                     <li class="swag-card-gallery__slide">
@@ -429,105 +295,110 @@ const buildOrderLink = (item: SwagItem) => {
   <script is:inline>
     (() => {
       if (typeof window === "undefined") return;
-      const slider = document.querySelector("[data-showcase-slider]");
-      if (!slider) return;
-      const track = slider.querySelector("[data-showcase-track]");
-      const slides = Array.from(track?.children ?? []);
-      if (!track || slides.length <= 1) return;
-      const prevBtn = slider.querySelector("[data-showcase-prev]");
-      const nextBtn = slider.querySelector("[data-showcase-next]");
-      const dots = Array.from(slider.querySelectorAll("[data-showcase-dot]"));
-      const viewport = slider.querySelector(".swag-showcase__viewport");
+      const initShowcaseSlider = () => {
+        const slider = document.querySelector("[data-showcase-slider]");
+        if (!slider) return;
+        const track = slider.querySelector("[data-showcase-track]");
+        const slides = Array.from(track?.children ?? []);
+        if (!track || slides.length <= 1) return;
+        const prevBtn = slider.querySelector("[data-showcase-prev]");
+        const nextBtn = slider.querySelector("[data-showcase-next]");
+        const dots = Array.from(slider.querySelectorAll("[data-showcase-dot]"));
+        const viewport = slider.querySelector(".swag-showcase__viewport");
 
-      let index = 0;
-      let autoPlayId;
-      const AUTO_PLAY_INTERVAL = 6500;
+        let index = 0;
+        let autoPlayId;
+        const AUTO_PLAY_INTERVAL = 6500;
 
-      const normalize = (value) => {
-        const total = slides.length;
-        return ((value % total) + total) % total;
-      };
+        const normalize = (value) => {
+          const total = slides.length;
+          return ((value % total) + total) % total;
+        };
 
-      const render = () => {
-        track.setAttribute("data-current", String(index));
-        track.style.transform = `translateX(-${index * 100}%)`;
-        dots.forEach((dot, dotIndex) => {
-          dot.classList.toggle("swag-showcase__dot--active", dotIndex === index);
-        });
-      };
+        const render = () => {
+          track.setAttribute("data-current", String(index));
+          track.style.transform = `translateX(-${index * 100}%)`;
+          dots.forEach((dot, dotIndex) => {
+            dot.classList.toggle("swag-showcase__dot--active", dotIndex === index);
+          });
+        };
 
-      const goTo = (nextIndex) => {
-        index = normalize(nextIndex);
-        render();
-      };
+        const goTo = (nextIndex) => {
+          index = normalize(nextIndex);
+          render();
+        };
 
-      const startAutoPlay = () => {
-        stopAutoPlay();
-        autoPlayId = window.setInterval(() => {
-          goTo(index + 1);
-        }, AUTO_PLAY_INTERVAL);
-      };
+        const startAutoPlay = () => {
+          stopAutoPlay();
+          autoPlayId = window.setInterval(() => {
+            goTo(index + 1);
+          }, AUTO_PLAY_INTERVAL);
+        };
 
-      const stopAutoPlay = () => {
-        if (typeof autoPlayId === "number") {
-          window.clearInterval(autoPlayId);
-          autoPlayId = undefined;
-        }
-      };
+        const stopAutoPlay = () => {
+          if (typeof autoPlayId === "number") {
+            window.clearInterval(autoPlayId);
+            autoPlayId = undefined;
+          }
+        };
 
-      prevBtn?.addEventListener("click", () => {
-        goTo(index - 1);
-        startAutoPlay();
-      });
-      nextBtn?.addEventListener("click", () => {
-        goTo(index + 1);
-        startAutoPlay();
-      });
-      dots.forEach((dot, dotIndex) => {
-        dot.addEventListener("click", () => {
-          goTo(dotIndex);
+        prevBtn?.addEventListener("click", () => {
+          goTo(index - 1);
           startAutoPlay();
         });
-      });
+        nextBtn?.addEventListener("click", () => {
+          goTo(index + 1);
+          startAutoPlay();
+        });
+        dots.forEach((dot, dotIndex) => {
+          dot.addEventListener("click", () => {
+            goTo(dotIndex);
+            startAutoPlay();
+          });
+        });
 
-      let isPointerDown = false;
-      let startX = 0;
+        let isPointerDown = false;
+        let startX = 0;
 
-      const handlePointerDown = (event) => {
-        isPointerDown = true;
-        startX = event.clientX;
+        const handlePointerDown = (event) => {
+          isPointerDown = true;
+          startX = event.clientX;
+        };
+
+        const handlePointerUp = (event) => {
+          if (!isPointerDown) return;
+          const delta = event.clientX - startX;
+          if (Math.abs(delta) > 40) {
+            goTo(delta < 0 ? index + 1 : index - 1);
+          }
+          isPointerDown = false;
+        };
+
+        viewport?.addEventListener("pointerdown", (event) => {
+          stopAutoPlay();
+          handlePointerDown(event);
+        });
+        viewport?.addEventListener("pointerup", (event) => {
+          handlePointerUp(event);
+          startAutoPlay();
+        });
+        viewport?.addEventListener("pointerleave", () => {
+          isPointerDown = false;
+          startAutoPlay();
+        });
+        window.addEventListener("pointerup", (event) => {
+          handlePointerUp(event);
+          startAutoPlay();
+        });
+
+        slider.addEventListener("mouseenter", stopAutoPlay);
+        slider.addEventListener("mouseleave", startAutoPlay);
+        slider.addEventListener("focusin", stopAutoPlay);
+        slider.addEventListener("focusout", startAutoPlay);
+
+        render();
+        startAutoPlay();
       };
-
-      const handlePointerUp = (event) => {
-        if (!isPointerDown) return;
-        const delta = event.clientX - startX;
-        if (Math.abs(delta) > 40) {
-          goTo(delta < 0 ? index + 1 : index - 1);
-        }
-        isPointerDown = false;
-      };
-
-      viewport?.addEventListener("pointerdown", (event) => {
-        stopAutoPlay();
-        handlePointerDown(event);
-      });
-      viewport?.addEventListener("pointerup", (event) => {
-        handlePointerUp(event);
-        startAutoPlay();
-      });
-      viewport?.addEventListener("pointerleave", () => {
-        isPointerDown = false;
-        startAutoPlay();
-      });
-      window.addEventListener("pointerup", (event) => {
-        handlePointerUp(event);
-        startAutoPlay();
-      });
-
-      slider.addEventListener("mouseenter", stopAutoPlay);
-      slider.addEventListener("mouseleave", startAutoPlay);
-      slider.addEventListener("focusin", stopAutoPlay);
-      slider.addEventListener("focusout", startAutoPlay);
 
       const initCardGalleries = () => {
         const galleries = document.querySelectorAll("[data-card-gallery]");
@@ -542,6 +413,8 @@ const buildOrderLink = (item: SwagItem) => {
           const next = gallery.querySelector("[data-gallery-next]");
           const dots = Array.from(gallery.querySelectorAll("[data-gallery-dot]"));
           const viewport = gallery.querySelector("[data-gallery-viewport]");
+          const badge = gallery.querySelector("[data-gallery-badge]");
+          const totalSlides = slides.length;
           let current = 0;
 
           const normalize = (value) => {
@@ -550,10 +423,16 @@ const buildOrderLink = (item: SwagItem) => {
           };
 
           const update = () => {
-            track.style.transform = `translateX(-${current * 100}%)`;
+            const slideWidth = viewport?.getBoundingClientRect().width ?? 0;
+            track.style.transform = `translate3d(-${current * slideWidth}px, 0, 0)`;
             dots.forEach((dot, dotIndex) => {
               dot.classList.toggle("swag-card-gallery__dot--active", dotIndex === current);
             });
+            if (badge) {
+              badge.textContent = `${String(current + 1).padStart(2, "0")} / ${String(
+                totalSlides,
+              ).padStart(2, "0")}`;
+            }
           };
 
           const goTo = (nextIndex) => {
@@ -590,13 +469,21 @@ const buildOrderLink = (item: SwagItem) => {
             pointerDown = false;
           });
           window.addEventListener("pointerup", handlePointerUp);
+          const handleResize = () => {
+            track.style.transition = "none";
+            update();
+            requestAnimationFrame(() => {
+              track.style.transition = "transform 420ms cubic-bezier(0.25, 0.8, 0.25, 1)";
+            });
+          };
+
+          window.addEventListener("resize", handleResize);
 
           update();
         });
       };
 
-      render();
-      startAutoPlay();
+      initShowcaseSlider();
       initCardGalleries();
     })();
   </script>
@@ -606,79 +493,106 @@ const buildOrderLink = (item: SwagItem) => {
   .swag-card-gallery {
     position: relative;
     width: 100%;
-    border-radius: 1.5rem;
-    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 1.75rem;
+    border: 1px solid rgba(0, 0, 0, 0.18);
     overflow: hidden;
+    background: radial-gradient(circle at top, rgba(255, 255, 255, 0.15), transparent);
+    box-shadow: 0 15px 45px rgba(15, 23, 42, 0.15);
   }
 
   .swag-card-gallery__viewport {
     overflow: hidden;
     border-radius: inherit;
+    position: relative;
   }
 
   .swag-card-gallery__track {
     display: flex;
-    transition: transform 400ms cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition: transform 420ms cubic-bezier(0.25, 0.8, 0.25, 1);
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
 
   .swag-card-gallery__slide {
-    min-width: 100%;
+    flex: 0 0 100%;
   }
 
   .swag-card-gallery__slide img {
     width: 100%;
-    height: 14rem;
+    aspect-ratio: 4 / 3;
     object-fit: cover;
     display: block;
+  }
+
+  .swag-card-gallery__badge {
+    position: absolute;
+    top: 0.85rem;
+    right: 0.85rem;
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.75);
+    color: white;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
   }
 
   .swag-card-gallery__nav {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.4rem;
+    height: 2.4rem;
     border-radius: 999px;
-    border: 1px solid rgba(0, 0, 0, 0.25);
-    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: rgba(15, 23, 42, 0.55);
+    color: #f8fafc;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    font-size: 1.25rem;
+    box-shadow: 0 6px 30px rgba(15, 23, 42, 0.35);
+    transition: transform 120ms ease, background 120ms ease;
+  }
+
+  .swag-card-gallery__nav:hover {
+    transform: translateY(-50%) scale(1.05);
+    background: rgba(6, 78, 59, 0.8);
   }
 
   .swag-card-gallery [data-gallery-prev] {
-    left: 0.6rem;
+    left: 0.75rem;
   }
 
   .swag-card-gallery [data-gallery-next] {
-    right: 0.6rem;
+    right: 0.75rem;
   }
 
   .swag-card-gallery__dots {
     position: absolute;
-    bottom: 0.5rem;
+    bottom: 0.4rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 0.35rem;
-    padding: 0.2rem 0.6rem;
+    gap: 0.4rem;
+    padding: 0.25rem 0.75rem;
     border-radius: 999px;
-    background: rgba(15, 23, 42, 0.2);
-    backdrop-filter: blur(6px);
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
   }
 
   .swag-card-gallery__dot {
-    width: 0.45rem;
-    height: 0.45rem;
+    width: 0.5rem;
+    height: 0.5rem;
     border-radius: 999px;
     border: none;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.35);
   }
 
   .swag-card-gallery__dot--active {
     background: #34d399;
+    box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.25);
   }
 
   .swag-card-gallery--static .swag-card-gallery__nav,
@@ -699,18 +613,24 @@ const buildOrderLink = (item: SwagItem) => {
     }
 
     .swag-card-gallery__slide img {
-      height: 12rem;
+      aspect-ratio: 5 / 4;
+    }
+
+    .swag-card-gallery__badge {
+      font-size: 0.55rem;
+      right: 0.65rem;
+      top: 0.65rem;
     }
   }
 
   :global(.dark) .swag-card-gallery {
     border-color: rgba(255, 255, 255, 0.2);
+    background: radial-gradient(circle at top, rgba(59, 130, 246, 0.15), rgba(15, 23, 42, 0.3));
   }
 
   :global(.dark) .swag-card-gallery__nav {
-    background: rgba(15, 23, 42, 0.85);
-    color: #f8fafc;
-    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(15, 23, 42, 0.8);
+    border-color: rgba(59, 130, 246, 0.4);
   }
 
   :global(.dark) .swag-card-gallery__dots {
@@ -723,6 +643,7 @@ const buildOrderLink = (item: SwagItem) => {
 
   :global(.dark) .swag-card-gallery__dot--active {
     background: #22d3ee;
+    box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.35);
   }
 
   .swag-showcase {

@@ -12,13 +12,13 @@ url: "/blog/ramah-di-luar-marah-di-rumah"
 
 <figure class="max-w-xl mx-auto my-8">
   <img
-    src="https://images.pexels.com/photos/4260102/pexels-photo-4260102.jpeg"
+    src="https://images.unsplash.com/photo-1605595988901-3d06601c38ad?q=80&w=1430&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     alt="Seorang pria berdiri sendiri dalam bayangan, menggambarkan konflik batin"
     class="w-full rounded-lg shadow-md"
     loading="lazy"
   />
   <figcaption class="mt-3 text-center text-sm text-zag-dark/70 dark:text-zag-light/70">
-     Photo by <b>August de Richelieu:<a/> from pexels
+    Foto oleh <b>Eric Ward</b> di Unsplash
   </figcaption>
 </figure>
 
@@ -141,3 +141,4 @@ Artikel ini adalah undangan untuk mulai mengenali diri,
 dan mungkin, membuka ruang baru untuk menjadi ayah dan suami yang lebih hadir—  
 bukan dengan kekerasan,  
 tetapi dengan kesadaran dan cinta yang pelan-pelan tumbuh.
+

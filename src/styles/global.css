@@ -455,3 +455,54 @@ kbd {
   font-size: 0.65rem;
   font-family: var(--font-mono);
 }
+
+.breadcrumbs {
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--color-zag-dark-muted);
+  margin-bottom: 1rem;
+}
+
+:where(.dark, .dark *) .breadcrumbs {
+  color: var(--color-zag-light-muted);
+}
+
+.breadcrumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.breadcrumbs__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.breadcrumbs__link {
+  text-decoration: none;
+  color: inherit;
+  border-bottom: 1px solid transparent;
+  transition: border-color 150ms ease;
+}
+
+.breadcrumbs__link:hover,
+.breadcrumbs__link:focus-visible {
+  border-color: currentColor;
+  outline: none;
+}
+
+.breadcrumbs__current {
+  color: var(--color-zag-dark);
+}
+
+:where(.dark, .dark *) .breadcrumbs__current {
+  color: var(--color-zag-light);
+}
+
+.breadcrumbs__separator {
+  font-size: 0.6rem;
+  opacity: 0.7;
+}

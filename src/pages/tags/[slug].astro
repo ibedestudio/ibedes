@@ -5,6 +5,7 @@ import ArticleSnippet from "../../components/ArticleSnippet.astro";
 import { getArticles } from "../../lib/list";
 import { slugifyTag, getShortDescription } from "../../lib/utils";
 import { GLOBAL } from "../../lib/variables";
+import Breadcrumbs from "../../components/common/Breadcrumbs.astro";
 
 type PageProps = {
   tag: string;
@@ -57,6 +58,11 @@ export async function getStaticPaths() {
 const { tag, articles, latest } = Astro.props as PageProps & { latest: string };
 const pageTitle = `${tag} • ${GLOBAL.articlesName}`;
 const metaDescription = `Semua artikel bertopik ${tag} yang pernah ditulis di ${GLOBAL.username}.`;
+const breadcrumbs = [
+  { label: "Home", url: "/" },
+  { label: "Tags", url: "/tags" },
+  { label: tag },
+];
 ---
 
 <Layout>
@@ -78,6 +84,7 @@ const metaDescription = `Semua artikel bertopik ${tag} yang pernah ditulis di ${
 
   <Section class="my-8">
     <div class="pt-8 pb-6 space-y-4">
+      <Breadcrumbs items={breadcrumbs} />
       <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">
         Tag
       </p>

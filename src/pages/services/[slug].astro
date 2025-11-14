@@ -4,6 +4,7 @@ import Section from "../../components/common/Section.astro";
 import { GLOBAL } from "../../lib/variables";
 import type { ServiceDetail } from "../../lib/services";
 import { SERVICES } from "../../lib/services";
+import Breadcrumbs from "../../components/common/Breadcrumbs.astro";
 
 export async function getStaticPaths() {
   return SERVICES.map((service) => ({
@@ -20,6 +21,11 @@ const { service } = Astro.props as Props;
 const contactPhone = GLOBAL.contactPhone ?? "0823-1777-7008";
 const whatsappLink = GLOBAL.contactWhatsApp ?? "https://wa.link/b1hzai";
 const phoneHref = `tel:${contactPhone.replace(/\D+/g, "")}`;
+const breadcrumbs = [
+  { label: "Home", url: "/" },
+  { label: "Services", url: "/services" },
+  { label: service.title },
+];
 ---
 
 <Layout>
@@ -40,9 +46,7 @@ const phoneHref = `tel:${contactPhone.replace(/\D+/g, "")}`;
   </Fragment>
 
   <Section class="py-16 space-y-8">
-    <a href="/services" class="inline-flex items-center text-xs uppercase tracking-[0.35em] zag-muted gap-2">
-      <span aria-hidden="true">←</span> Kembali
-    </a>
+    <Breadcrumbs items={breadcrumbs} />
     <div class="space-y-4">
       <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">
         {service.bestFor}

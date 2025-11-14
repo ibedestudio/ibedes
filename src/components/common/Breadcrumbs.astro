@@ -1,0 +1,36 @@
+---
+export type BreadcrumbItem = {
+  label: string;
+  url?: string;
+};
+
+const { items = [] as BreadcrumbItem[] } = Astro.props;
+const breadcrumbs = items.filter((item) => Boolean(item?.label));
+---
+
+{breadcrumbs.length > 0 && (
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <ol>
+      {breadcrumbs.map((item, index) => {
+        const isLast = index === breadcrumbs.length - 1;
+        return (
+          <li class="breadcrumbs__item">
+            {item.url && !isLast ? (
+              <a href={item.url} class="breadcrumbs__link">{item.label}</a>
+            ) : (
+              <span
+                class="breadcrumbs__current"
+                aria-current={isLast ? "page" : undefined}
+              >
+                {item.label}
+              </span>
+            )}
+            {!isLast && (
+              <span class="breadcrumbs__separator" aria-hidden="true">/</span>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  </nav>
+)}

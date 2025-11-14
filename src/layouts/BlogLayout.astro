@@ -15,6 +15,7 @@ import ShareActions from "../components/ShareActions.astro";
 import ArticleEngagement from "../components/ArticleEngagement.astro";
 import RelatedArticles from "../components/RelatedArticles.astro";
 import { getArticles } from "../lib/list";
+import Breadcrumbs from "../components/common/Breadcrumbs.astro";
 
 type Props = MarkdownLayoutProps<ArticleFrontmatter>;
 
@@ -25,6 +26,11 @@ const sourceUrl = generateSourceUrl(frontmatter.filename, "blog");
 const currentArticlePath = `/blog/${frontmatter.filename}`;
 const tagSet = new Set(Array.isArray(frontmatter.tags) ? frontmatter.tags : []);
 const articles = await getArticles();
+const breadcrumbs = [
+  { label: "Home", url: "/" },
+  { label: GLOBAL.articlesName, url: "/blog" },
+  { label: frontmatter.title },
+];
 
 const scoredArticles = articles
   .filter((article) => article.filename !== currentArticlePath)
@@ -72,8 +78,9 @@ const relatedArticles = [...prioritized.slice(0, 3), ...fallback].slice(0, 3).ma
     <meta name="language" content="indonesia" />
     <link rel="canonical" href={sourceUrl} />
   </Fragment>
- <Section class="pt-8">
+  <Section class="pt-8">
   <div class="max-w-prose mx-auto w-full">
+    <Breadcrumbs items={breadcrumbs} />
     <div class="flex flex-col gap-4 mt-8 mb-16 w-full">
       <h1
         class="text-3xl sm:text-4xl leading-tight font-display break-words"

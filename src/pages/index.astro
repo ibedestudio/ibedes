@@ -10,6 +10,33 @@ import FeaturedArticles from "../components/home/FeaturedArticles.astro";
 import SubscribeCard from "../components/SubscribeCard.astro";
 
 const shortDescriptionPlain = stripHtml(GLOBAL.shortDescription);
+const sameAsProfiles = [GLOBAL.githubProfile, GLOBAL.threadsProfile].filter(Boolean);
+const homepageSchema = JSON.stringify(
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "name": GLOBAL.username,
+        "url": GLOBAL.rootUrl,
+        "description": shortDescriptionPlain,
+        "inLanguage": "id",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": `${GLOBAL.rootUrl}/?q={search_term_string}`,
+          "query-input": "required name=search_term_string",
+        },
+      },
+      {
+        "@type": "Organization",
+        "name": GLOBAL.username,
+        "url": GLOBAL.rootUrl,
+        "logo": `${GLOBAL.rootUrl}/${GLOBAL.profileImage}`,
+        "sameAs": sameAsProfiles,
+      },
+    ],
+  },
+).replace(/</g, "\\u003c");
 ---
 
 <Layout>
@@ -42,6 +69,7 @@ const shortDescriptionPlain = stripHtml(GLOBAL.shortDescription);
     <meta http-equiv="content-language" content="en" />
     <meta name="language" content="English" />
     <link rel="canonical" href={GLOBAL.rootUrl} />
+    <script type="application/ld+json" set:html={homepageSchema}></script>
   </Fragment>
   <Section class="my-16">
     <Hero />

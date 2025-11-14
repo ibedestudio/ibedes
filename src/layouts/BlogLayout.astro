@@ -60,6 +60,43 @@ const fallback =
     ? scoredArticles.filter(({ overlap }) => overlap === 0)
     : [];
 const relatedArticles = [...prioritized.slice(0, 3), ...fallback].slice(0, 3).map(({ article }) => article);
+const resolveImageUrl = (value?: string) => {
+  if (!value) return undefined;
+  return value.startsWith("http") ? value : `${GLOBAL.rootUrl}/${value.replace(/^\/+/, "")}`;
+};
+const rawArticleImage =
+  frontmatter.image ??
+  frontmatter.cover ??
+  frontmatter.hero ??
+  frontmatter.socialImage;
+const articleImage = resolveImageUrl(rawArticleImage) ?? `${GLOBAL.rootUrl}/${GLOBAL.profileImage}`;
+const articleSchema = JSON.stringify(
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": frontmatter.title,
+    "description": shortDescription,
+    "datePublished": frontmatter.timestamp,
+    "dateModified": frontmatter.timestamp,
+    "author": {
+      "@type": "Person",
+      "name": GLOBAL.username,
+      "url": GLOBAL.rootUrl,
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": GLOBAL.username,
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${GLOBAL.rootUrl}/${GLOBAL.profileImage}`,
+      },
+    },
+    "image": articleImage,
+    "mainEntityOfPage": sourceUrl,
+    "url": frontmatter.url ?? sourceUrl,
+    "keywords": Array.isArray(frontmatter.tags) ? frontmatter.tags : [],
+  },
+).replace(/</g, "\\u003c");
 ---
 
 <Layout>
@@ -68,15 +105,16 @@ const relatedArticles = [...prioritized.slice(0, 3), ...fallback].slice(0, 3).ma
     <meta name="description" content={frontmatter.description} />
     <meta property="og:title" content={`${frontmatter.title} • ${GLOBAL.username}`} />
     <meta property="og:description" content={shortDescription} />
-    <meta property="og:image" content={`${GLOBAL.rootUrl}/${GLOBAL.profileImage}`} />
+    <meta property="og:image" content={articleImage} />
     <meta property="og:url" content={frontmatter.url} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={`${frontmatter.title} • ${GLOBAL.username}`} />
     <meta name="twitter:description" content={shortDescription} />
-    <meta name="twitter:image" content={`${GLOBAL.rootUrl}/${GLOBAL.profileImage}`} />
+    <meta name="twitter:image" content={articleImage} />
     <meta http-equiv="content-language" content="id" />
     <meta name="language" content="indonesia" />
     <link rel="canonical" href={sourceUrl} />
+    <script type="application/ld+json" set:html={articleSchema}></script>
   </Fragment>
   <div
     class="reading-progress"
@@ -105,10 +143,29 @@ const relatedArticles = [...prioritized.slice(0, 3), ...fallback].slice(0, 3).ma
       </div>
     </div>
 
-   <div data-article-body>
-    <Prose>
-      <slot />
-    </Prose>
+   <div class="article-layout">
+    <div
+      class="article-main"
+      data-article-body
+      data-article-title={frontmatter.title}
+      data-article-url={sourceUrl}
+    >
+      <Prose>
+        <slot />
+      </Prose>
+    </div>
+    <aside
+      class="article-toc"
+      data-toc-container
+      data-visible="false"
+      aria-label="Daftar isi artikel"
+      hidden
+    >
+      <p class="article-toc__title">Daftar Isi</p>
+      <nav aria-label="Daftar isi">
+        <ol data-toc-list></ol>
+      </nav>
+    </aside>
   </div>
 
     <div class="my-12">
@@ -143,8 +200,20 @@ const relatedArticles = [...prioritized.slice(0, 3), ...fallback].slice(0, 3).ma
     const progressBarContainer = document.querySelector("[data-reading-progress]");
     const progressBar = progressBarContainer?.querySelector("span");
     const articleBody = document.querySelector("[data-article-body]");
+    const tocContainer = document.querySelector("[data-toc-container]");
+    const tocList = document.querySelector("[data-toc-list]");
+    const articleTitle = articleBody?.getAttribute("data-article-title") ?? document.title;
+    const articleSourceUrl = articleBody?.getAttribute("data-article-url") ?? window.location.href;
 
     const clamp = (value, min = 0, max = 1) => Math.min(Math.max(value, min), max);
+    const slugify = (value = "") =>
+      value
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
 
     const updateProgress = () => {
       if (!progressBar || !articleBody) return;
@@ -174,10 +243,86 @@ const relatedArticles = [...prioritized.slice(0, 3), ...fallback].slice(0, 3).ma
     updateProgress();
 
     if (!articleBody) return;
+
+    if (tocContainer && tocList) {
+      const headingMap = {};
+      const headings = Array.from(articleBody.querySelectorAll("h2, h3"));
+      if (headings.length) {
+        tocContainer.dataset.visible = "true";
+        tocContainer.removeAttribute("hidden");
+        headings.forEach((heading) => {
+          const text = heading.textContent?.trim();
+          if (!text) return;
+          const baseSlug = slugify(text);
+          headingMap[baseSlug] = (headingMap[baseSlug] ?? 0) + 1;
+          const finalSlug = headingMap[baseSlug] > 1 ? `${baseSlug}-${headingMap[baseSlug]}` : baseSlug;
+          if (!heading.id) heading.id = finalSlug;
+          const item = document.createElement("li");
+          item.dataset.level = heading.tagName.toLowerCase();
+          const link = document.createElement("a");
+          link.href = `#${finalSlug}`;
+          link.textContent = text;
+          item.appendChild(link);
+          tocList.appendChild(item);
+        });
+      }
+    }
+
     const markerPattern = /^\s*\[!highlight\]\s*/i;
     const blockquotes = Array.from(articleBody.querySelectorAll("blockquote"));
 
-    blockquotes.forEach((blockquote) => {
+    const writeToClipboard = (text) => {
+      if (navigator.clipboard?.writeText) {
+        return navigator.clipboard.writeText(text);
+      }
+      return new Promise((resolve, reject) => {
+        try {
+          const helper = document.createElement("textarea");
+          helper.value = text;
+          helper.setAttribute("readonly", "");
+          helper.style.position = "absolute";
+          helper.style.left = "-9999px";
+          document.body.appendChild(helper);
+          helper.select();
+          const success = document.execCommand("copy");
+          document.body.removeChild(helper);
+          if (success) resolve();
+          else reject(new Error("Clipboard unavailable"));
+        } catch (error) {
+          reject(error);
+        }
+      });
+    };
+
+    const createActionButton = (label, iconPath) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "quote-action";
+      button.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="${iconPath}" />
+        </svg>
+        <span>${label}</span>
+      `;
+      button.dataset.defaultLabel = label;
+      return button;
+    };
+
+    const updateButtonLabel = (button, text) => {
+      const label = button.querySelector("span");
+      if (label) label.textContent = text;
+    };
+
+    const flashState = (button, state, label) => {
+      button.dataset.state = state;
+      updateButtonLabel(button, label);
+      setTimeout(() => {
+        button.dataset.state = "idle";
+        updateButtonLabel(button, button.dataset.defaultLabel ?? "");
+      }, 1800);
+    };
+
+    blockquotes.forEach((blockquote, index) => {
       const firstParagraph = blockquote.querySelector("p");
       if (firstParagraph) {
         const paragraphHtml = firstParagraph.innerHTML;
@@ -187,54 +332,70 @@ const relatedArticles = [...prioritized.slice(0, 3), ...fallback].slice(0, 3).ma
         }
       }
 
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "quote-copy-button";
-      button.setAttribute("aria-label", "Salin kutipan");
-      button.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M9 2H5a2 2 0 0 0-2 2v14h2V4h4zm10 4h-8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm0 14h-8V8h8z" />
-        </svg>
-        <span>Salin</span>
-      `;
-      const setLabel = (text) => {
-        const label = button.querySelector("span");
-        if (label) {
-          label.textContent = text;
-        }
-      };
-      const handleCopy = async () => {
+      const quoteId = blockquote.id || `kutipan-${index + 1}`;
+      blockquote.id = quoteId;
+
+      const getQuoteText = () => {
         const clone = blockquote.cloneNode(true);
-        clone.querySelector(".quote-copy-button")?.remove();
-        const text = clone.textContent?.trim() ?? "";
+        clone.querySelectorAll(".quote-actions").forEach((node) => node.remove());
+        return clone.textContent?.trim() ?? "";
+      };
+
+      const actions = document.createElement("div");
+      actions.className = "quote-actions";
+
+      const copyButton = createActionButton(
+        "Salin",
+        "M9 2H5a2 2 0 0 0-2 2v14h2V4h4zm10 4h-8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm0 14h-8V8h8z",
+      );
+      copyButton.setAttribute("aria-label", "Salin kutipan");
+
+      const shareButton = createActionButton(
+        "Bagikan",
+        "M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7m-5-4L12 5l-3 3m3-3v12",
+      );
+      shareButton.setAttribute("aria-label", "Bagikan kutipan");
+
+      const handleCopy = async () => {
+        const text = getQuoteText();
+        if (!text) return;
         try {
-          if (navigator.clipboard?.writeText) {
-            await navigator.clipboard.writeText(text);
-          } else {
-            const shadow = document.createElement("textarea");
-            shadow.value = text;
-            shadow.setAttribute("readonly", "");
-            shadow.style.position = "absolute";
-            shadow.style.left = "-9999px";
-            document.body.appendChild(shadow);
-            shadow.select();
-            document.execCommand("copy");
-            document.body.removeChild(shadow);
-          }
-          button.dataset.state = "copied";
-          setLabel("Disalin!");
+          await writeToClipboard(text);
+          flashState(copyButton, "success", "Disalin!");
         } catch (error) {
-          button.dataset.state = "error";
-          setLabel("Gagal");
-        } finally {
-          setTimeout(() => {
-            button.dataset.state = "idle";
-            setLabel("Salin");
-          }, 1800);
+          flashState(copyButton, "error", "Gagal");
         }
       };
-      button.addEventListener("click", handleCopy);
-      blockquote.appendChild(button);
+
+      const handleShare = async () => {
+        const text = getQuoteText();
+        if (!text) return;
+        const shareUrl = `${articleSourceUrl}#${quoteId}`;
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: articleTitle,
+              text,
+              url: shareUrl,
+            });
+            flashState(shareButton, "success", "Dibagikan!");
+            return;
+          } catch (error) {
+            if (error?.name === "AbortError") return;
+          }
+        }
+        try {
+          await writeToClipboard(`${text} — ${articleTitle}\n${shareUrl}`);
+          flashState(shareButton, "success", "Link siap!");
+        } catch (error) {
+          flashState(shareButton, "error", "Gagal");
+        }
+      };
+
+      copyButton.addEventListener("click", handleCopy);
+      shareButton.addEventListener("click", handleShare);
+      actions.append(copyButton, shareButton);
+      blockquote.appendChild(actions);
     });
   })();
 </script>

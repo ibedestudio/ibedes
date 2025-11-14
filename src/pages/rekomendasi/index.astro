@@ -18,7 +18,8 @@ const categoryStats = PRODUCTS.reduce<Record<string, number>>((acc, product) => 
 }, {});
 const uniqueCategories = Object.keys(categoryStats);
 
-const categories = ["Semua", ...uniqueCategories];
+const favoriteLabel = "Favorit";
+const categories = ["Semua", ...uniqueCategories, favoriteLabel];
 
 const kitProduct = PRODUCTS.find((product) => product.slug === "markaz-hunter-shopee-kit");
 
@@ -43,6 +44,52 @@ const tokopediaDropSlugs = [
   "senter-led-zoom-90000",
 ];
 const tokopediaDrops = PRODUCTS.filter((product) => tokopediaDropSlugs.includes(product.slug));
+
+const toAbsoluteImage = (value?: string) => {
+  if (!value) return undefined;
+  return value.startsWith("http") ? value : `${GLOBAL.rootUrl}/${value.replace(/^\/+/, "")}`;
+};
+
+const structuredProducts = PRODUCTS.map((product) => {
+  const primaryLink = product.links?.[0];
+  const schemaProduct: Record<string, unknown> = {
+    "@type": "Product",
+    name: product.title,
+    description: product.description,
+    category: product.category,
+    url: `${GLOBAL.rootUrl}/rekomendasi#${product.slug}`,
+  };
+  const absoluteImage = toAbsoluteImage(product.image);
+  if (absoluteImage) {
+    schemaProduct.image = absoluteImage;
+  }
+  if (product.tags?.length) {
+    schemaProduct.keywords = product.tags.join(", ");
+  }
+  if (primaryLink) {
+    schemaProduct.offers = {
+      "@type": "Offer",
+      url: primaryLink.url,
+      priceCurrency: "IDR",
+      availability: "https://schema.org/InStock",
+    };
+  }
+  return schemaProduct;
+});
+
+const productListSchema = JSON.stringify(
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": `Kurasi Produk ${GLOBAL.username}`,
+    "itemListElement": structuredProducts.map((product, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "url": product.url,
+      "item": product,
+    })),
+  },
+).replace(/</g, "\\u003c");
 ---
 
 <Layout>
@@ -69,6 +116,7 @@ const tokopediaDrops = PRODUCTS.filter((product) => tokopediaDropSlugs.includes(
     <meta http-equiv="content-language" content="id" />
     <meta name="language" content="Indonesia" />
     <link rel="canonical" href={`${GLOBAL.rootUrl}/rekomendasi`} />
+    <script type="application/ld+json" set:html={productListSchema}></script>
   </Fragment>
 
   <Section class="py-12 sm:py-20">
@@ -204,12 +252,15 @@ const tokopediaDrops = PRODUCTS.filter((product) => tokopediaDropSlugs.includes(
           <p class="text-sm text-black/70 dark:text-white/70">
             Klik kategori untuk sembunyikan yang lain. Mode default menampilkan semuanya.
           </p>
+          <p class="text-xs uppercase tracking-[0.3em] text-black/50 dark:text-white/60">
+            Tap ikon hati di kartu untuk simpan pilihan dan buka filter "{favoriteLabel}" kapan saja.
+          </p>
         </div>
         <div class="text-xs uppercase tracking-[0.3em] text-black/60 dark:text-white/60">
           {categories.length} filter tersedia
         </div>
       </div>
-      <div class="mt-6 flex flex-wrap gap-2 filter-scroll" data-filter-group>
+      <div class="mt-6 flex flex-wrap gap-2 filter-scroll" data-filter-group data-favorite-label={favoriteLabel}>
         {categories.map((category, index) => (
           <button
             type="button"
@@ -219,9 +270,13 @@ const tokopediaDrops = PRODUCTS.filter((product) => tokopediaDropSlugs.includes(
             ]}
             data-filter-button
             data-filter-value={category}
+            data-filter-favorite={category === favoriteLabel ? "true" : undefined}
           >
             <span>{category}</span>
-            <span class="filter-chip__count">
+            <span
+              class="filter-chip__count"
+              data-filter-count={category === favoriteLabel ? "favorite" : undefined}
+            >
               {category === "Semua" ? PRODUCTS.length : categoryStats[category] ?? 0}
             </span>
           </button>
@@ -229,7 +284,11 @@ const tokopediaDrops = PRODUCTS.filter((product) => tokopediaDropSlugs.includes(
       </div>
       <div class="mt-10 grid gap-8">
         {PRODUCTS.map((product) => (
-          <div data-product-wrapper data-category={product.category.toLowerCase()}>
+          <div
+            data-product-wrapper
+            data-category={product.category.toLowerCase()}
+            data-product-slug={product.slug}
+          >
             <ProductCard {...product} />
           </div>
         ))}
@@ -273,21 +332,117 @@ const tokopediaDrops = PRODUCTS.filter((product) => tokopediaDropSlugs.includes(
     if (typeof window === "undefined") return;
     const buttons = Array.from(document.querySelectorAll("[data-filter-button]"));
     const wrappers = Array.from(document.querySelectorAll("[data-product-wrapper]"));
-    const applyFilter = (value) => {
-      const filter = value.toLowerCase();
-      wrappers.forEach((wrapper) => {
-        const category = wrapper.getAttribute("data-category") ?? "";
-        const visible = filter === "semua" || category === filter;
-        wrapper.style.display = visible ? "block" : "none";
+    if (!buttons.length || !wrappers.length) return;
+
+    const favoriteLabel =
+      document.querySelector("[data-filter-group]")?.getAttribute("data-favorite-label") ?? "Favorit";
+    const filterStorageKey = "ibedes_rekomendasi_filter";
+    const favoritesStorageKey = "ibedes_product_favorites";
+    const favoriteCountNode = document.querySelector("[data-filter-count='favorite']");
+
+    const parseJSON = (value) => {
+      if (!value) return [];
+      try {
+        const parsed = JSON.parse(value);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
+    };
+
+    const getFavorites = () => parseJSON(localStorage.getItem(favoritesStorageKey));
+
+    const normalizeFilterValue = (value = "") => {
+      const lower = value.trim().toLowerCase();
+      if (!lower) return null;
+      const match = buttons.find(
+        (button) => (button.getAttribute("data-filter-value") ?? "").toLowerCase() === lower,
+      );
+      return match?.getAttribute("data-filter-value") ?? null;
+    };
+
+    const syncActiveButton = (value) => {
+      buttons.forEach((button) => {
+        const isActive = button.getAttribute("data-filter-value") === value;
+        button.classList.toggle("is-active", isActive);
       });
     };
+
+    const updateFavoriteCount = () => {
+      if (!favoriteCountNode) return;
+      const count = getFavorites().length;
+      favoriteCountNode.textContent = count.toString();
+    };
+
+    let activeFilter = "Semua";
+
+    const applyFilter = (value, options = {}) => {
+      const resolved = normalizeFilterValue(value) ?? "Semua";
+      activeFilter = resolved;
+      syncActiveButton(resolved);
+
+      const normalized = resolved.toLowerCase();
+      const favorites = new Set(getFavorites());
+      wrappers.forEach((wrapper) => {
+        const category = (wrapper.getAttribute("data-category") ?? "").toLowerCase();
+        const slug = wrapper.getAttribute("data-product-slug") ?? "";
+        const isFavoriteFilter = normalized === favoriteLabel.toLowerCase();
+        const visible =
+          normalized === "semua" ||
+          (isFavoriteFilter ? favorites.has(slug) : category === normalized);
+        wrapper.style.display = visible ? "block" : "none";
+      });
+
+      if (options.updateState !== false) {
+        try {
+          localStorage.setItem(filterStorageKey, resolved);
+        } catch (error) {
+          console.warn("Gagal menyimpan filter", error);
+        }
+      }
+
+      if (options.updateHistory !== false) {
+        const params = new URLSearchParams(window.location.search);
+        if (normalized === "semua") {
+          params.delete("kategori");
+        } else {
+          params.set("kategori", normalized);
+        }
+        const query = params.toString();
+        const newUrl = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
+        window.history.replaceState({}, "", newUrl);
+      }
+    };
+
     buttons.forEach((button) => {
       button.addEventListener("click", () => {
-        buttons.forEach((btn) => btn.classList.remove("is-active"));
-        button.classList.add("is-active");
         applyFilter(button.getAttribute("data-filter-value") ?? "Semua");
       });
     });
-    applyFilter("Semua");
+
+    const initialFilter =
+      normalizeFilterValue(new URLSearchParams(window.location.search).get("kategori") ?? "") ??
+      normalizeFilterValue(localStorage.getItem(filterStorageKey) ?? "") ??
+      "Semua";
+
+    applyFilter(initialFilter, { updateHistory: false, updateState: false });
+    updateFavoriteCount();
+
+    const handleFavoritesChange = () => {
+      updateFavoriteCount();
+      if (activeFilter.toLowerCase() === favoriteLabel.toLowerCase()) {
+        applyFilter(favoriteLabel, { updateHistory: false, updateState: false });
+      }
+    };
+
+    window.addEventListener("ibedes:favorites-changed", handleFavoritesChange);
+    window.addEventListener("storage", (event) => {
+      if (event.key === favoritesStorageKey) {
+        handleFavoritesChange();
+      }
+      if (event.key === filterStorageKey && event.newValue) {
+        applyFilter(event.newValue, { updateHistory: true, updateState: false });
+      }
+    });
   })();
 </script>

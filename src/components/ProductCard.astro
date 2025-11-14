@@ -24,6 +24,19 @@ const hasImage = Boolean(image);
   data-category={category.toLowerCase()}
   data-product-slug={slug}
 >
+  <button
+    type="button"
+    class="favorite-toggle"
+    data-favorite-toggle
+    data-slug={slug}
+    aria-pressed="false"
+    aria-label={`Simpan ${title} ke daftar favorit`}
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41.99 4.22 2.51C11.09 4.99 12.76 4 14.5 4 17 4 19 6 19 8.5c0 3.78-3.4 6.86-8.55 11.54z" />
+    </svg>
+    <span>Favorit</span>
+  </button>
   <div class:list={["grid gap-8", hasImage ? "md:grid-cols-[minmax(0,1fr)_220px]" : ""]}>
     <div class="space-y-5">
       <div class="flex flex-wrap items-center gap-3">
@@ -138,5 +151,77 @@ const hasImage = Boolean(image);
       if (event.key === storageKey) renderCounters();
     });
     renderCounters();
+  })();
+</script>
+
+<script is:inline>
+  (() => {
+    if (typeof window === "undefined") return;
+    if (window.__ibedesFavoritesManager) return;
+    window.__ibedesFavoritesManager = true;
+    const storageKey = "ibedes_product_favorites";
+
+    const parseFavorites = () => {
+      try {
+        const stored = JSON.parse(localStorage.getItem(storageKey) ?? "[]");
+        return Array.isArray(stored) ? stored : [];
+      } catch (error) {
+        console.warn("Gagal membaca daftar favorit", error);
+        return [];
+      }
+    };
+
+    const saveFavorites = (items) => {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(items));
+      } catch (error) {
+        console.warn("Tidak bisa menyimpan favorit", error);
+      }
+    };
+
+    const renderFavoriteButtons = () => {
+      const favorites = new Set(parseFavorites());
+      document.querySelectorAll("[data-favorite-toggle]").forEach((button) => {
+        const slug = button.getAttribute("data-slug");
+        if (!slug) return;
+        const isActive = favorites.has(slug);
+        button.dataset.active = isActive ? "true" : "false";
+        button.setAttribute("aria-pressed", String(isActive));
+        const label = button.querySelector("span");
+        if (label) {
+          label.textContent = isActive ? "Disimpan" : "Favorit";
+        }
+      });
+    };
+
+    const toggleFavorite = (slug) => {
+      const favorites = new Set(parseFavorites());
+      if (favorites.has(slug)) {
+        favorites.delete(slug);
+      } else {
+        favorites.add(slug);
+      }
+      const list = Array.from(favorites);
+      saveFavorites(list);
+      renderFavoriteButtons();
+      window.dispatchEvent(new CustomEvent("ibedes:favorites-changed", { detail: { favorites: list } }));
+    };
+
+    document.addEventListener("click", (event) => {
+      const button = event.target.closest?.("[data-favorite-toggle]");
+      if (!button) return;
+      const slug = button.getAttribute("data-slug");
+      if (!slug) return;
+      toggleFavorite(slug);
+    });
+
+    window.addEventListener("storage", (event) => {
+      if (event.key === storageKey) {
+        renderFavoriteButtons();
+      }
+    });
+
+    renderFavoriteButtons();
+    window.dispatchEvent(new CustomEvent("ibedes:favorites-changed", { detail: { favorites: parseFavorites() } }));
   })();
 </script>

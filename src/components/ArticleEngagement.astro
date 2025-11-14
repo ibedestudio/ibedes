@@ -31,7 +31,7 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
       data-like-button
       aria-label="Kirim tepuk"
     >
-      <span aria-hidden="true">❤️</span>
+      <i aria-hidden="true" class="fa-solid fa-heart engagement-icon engagement-icon--love"></i>
       <span class="engagement-fab__count" data-like-count>0</span>
     </button>
     <button
@@ -40,7 +40,7 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
       data-comment-toggle
       aria-label="Buka komentar"
     >
-      💬
+      <i aria-hidden="true" class="fa-regular fa-comment engagement-icon engagement-icon--comment"></i>
     </button>
   </div>
 
@@ -51,7 +51,7 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
       data-like-button
       aria-label="Kirim tepuk"
     >
-      <span aria-hidden="true">❤️</span>
+      <i aria-hidden="true" class="fa-solid fa-heart engagement-icon engagement-icon--love"></i>
       <span class="font-semibold" data-like-count>0</span>
       <span class="text-xs uppercase tracking-[0.3em]">Tepuk</span>
     </button>
@@ -61,7 +61,7 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
       data-comment-toggle
       aria-label="Menuju komentar"
     >
-      <span aria-hidden="true">💬</span>
+      <i aria-hidden="true" class="fa-regular fa-comment engagement-icon engagement-icon--comment"></i>
       <span class="font-mono text-xs uppercase tracking-[0.3em]">Komentar</span>
     </button>
   </div>
@@ -672,6 +672,26 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
 </section>
 
 <style>
+  .engagement-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .engagement-icon--love {
+    color: #f43f5e;
+  }
+
+  .engagement-icon--comment {
+    color: inherit;
+  }
+
+  :global(.dark) [data-engagement] .engagement-icon--love {
+    color: #fda4af;
+  }
+
   .comment-modal {
     position: fixed;
     inset: 0;

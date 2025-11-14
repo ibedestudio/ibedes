@@ -269,6 +269,8 @@ const shareTargets = [
   .share-card {
     position: relative;
     overflow: hidden;
+    padding: 1.5rem;
+    gap: 1.5rem;
   }
 
   .share-card__badge {
@@ -374,8 +376,45 @@ const shareTargets = [
   }
 
   @media (max-width: 640px) {
+    .share-card {
+      padding: 1.1rem;
+      gap: 1.1rem;
+    }
+
+    .share-card__badge {
+      width: 2rem;
+      height: 2rem;
+      font-size: 0.85rem;
+    }
+
     .share-grid {
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem;
+    }
+
+    .share-pill {
+      gap: 0.35rem;
+      padding: 0.45rem 0.7rem;
+      font-size: 0.8rem;
+    }
+
+    .share-pill__icon {
+      width: 1.4rem;
+      height: 1.4rem;
+      font-size: 0.75rem;
+    }
+
+    .share-utilities {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .share-utility {
+      width: 100%;
+      justify-content: center;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      padding: 0.45rem 0.75rem;
     }
   }
 </style>

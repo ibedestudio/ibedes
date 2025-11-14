@@ -1,0 +1,293 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Section from "../../components/common/Section.astro";
+import ProductCard from "../../components/ProductCard.astro";
+import { GLOBAL } from "../../lib/variables";
+import { PRODUCTS } from "../../lib/products";
+
+const hero = {
+  title: "Temuan Favorit & Kit Affiliate Andalan",
+  description:
+    "Kurasi alat belajar, gear kreator, sampai gadget santai yang benar-benar kupakai. Rilisan terbaru langsung kutandai sebagai Tokopedia Drop supaya kamu nggak ketinggalan stok.",
+  sub: "Belanja lewat link ini bantu ibedes tetap nulis & bikin konten tanpa bikin harga jadi lebih mahal.",
+};
+
+const categoryStats = PRODUCTS.reduce<Record<string, number>>((acc, product) => {
+  acc[product.category] = (acc[product.category] ?? 0) + 1;
+  return acc;
+}, {});
+const uniqueCategories = Object.keys(categoryStats);
+
+const categories = ["Semua", ...uniqueCategories];
+
+const kitProduct = PRODUCTS.find((product) => product.slug === "markaz-hunter-shopee-kit");
+
+const supportSteps = [
+  {
+    title: "1. Pilih link favorit",
+    copy: "Klik marketplace yang paling nyaman. Harganya sama, cuma tambahan referer supaya aku dapat komisi kecil.",
+  },
+  {
+    title: "2. Checkout seperti biasa",
+    copy: "Tambah ke keranjang, bandingkan harga, atau tunggu promo — selagi berasal dari link ini, dukungan tetap masuk.",
+  },
+  {
+    title: "3. Ceritakan pengalamanmu",
+    copy: "DM atau mention aku kalau sudah dipakai. Feedback kamu bantu aku pilih produk berikutnya.",
+  },
+];
+
+const tokopediaDropSlugs = [
+  "soundcore-r50i-nc",
+  "mirrorspace-3-wireless-case",
+  "senter-led-zoom-90000",
+];
+const tokopediaDrops = PRODUCTS.filter((product) => tokopediaDropSlugs.includes(product.slug));
+---
+
+<Layout>
+  <Fragment slot="head">
+    <title>Rekomendasi Produk • {GLOBAL.username}</title>
+    <meta
+      name="description"
+      content="Kurasi alat belajar, gear kreator, dan gadget yang kupakai sehari-hari lengkap dengan Tokopedia Drop terbaru serta kit Shopee favorit."
+    />
+    <meta property="og:title" content={`Rekomendasi Produk • ${GLOBAL.username}`} />
+    <meta
+      property="og:description"
+      content="Tokopedia Drop terbaru + kit affiliate Shopee Markaz Hunter lengkap dengan catatan pemakaian."
+    />
+    <meta property="og:image" content={`${GLOBAL.rootUrl}/${GLOBAL.profileImage}`} />
+    <meta property="og:url" content={`${GLOBAL.rootUrl}/rekomendasi`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`Rekomendasi Produk • ${GLOBAL.username}`} />
+    <meta
+      name="twitter:description"
+      content="Bantu ibedes tetap produktif lewat Tokopedia Drop dan kit affiliate pilihan yang diperbarui mingguan."
+    />
+    <meta name="twitter:image" content={`${GLOBAL.rootUrl}/${GLOBAL.profileImage}`} />
+    <meta http-equiv="content-language" content="id" />
+    <meta name="language" content="Indonesia" />
+    <link rel="canonical" href={`${GLOBAL.rootUrl}/rekomendasi`} />
+  </Fragment>
+
+  <Section class="py-12 sm:py-20">
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">
+            Affiliate Picks
+          </p>
+          <h1 class="text-3xl font-display leading-tight sm:text-4xl">
+            {hero.title}
+          </h1>
+          <p class="text-base sm:text-lg">{hero.description}</p>
+          <p class="text-sm zag-muted">{hero.sub}</p>
+        </div>
+      </div>
+
+      {kitProduct && (
+        <div class="rounded-[32px] border border-black/10 bg-gradient-to-br from-emerald-100 via-white to-white p-6 shadow-[0_30px_80px_rgba(0,0,0,0.07)] dark:border-white/10 dark:from-emerald-500/20 dark:via-white/5 dark:to-white/5">
+          <p class="text-xs uppercase tracking-[0.35em] text-emerald-700 dark:text-emerald-200">
+            Kit Terbaru
+          </p>
+          <h2 class="mt-3 text-2xl font-serif leading-tight">{kitProduct.title}</h2>
+          <p class="mt-2 text-sm text-black/70 dark:text-white/80">{kitProduct.highlight}</p>
+          <ul class="mt-4 space-y-2">
+            {kitProduct.links.slice(0, 3).map((link) => (
+              <li>
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex flex-col rounded-2xl border border-black/10 bg-white/80 px-4 py-3 text-left text-xs uppercase tracking-[0.3em] text-black/80 transition hover:-translate-y-0.5 hover:border-black/40 dark:border-white/10 dark:bg-white/10 dark:text-white"
+                >
+                  <span>{link.label}</span>
+                  {link.note && (
+                    <span class="mt-1 font-sans text-[0.65rem] normal-case tracking-normal text-black/60 dark:text-white/70">
+                      {link.note}
+                    </span>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a
+            class="mt-5 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.3em]"
+            href={`#${kitProduct.slug}`}
+          >
+            Detail kit & semua link
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      )}
+    </div>
+  </Section>
+
+  {tokopediaDrops.length > 0 && (
+    <Section class="py-12" id="tokopedia-drop">
+      <div class="space-y-4">
+        <p class="font-display text-xs uppercase tracking-[0.35em] text-emerald-600 dark:text-emerald-300">
+          Tokopedia Drop
+        </p>
+        <h2 class="text-2xl font-serif leading-tight">
+          Rilisan yang baru saja ku-share di grup & IG story
+        </h2>
+        <p class="text-sm text-black/70 dark:text-white/70">
+          Klik salah satu kartu di bawah untuk lompat ke detail + semua link marketplace alternatifnya.
+        </p>
+      </div>
+      <div class="mt-8 grid gap-6 md:grid-cols-3">
+        {tokopediaDrops.map((product) => (
+          <a
+            href={`#${product.slug}`}
+            class="relative flex flex-col gap-4 rounded-[28px] border border-emerald-200/70 bg-gradient-to-br from-emerald-100/80 via-white to-white p-5 text-left transition hover:-translate-y-1 hover:border-emerald-400/70 dark:border-emerald-500/30 dark:from-emerald-400/10 dark:via-white/5 dark:to-white/5"
+          >
+            <span class="text-xs uppercase tracking-[0.35em] text-emerald-700 dark:text-emerald-200">
+              Drop terbaru
+            </span>
+            <div class="space-y-2">
+              <h3 class="text-xl font-serif leading-snug">{product.title}</h3>
+              {product.highlight && (
+                <p class="text-sm text-black/70 dark:text-white/75">{product.highlight}</p>
+              )}
+            </div>
+            <div class="flex flex-wrap gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-black/50 dark:text-white/60">
+              {product.tags?.slice(0, 3).map((tag) => (
+                <span class="rounded-full border border-black/10 px-3 py-1 dark:border-white/20">#{tag}</span>
+              ))}
+            </div>
+            <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-emerald-700 dark:text-emerald-200">
+              Lihat detail
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    </Section>
+  )}
+
+  <div id="produk-terkurasi">
+    <Section class="py-12">
+      <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">
+            Cari cepat
+          </p>
+          <h2 class="text-2xl font-serif leading-tight">Filter kategori favoritmu</h2>
+          <p class="text-sm text-black/70 dark:text-white/70">
+            Klik kategori untuk sembunyikan yang lain. Mode default menampilkan semuanya.
+          </p>
+        </div>
+        <div class="text-xs uppercase tracking-[0.3em] text-black/60 dark:text-white/60">
+          {categories.length} filter tersedia
+        </div>
+      </div>
+      <div class="mt-6 flex flex-wrap gap-2 filter-scroll" data-filter-group>
+        {categories.map((category, index) => (
+          <button
+            type="button"
+            class:list={[
+              "filter-chip",
+              index === 0 ? "is-active" : "",
+            ]}
+            data-filter-button
+            data-filter-value={category}
+          >
+            <span>{category}</span>
+            <span class="filter-chip__count">
+              {category === "Semua" ? PRODUCTS.length : categoryStats[category] ?? 0}
+            </span>
+          </button>
+        ))}
+      </div>
+      <div class="mt-10 grid gap-8">
+        {PRODUCTS.map((product) => (
+          <div data-product-wrapper data-category={product.category.toLowerCase()}>
+            <ProductCard {...product} />
+          </div>
+        ))}
+      </div>
+    </Section>
+  </div>
+
+  <Section class="py-12">
+    <div class="rounded-[32px] border border-black/10 bg-white/80 p-8 shadow-[0_30px_70px_rgba(0,0,0,0.08)] dark:border-white/10 dark:bg-white/5">
+      <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">
+            Cara pakai link afiliasi
+          </p>
+          <h2 class="text-2xl font-serif leading-snug">
+            Dukung ibedes tanpa biaya tambahan
+          </h2>
+        </div>
+        <p class="text-sm text-black/70 dark:text-white/70 md:max-w-sm">
+          Semua pembelian lewat link ini otomatis tercatat sebagai dukungan. Tidak ada biaya ekstra,
+          tapi efeknya besar untuk proses kreatifku.
+        </p>
+      </div>
+      <div class="mt-8 grid gap-6 md:grid-cols-3">
+        {supportSteps.map((step) => (
+          <div class="rounded-2xl border border-dashed border-black/15 p-5 dark:border-white/20">
+            <p class="text-xs uppercase tracking-[0.3em] zag-muted">{step.title}</p>
+            <p class="mt-3 text-sm text-black/80 dark:text-white/80">{step.copy}</p>
+          </div>
+        ))}
+      </div>
+      <p class="mt-6 text-center text-xs uppercase tracking-[0.3em] text-black/60 dark:text-white/60">
+        Terima kasih sudah klik & share link affiliate ini.
+      </p>
+    </div>
+  </Section>
+</Layout>
+
+<script is:inline>
+  (() => {
+    if (typeof window === "undefined") return;
+    const buttons = Array.from(document.querySelectorAll("[data-filter-button]"));
+    const wrappers = Array.from(document.querySelectorAll("[data-product-wrapper]"));
+    const applyFilter = (value) => {
+      const filter = value.toLowerCase();
+      wrappers.forEach((wrapper) => {
+        const category = wrapper.getAttribute("data-category") ?? "";
+        const visible = filter === "semua" || category === filter;
+        wrapper.style.display = visible ? "block" : "none";
+      });
+    };
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        buttons.forEach((btn) => btn.classList.remove("is-active"));
+        button.classList.add("is-active");
+        applyFilter(button.getAttribute("data-filter-value") ?? "Semua");
+      });
+    });
+    applyFilter("Semua");
+  })();
+</script>

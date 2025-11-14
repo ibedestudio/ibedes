@@ -1,0 +1,142 @@
+---
+import type { AffiliateProduct } from "../lib/products";
+
+type Props = AffiliateProduct;
+
+const {
+  slug,
+  title,
+  highlight,
+  description,
+  image,
+  imageAlt = title,
+  category,
+  tags = [],
+  links,
+} = Astro.props as Props;
+const hasImage = Boolean(image);
+---
+
+<article
+  id={slug}
+  class="group relative isolate overflow-hidden rounded-[30px] border border-black/10 bg-white/90 p-6 shadow-[0_25px_55px_rgba(0,0,0,0.08)] backdrop-blur dark:border-white/10 dark:bg-white/5 dark:shadow-[0_25px_55px_rgba(0,0,0,0.55)]"
+  data-product-card
+  data-category={category.toLowerCase()}
+  data-product-slug={slug}
+>
+  <div class:list={["grid gap-8", hasImage ? "md:grid-cols-[minmax(0,1fr)_220px]" : ""]}>
+    <div class="space-y-5">
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="inline-flex items-center rounded-full border border-black/15 px-3 py-1 text-[0.62rem] font-semibold uppercase tracking-[0.3em] text-black/70 dark:border-white/30 dark:text-white/70">
+          {category}
+        </span>
+        {tags.length > 0 && (
+          <ul class="flex flex-wrap gap-2 text-[0.62rem] uppercase tracking-[0.2em] text-black/50 dark:text-white/50">
+            {tags.map((tag) => (
+              <li class="rounded-full bg-black/5 px-3 py-1 dark:bg-white/10">#{tag}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <div class="space-y-3">
+        <h3 class="text-2xl font-serif leading-tight text-black dark:text-white">{title}</h3>
+        {highlight && (
+          <p class="rounded-2xl border border-dashed border-black/15 px-4 py-3 text-sm font-semibold italic text-black/70 dark:border-white/30 dark:text-white/70">
+            {highlight}
+          </p>
+        )}
+        <p class="text-base text-black/80 dark:text-white/80">{description}</p>
+      </div>
+    </div>
+    {hasImage && (
+      <div class="relative overflow-hidden rounded-2xl border border-black/10 bg-black/5 p-3 dark:border-white/10 dark:bg-white/5">
+        <div class="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/10 pointer-events-none" aria-hidden="true" />
+        <img
+          src={image}
+          alt={imageAlt}
+          loading="lazy"
+          decoding="async"
+          class="relative z-10 h-full w-full rounded-xl object-cover"
+        />
+      </div>
+    )}
+  </div>
+  <div class="mt-6 grid gap-3 md:grid-cols-2">
+    {links.map((link) => (
+      <a
+        href={link.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group/btn flex flex-col gap-1 rounded-2xl border border-black/10 bg-white/95 px-4 py-3 text-left text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-black transition hover:-translate-y-0.5 hover:border-black/50 focus-visible:-translate-y-0.5 focus-visible:border-black/70 dark:border-white/10 dark:bg-white/10 dark:text-white"
+        data-affiliate-link
+        data-product={slug}
+        data-label={link.label}
+      >
+        <span>{link.label}</span>
+        {link.note && (
+          <span class="font-sans text-[0.62rem] normal-case tracking-normal text-black/55 dark:text-white/70">
+            {link.note}
+          </span>
+        )}
+      </a>
+    ))}
+  </div>
+  <p
+    class="mt-4 text-[0.75rem] italic text-black/50 dark:text-white/60"
+    data-affiliate-clicks
+    data-product={slug}
+  >
+    Link ini bersifat afiliasi — kalau kamu membeli lewat sini, kamu dukung konten ibedes tanpa biaya tambahan.
+  </p>
+</article>
+
+<script is:inline>
+  (() => {
+    if (typeof window === "undefined") return;
+    if (window.__ibedesAffiliateTracker) return;
+    window.__ibedesAffiliateTracker = true;
+    const storageKey = "ibedes_affiliate_clicks";
+    const getCounts = () => {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey) ?? "{}") ?? {};
+      } catch (error) {
+        console.error("Gagal membaca data klik affiliate", error);
+        return {};
+      }
+    };
+    const saveCounts = (counts) => {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(counts));
+      } catch (error) {
+        console.error("Gagal menyimpan data klik affiliate", error);
+      }
+    };
+    const renderCounters = () => {
+      const counts = getCounts();
+      document.querySelectorAll("[data-affiliate-clicks]").forEach((el) => {
+        const product = el.getAttribute("data-product");
+        if (!product) return;
+        const count = counts[product] ?? 0;
+        if (count === 0) {
+          el.textContent = "Link ini bersifat afiliasi — dukunganmu berarti.";
+        } else {
+          el.textContent = `Sudah ${count} klik dukungan dari perangkat ini. Terima kasih!`;
+        }
+      });
+    };
+    document.addEventListener("click", (event) => {
+      const target = event.target.closest?.("[data-affiliate-link]");
+      if (!target) return;
+      const product = target.getAttribute("data-product");
+      if (!product) return;
+      const counts = getCounts();
+      counts[product] = (counts[product] ?? 0) + 1;
+      saveCounts(counts);
+      renderCounters();
+    });
+    window.addEventListener("storage", (event) => {
+      if (event.key === storageKey) renderCounters();
+    });
+    renderCounters();
+  })();
+</script>

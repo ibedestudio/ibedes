@@ -6,10 +6,10 @@ import { GLOBAL } from "../../lib/variables";
 import { PRODUCTS } from "../../lib/products";
 
 const hero = {
-  title: "Temuan Favorit & Kit Affiliate Andalan",
+  title: "Rekomendasi Produk Terpercaya",
   description:
-    "Kurasi alat belajar, gear kreator, sampai gadget santai yang benar-benar kupakai. Rilisan terbaru langsung kutandai sebagai Tokopedia Drop supaya kamu nggak ketinggalan stok.",
-  sub: "Belanja lewat link ini bantu ibedes tetap nulis & bikin konten tanpa bikin harga jadi lebih mahal.",
+    "Kurasi alat belajar, gear kreator, sampai gadget santai yang benar-benar kupakai dan tested. Semua link affiliate yang ada di sini sudah terverifikasi dan aman.",
+  sub: "Belanja lewat link ini bantu ibedes tetap konsisten nulis konten berkualitas.",
 };
 
 const categoryStats = PRODUCTS.reduce<Record<string, number>>((acc, product) => {
@@ -25,16 +25,16 @@ const kitProduct = PRODUCTS.find((product) => product.slug === "markaz-hunter-sh
 
 const supportSteps = [
   {
-    title: "1. Pilih link favorit",
-    copy: "Klik marketplace yang paling nyaman. Harganya sama, cuma tambahan referer supaya aku dapat komisi kecil.",
+    title: "Pilih marketplace favorit",
+    copy: "Klik marketplace yang paling nyaman. Harganya sama, cuma ada referensi untuk sedikit komisi.",
   },
   {
-    title: "2. Checkout seperti biasa",
-    copy: "Tambah ke keranjang, bandingkan harga, atau tunggu promo — selagi berasal dari link ini, dukungan tetap masuk.",
+    title: "Checkout seperti biasa",
+    copy: "Proses checkout normal, bandingkan harga, atau tunggu promo — selagi dari link ini, tetap support.",
   },
   {
-    title: "3. Ceritakan pengalamanmu",
-    copy: "DM atau mention aku kalau sudah dipakai. Feedback kamu bantu aku pilih produk berikutnya.",
+    title: "Share experience",
+    copy: "Ceritakan kalau sudah dipakai. Feedback kamu bantu aku pilih produk berikutnya yang lebih baik.",
   },
 ];
 
@@ -97,12 +97,12 @@ const productListSchema = JSON.stringify(
     <title>Rekomendasi Produk • {GLOBAL.username}</title>
     <meta
       name="description"
-      content="Kurasi alat belajar, gear kreator, dan gadget yang kupakai sehari-hari lengkap dengan Tokopedia Drop terbaru serta kit Shopee favorit."
+      content="Kurasi produk terpercaya dengan link affiliate Shopee dan Tokopedia. Alat belajar, gear kreator, dan gadget tested langsung oleh ibedes."
     />
     <meta property="og:title" content={`Rekomendasi Produk • ${GLOBAL.username}`} />
     <meta
       property="og:description"
-      content="Tokopedia Drop terbaru + kit affiliate Shopee Markaz Hunter lengkap dengan catatan pemakaian."
+      content="Kurasi produk terpercaya dengan link affiliate Shopee dan Tokopedia yang sudah tested."
     />
     <meta property="og:image" content={`${GLOBAL.rootUrl}/${GLOBAL.profileImage}`} />
     <meta property="og:url" content={`${GLOBAL.rootUrl}/rekomendasi`} />
@@ -110,7 +110,7 @@ const productListSchema = JSON.stringify(
     <meta name="twitter:title" content={`Rekomendasi Produk • ${GLOBAL.username}`} />
     <meta
       name="twitter:description"
-      content="Bantu ibedes tetap produktif lewat Tokopedia Drop dan kit affiliate pilihan yang diperbarui mingguan."
+      content="Bantu ibedes tetap konsisten bikin konten berkualitas lewat kurasi produk terpercaya."
     />
     <meta name="twitter:image" content={`${GLOBAL.rootUrl}/${GLOBAL.profileImage}`} />
     <meta http-equiv="content-language" content="id" />
@@ -119,210 +119,248 @@ const productListSchema = JSON.stringify(
     <script type="application/ld+json" set:html={productListSchema}></script>
   </Fragment>
 
-  <Section class="py-12 sm:py-20">
-    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
-      <div class="space-y-8">
-        <div class="space-y-4">
-          <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">
-            Affiliate Picks
-          </p>
-          <h1 class="text-3xl font-display leading-tight sm:text-4xl">
-            {hero.title}
-          </h1>
-          <p class="text-base sm:text-lg">{hero.description}</p>
-          <p class="text-sm zag-muted">{hero.sub}</p>
+  <Section class="py-12 sm:py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-0 space-y-8 sm:space-y-12">
+      <div class="text-center space-y-4 sm:space-y-6">
+        <div class="inline-flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-6 sm:py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-full">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 dark:text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          <span class="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">Rekomendasi Terpercaya</span>
+        </div>
+        
+        <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white leading-tight px-4 sm:px-0">
+          {hero.title}
+        </h1>
+        
+        <p class="text-sm sm:text-base lg:text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
+          {hero.description}
+        </p>
+        
+        <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg mx-4 sm:mx-0">
+          <svg class="w-3 h-3 sm:w-4 sm:h-4 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+          <span class="text-xs sm:text-sm font-medium text-green-800 dark:text-green-200">{hero.sub}</span>
         </div>
       </div>
-
-      {kitProduct && (
-        <div class="rounded-[32px] border border-black/10 bg-gradient-to-br from-emerald-100 via-white to-white p-6 shadow-[0_30px_80px_rgba(0,0,0,0.07)] dark:border-white/10 dark:from-emerald-500/20 dark:via-white/5 dark:to-white/5">
-          <p class="text-xs uppercase tracking-[0.35em] text-emerald-700 dark:text-emerald-200">
-            Kit Terbaru
-          </p>
-          <h2 class="mt-3 text-2xl font-serif leading-tight">{kitProduct.title}</h2>
-          <p class="mt-2 text-sm text-black/70 dark:text-white/80">{kitProduct.highlight}</p>
-          <ul class="mt-4 space-y-2">
-            {kitProduct.links.slice(0, 3).map((link) => (
-              <li>
-                <a
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="flex flex-col rounded-2xl border border-black/10 bg-white/80 px-4 py-3 text-left text-xs uppercase tracking-[0.3em] text-black/80 transition hover:-translate-y-0.5 hover:border-black/40 dark:border-white/10 dark:bg-white/10 dark:text-white"
-                >
-                  <span>{link.label}</span>
-                  {link.note && (
-                    <span class="mt-1 font-sans text-[0.65rem] normal-case tracking-normal text-black/60 dark:text-white/70">
-                      {link.note}
-                    </span>
-                  )}
-                </a>
-              </li>
-            ))}
-          </ul>
-          <a
-            class="mt-5 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.3em]"
-            href={`#${kitProduct.slug}`}
-          >
-            Detail kit & semua link
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
-          </a>
-        </div>
-      )}
     </div>
   </Section>
 
-  {tokopediaDrops.length > 0 && (
-    <Section class="py-12" id="tokopedia-drop">
-      <div class="space-y-4">
-        <p class="font-display text-xs uppercase tracking-[0.35em] text-emerald-600 dark:text-emerald-300">
-          Tokopedia Drop
-        </p>
-        <h2 class="text-2xl font-serif leading-tight">
-          Rilisan yang baru saja ku-share di grup & IG story
-        </h2>
-        <p class="text-sm text-black/70 dark:text-white/70">
-          Klik salah satu kartu di bawah untuk lompat ke detail + semua link marketplace alternatifnya.
-        </p>
-      </div>
-      <div class="mt-8 grid gap-6 md:grid-cols-3">
-        {tokopediaDrops.map((product) => (
-          <a
-            href={`#${product.slug}`}
-            class="relative flex flex-col gap-4 rounded-[28px] border border-emerald-200/70 bg-gradient-to-br from-emerald-100/80 via-white to-white p-5 text-left transition hover:-translate-y-1 hover:border-emerald-400/70 dark:border-emerald-500/30 dark:from-emerald-400/10 dark:via-white/5 dark:to-white/5"
-          >
-            <span class="text-xs uppercase tracking-[0.35em] text-emerald-700 dark:text-emerald-200">
-              Drop terbaru
-            </span>
-            <div class="space-y-2">
-              <h3 class="text-xl font-serif leading-snug">{product.title}</h3>
-              {product.highlight && (
-                <p class="text-sm text-black/70 dark:text-white/75">{product.highlight}</p>
-              )}
-            </div>
-            <div class="flex flex-wrap gap-2 text-[0.65rem] uppercase tracking-[0.25em] text-black/50 dark:text-white/60">
-              {product.tags?.slice(0, 3).map((tag) => (
-                <span class="rounded-full border border-black/10 px-3 py-1 dark:border-white/20">#{tag}</span>
-              ))}
-            </div>
-            <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-emerald-700 dark:text-emerald-200">
-              Lihat detail
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+  {kitProduct && (
+    <Section class="py-8 sm:py-12">
+      <div class="max-w-4xl mx-auto px-4 sm:px-0">
+        <div class="bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-6 lg:p-8">
+          <div class="flex flex-col lg:flex-row items-start gap-4 sm:gap-6">
+            <div class="flex-1 space-y-4 w-full">
+              <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                <span class="px-3 py-1 bg-slate-600 text-white text-xs font-bold rounded-full w-fit">
+                  Kit Terbaru
+                </span>
+                <span class="text-sm text-slate-500 dark:text-slate-400">{kitProduct.title}</span>
+              </div>
+              
+              <p class="text-sm sm:text-base text-slate-700 dark:text-slate-300 italic">
+                {kitProduct.highlight}
+              </p>
+              
+              <div class="space-y-3">
+                {kitProduct.links.slice(0, 3).map((link) => (
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex items-center gap-3 px-3 sm:px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
+                  >
+                    <div class="flex items-center gap-2">
+                      {link.label.toLowerCase().includes('shopee') && (
+                        <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                      )}
+                      {link.label.toLowerCase().includes('tokopedia') && (
+                        <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                      )}
+                      <span class="font-medium text-sm">{link.label}</span>
+                    </div>
+                    <svg class="w-4 h-4 text-slate-400 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                    </svg>
+                  </a>
+                ))}
+              </div>
+              
+              <a
+                href={`#${kitProduct.slug}`}
+                class="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 font-medium transition-colors text-sm sm:text-base"
               >
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
+                <span>Lihat detail kit lengkap</span>
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
             </div>
-          </a>
-        ))}
+          </div>
+        </div>
+      </div>
+    </Section>
+  )}
+
+  {tokopediaDrops.length > 0 && (
+    <Section class="py-8 sm:py-12">
+      <div class="max-w-4xl mx-auto px-4 sm:px-0 space-y-6 sm:space-y-8">
+        <div class="text-center space-y-3 sm:space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-full">
+            <svg class="w-3 h-3 sm:w-4 sm:h-4 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+            </svg>
+            <span class="text-xs sm:text-sm font-semibold text-green-800 dark:text-green-200">Tokopedia Drop</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white px-4 sm:px-0">
+            Rilisan Terbaru
+          </h2>
+          <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 px-4 sm:px-0">
+            Produk yang baru saja di-share di social media
+          </p>
+        </div>
+        
+        <div class="grid gap-4 sm:gap-6">
+          {tokopediaDrops.map((product) => (
+            <a
+              href={`#${product.slug}`}
+              class="block bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4 sm:p-6 hover:shadow-lg hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-300 mx-4 sm:mx-0"
+            >
+              <div class="flex items-start justify-between">
+                <div class="flex-1 space-y-3">
+                  <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                    <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-xs font-medium rounded-full border border-green-200 dark:border-green-800">
+                      Tokopedia Drop
+                    </span>
+                    {product.tags?.slice(0, 2).map((tag) => (
+                      <span class="text-xs text-slate-500 dark:text-slate-400">#{tag}</span>
+                    ))}
+                  </div>
+                  
+                  <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">
+                    {product.title}
+                  </h3>
+                  
+                  {product.highlight && (
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 italic">
+                      {product.highlight}
+                    </p>
+                  )}
+                </div>
+                
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 shrink-0 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </a>
+          ))}
+        </div>
       </div>
     </Section>
   )}
 
   <div id="produk-terkurasi">
-    <Section class="py-12">
-      <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">
-            Cari cepat
-          </p>
-          <h2 class="text-2xl font-serif leading-tight">Filter kategori favoritmu</h2>
-          <p class="text-sm text-black/70 dark:text-white/70">
-            Klik kategori untuk sembunyikan yang lain. Mode default menampilkan semuanya.
-          </p>
-          <p class="text-xs uppercase tracking-[0.3em] text-black/50 dark:text-white/60">
-            Tap ikon hati di kartu untuk simpan pilihan dan buka filter "{favoriteLabel}" kapan saja.
+    <Section class="py-12 sm:py-16">
+      <div class="max-w-4xl mx-auto px-4 sm:px-0 space-y-8 sm:space-y-12">
+        <div class="text-center space-y-3 sm:space-y-4">
+          <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white px-4 sm:px-0">
+            Semua Produk
+          </h2>
+          <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 px-4 sm:px-0">
+            Filter berdasarkan kategori untuk kemudahan browsing
           </p>
         </div>
-        <div class="text-xs uppercase tracking-[0.3em] text-black/60 dark:text-white/60">
-          {categories.length} filter tersedia
-        </div>
-      </div>
-      <div class="mt-6 flex flex-wrap gap-2 filter-scroll" data-filter-group data-favorite-label={favoriteLabel}>
-        {categories.map((category, index) => (
-          <button
-            type="button"
-            class:list={[
-              "filter-chip",
-              index === 0 ? "is-active" : "",
-            ]}
-            data-filter-button
-            data-filter-value={category}
-            data-filter-favorite={category === favoriteLabel ? "true" : undefined}
-          >
-            <span>{category}</span>
-            <span
-              class="filter-chip__count"
-              data-filter-count={category === favoriteLabel ? "favorite" : undefined}
+        
+        <div class="flex flex-wrap justify-center gap-2 sm:gap-3 filter-scroll px-4 sm:px-0" data-filter-group data-favorite-label={favoriteLabel}>
+          {categories.map((category, index) => (
+            <button
+              type="button"
+              class:list={[
+                "filter-chip px-3 py-2 sm:px-4 sm:py-2 rounded-full font-medium text-xs sm:text-sm transition-all duration-300",
+                index === 0 ? "bg-slate-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700",
+              ]}
+              data-filter-button
+              data-filter-value={category}
+              data-filter-favorite={category === favoriteLabel ? "true" : undefined}
             >
-              {category === "Semua" ? PRODUCTS.length : categoryStats[category] ?? 0}
-            </span>
-          </button>
-        ))}
-      </div>
-      <div class="mt-10 grid gap-8">
-        {PRODUCTS.map((product) => (
-          <div
-            data-product-wrapper
-            data-category={product.category.toLowerCase()}
-            data-product-slug={product.slug}
-          >
-            <ProductCard {...product} />
-          </div>
-        ))}
+              <span>{category}</span>
+              <span
+                class="filter-chip__count ml-1 sm:ml-2 px-1.5 py-0.5 sm:px-2 sm:py-1 bg-black/10 dark:bg-white/20 rounded-full text-xs"
+                data-filter-count={category === favoriteLabel ? "favorite" : undefined}
+              >
+                {category === "Semua" ? PRODUCTS.length : categoryStats[category] ?? 0}
+              </span>
+            </button>
+          ))}
+        </div>
+        
+        <div class="space-y-6 sm:space-y-8 px-4 sm:px-0">
+          {PRODUCTS.map((product) => (
+            <div
+              data-product-wrapper
+              data-category={product.category.toLowerCase()}
+              data-product-slug={product.slug}
+            >
+              <ProductCard {...product} />
+            </div>
+          ))}
+        </div>
       </div>
     </Section>
   </div>
 
-  <Section class="py-12">
-    <div class="rounded-[32px] border border-black/10 bg-white/80 p-8 shadow-[0_30px_70px_rgba(0,0,0,0.08)] dark:border-white/10 dark:bg-white/5">
-      <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-        <div>
-          <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">
-            Cara pakai link afiliasi
-          </p>
-          <h2 class="text-2xl font-serif leading-snug">
-            Dukung ibedes tanpa biaya tambahan
-          </h2>
-        </div>
-        <p class="text-sm text-black/70 dark:text-white/70 md:max-w-sm">
-          Semua pembelian lewat link ini otomatis tercatat sebagai dukungan. Tidak ada biaya ekstra,
-          tapi efeknya besar untuk proses kreatifku.
-        </p>
-      </div>
-      <div class="mt-8 grid gap-6 md:grid-cols-3">
-        {supportSteps.map((step) => (
-          <div class="rounded-2xl border border-dashed border-black/15 p-5 dark:border-white/20">
-            <p class="text-xs uppercase tracking-[0.3em] zag-muted">{step.title}</p>
-            <p class="mt-3 text-sm text-black/80 dark:text-white/80">{step.copy}</p>
+  <Section class="py-12 sm:py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-0">
+      <div class="bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 sm:p-8">
+        <div class="text-center space-y-4 sm:space-y-6">
+          <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-full">
+            <svg class="w-3 h-3 sm:w-4 sm:h-4 text-purple-600 dark:text-purple-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41.99 4.22 2.51C11.09 4.99 12.76 4 14.5 4 17 4 19 6 19 8.5c0 3.78-3.4 6.86-8.55 11.54z"/>
+            </svg>
+            <span class="text-xs sm:text-sm font-semibold text-purple-800 dark:text-purple-200">Cara Kerja Affiliate</span>
           </div>
-        ))}
+          
+          <h3 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white px-4 sm:px-0">
+            Dukung Konten Berkualitas
+          </h3>
+          
+          <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto px-4 sm:px-0 leading-relaxed">
+            Semua pembelian lewat link ini tercatat sebagai dukungan. Tidak ada biaya tambahan untukmu, 
+            tapi membantu aku tetap konsisten bikin konten yang berguna.
+          </p>
+          
+          <div class="grid gap-4 sm:gap-6 md:grid-cols-3 mt-6 sm:mt-8 px-4 sm:px-0">
+            {supportSteps.map((step, index) => (
+              <div class="text-center space-y-3">
+                <div class="inline-flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 rounded-full font-bold text-sm sm:text-base">
+                  {index + 1}
+                </div>
+                <h4 class="font-semibold text-slate-900 dark:text-white text-xs sm:text-sm">
+                  {step.title}
+                </h4>
+                <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed px-2">
+                  {step.copy}
+                </p>
+              </div>
+            ))}
+          </div>
+          
+          <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg mx-4 sm:mx-0">
+            <svg class="w-3 h-3 sm:w-4 sm:h-4 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+            <span class="text-xs sm:text-sm font-medium text-green-800 dark:text-green-200">
+              Terima kasih sudah support! 🙏
+            </span>
+          </div>
+        </div>
       </div>
-      <p class="mt-6 text-center text-xs uppercase tracking-[0.3em] text-black/60 dark:text-white/60">
-        Terima kasih sudah klik & share link affiliate ini.
-      </p>
     </div>
   </Section>
 </Layout>

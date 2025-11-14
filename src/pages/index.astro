@@ -8,8 +8,11 @@ import Section from "../components/common/Section.astro";
 import FeaturedProjects from "../components/home/FeaturedProjects.astro";
 import FeaturedArticles from "../components/home/FeaturedArticles.astro";
 import SubscribeCard from "../components/SubscribeCard.astro";
+import AffiliateHighlights from "../components/home/AffiliateHighlights.astro";
+import { PRODUCTS } from "../lib/products";
 
 const shortDescriptionPlain = stripHtml(GLOBAL.shortDescription);
+const highlightedProducts = PRODUCTS;
 const sameAsProfiles = [GLOBAL.githubProfile, GLOBAL.threadsProfile].filter(Boolean);
 const homepageSchema = JSON.stringify(
   {
@@ -79,7 +82,8 @@ const homepageSchema = JSON.stringify(
   </Section>
   <Section>
     <FeaturedArticles featuredArticles={featuredArticles} />
-     <div class="mt-12">
+    <AffiliateHighlights products={highlightedProducts} />
+    <div class="mt-12">
       <SubscribeCard />
     </div>
   </Section>

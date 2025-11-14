@@ -6,29 +6,71 @@ import Anchor from "../common/Anchor.astro";
 
 type Props = {
   featuredArticles: Array<ArticleFrontmatter>;
-}
+};
 
 const { featuredArticles } = Astro.props;
-console.log(featuredArticles);
+const visibleArticles = featuredArticles.slice(0, 5);
 ---
 
-<div class="flex justify-between items-center w-full">
-  <h3 class="font-display text-lg sm:text-xl leading-loose">{GLOBAL.articlesName}</h3>
-  <Anchor url="/blog" class="text-base">{GLOBAL.viewAll}</Anchor>
-</div>
-<ul class="my-8">
+<section class="featured-articles">
+  <div class="featured-articles__header">
+    <h3 class="font-display text-lg sm:text-xl leading-loose">{GLOBAL.articlesName}</h3>
+    <Anchor url="/blog" class="text-base">{GLOBAL.viewAll}</Anchor>
+  </div>
   {
-    (featuredArticles.length === 0 && <p>{GLOBAL.noArticles}</p>) ||
-      featuredArticles.map((article) => (
-        <li>
-          <ArticleSnippet
-            title={article.title}
-            description={article.description}
-            url={article.filename}
-            timestamp={article.timestamp}
-            duration={`${article.time} min`}
-          />
-        </li>
-      ))
+    (visibleArticles.length === 0 && <p>{GLOBAL.noArticles}</p>) || (
+      <ul class="featured-articles__list">
+        {
+          visibleArticles.map((article) => (
+            <li class="featured-articles__item">
+              <ArticleSnippet
+                title={article.title}
+                description={article.description}
+                url={article.filename}
+                timestamp={article.timestamp}
+                duration={`${article.time} min`}
+              />
+            </li>
+          ))
+        }
+      </ul>
+    )
   }
-</ul>
+</section>
+
+<style>
+  .featured-articles__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .featured-articles__list {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .featured-articles__item {
+    list-style: none;
+  }
+
+  @media (max-width: 768px) {
+    .featured-articles__list {
+      flex-direction: row;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: 1rem;
+      padding-bottom: 0.5rem;
+      margin-right: -1rem;
+      padding-right: 1rem;
+    }
+
+    .featured-articles__item {
+      min-width: 82%;
+      scroll-snap-align: start;
+    }
+  }
+</style>

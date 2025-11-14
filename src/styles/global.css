@@ -301,6 +301,7 @@
   letter-spacing: 0.35em;
   color: var(--color-zag-dark-muted);
   margin-bottom: 0.75rem;
+  white-space: nowrap;
 }
 
 :where(.dark, .dark *) .article-toc__title {
@@ -397,7 +398,31 @@
 }
 
 .article-toc[data-collapsed="true"] {
-  padding-bottom: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 999px;
+  margin: 0 auto 1rem;
+  max-width: max-content;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.article-toc[data-collapsed="true"] .article-toc__header {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.article-toc[data-collapsed="true"] .article-toc__title {
+  margin-bottom: 0;
+}
+
+:where(.dark, .dark *) .article-toc[data-collapsed="true"] {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.85);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
 }
 
 .prose blockquote {
@@ -620,81 +645,6 @@
   color: var(--color-zag-light);
 }
 
-.reading-reminder-banner {
-  position: fixed;
-  bottom: 1.5rem;
-  left: 1.5rem;
-  right: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem 1.25rem;
-  border-radius: 1.5rem;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-  z-index: 60;
-}
-
-.reading-reminder-banner[hidden] {
-  display: none;
-}
-
-.reading-reminder-banner__label {
-  font-size: 0.7rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--color-zag-dark-muted);
-}
-
-.reading-reminder-banner__title {
-  font-weight: 600;
-  margin: 0.15rem 0;
-}
-
-.reading-reminder-banner__progress {
-  font-size: 0.8rem;
-  color: var(--color-zag-dark-muted);
-}
-
-.reading-reminder-banner__actions {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.reading-reminder-banner__actions button {
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  border-radius: 999px;
-  padding: 0.4rem 0.9rem;
-  background: transparent;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  cursor: pointer;
-}
-
-.reading-reminder-banner__actions [data-reminder-dismiss] {
-  font-size: 1rem;
-  padding: 0.4rem 0.6rem;
-}
-
-:where(.dark, .dark *) .reading-reminder-banner {
-  background: rgba(15, 23, 42, 0.92);
-  border-color: rgba(255, 255, 255, 0.15);
-  color: var(--color-zag-light);
-}
-
-:where(.dark, .dark *) .reading-reminder-banner__label,
-:where(.dark, .dark *) .reading-reminder-banner__progress {
-  color: var(--color-zag-light-muted);
-}
-
-:where(.dark, .dark *) .reading-reminder-banner__actions button {
-  border-color: rgba(255, 255, 255, 0.3);
-  color: var(--color-zag-light);
-}
 
 .cta-button {
   display: inline-flex;

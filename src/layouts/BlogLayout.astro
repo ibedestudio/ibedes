@@ -228,9 +228,6 @@ const articleSchema = JSON.stringify(
     const articleTitle = articleBody?.getAttribute("data-article-title") ?? document.title;
     const articleSourceUrl = articleBody?.getAttribute("data-article-url") ?? window.location.href;
     const articleSlug = articleBody?.getAttribute("data-article-slug") ?? "";
-    if (articleSlug) {
-      document.body.dataset.currentArticle = articleSlug;
-    }
 
     const clamp = (value, min = 0, max = 1) => Math.min(Math.max(value, min), max);
     const slugify = (value = "") =>
@@ -245,38 +242,12 @@ const articleSchema = JSON.stringify(
     const milestoneEls = progressBarContainer
       ? Array.from(progressBarContainer.querySelectorAll("[data-milestone]"))
       : [];
-    const reminderKey = "ibedes:reading-reminder";
 
     const updateMilestones = (progress) => {
       milestoneEls.forEach((node) => {
         const value = Number(node.getAttribute("data-milestone")) / 100;
         node.dataset.active = progress >= value ? "true" : "false";
       });
-    };
-
-    const saveReminderProgress = (progress) => {
-      if (!articleSlug) return;
-      if (progress >= 0.95) {
-        try {
-          localStorage.removeItem(reminderKey);
-        } catch (error) {
-          console.warn("Gagal menghapus pengingat baca", error);
-        }
-        return;
-      }
-      try {
-        const payload = {
-          slug: articleSlug,
-          title: articleTitle,
-          url: articleSourceUrl,
-          progress: Number((progress * 100).toFixed(0)),
-          updatedAt: Date.now(),
-        };
-        localStorage.setItem(reminderKey, JSON.stringify(payload));
-        window.dispatchEvent(new CustomEvent("ibedes:reading-reminder", { detail: payload }));
-      } catch (error) {
-        console.warn("Tidak dapat menyimpan progress baca", error);
-      }
     };
 
     const updateProgress = () => {
@@ -290,7 +261,6 @@ const articleSchema = JSON.stringify(
       progressBar.style.transform = `scaleX(${progress})`;
       progressBar.setAttribute("aria-valuenow", (progress * 100).toFixed(0));
       updateMilestones(progress);
-      saveReminderProgress(progress);
     };
 
     let ticking = false;
@@ -317,16 +287,17 @@ const articleSchema = JSON.stringify(
       tocToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
     };
 
+    const isMobile = () => window.matchMedia("(max-width: 1023px)").matches;
+
     const initializeTocState = () => {
       if (!tocContainer || !tocToggle) return;
-      const prefersCollapsed = window.matchMedia("(max-width: 1023px)").matches;
-      setTocState(prefersCollapsed);
+      setTocState(isMobile());
     };
 
     tocToggle?.addEventListener("click", () => {
       if (!tocContainer) return;
       const collapsed = tocContainer.dataset.collapsed === "true";
-      setTocState(!collapsed);
+      setTocState(collapsed ? false : isMobile() ? true : false);
     });
 
     window.addEventListener("resize", () => {

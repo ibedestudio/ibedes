@@ -92,3 +92,18 @@ export const generateSourceUrl = (
 ) => {
   return `${GLOBAL.rootUrl}/${contentType}/${sourceUrl}`;
 };
+
+/**
+ * Converts a tag string into a URL-friendly slug.
+ * @param tag the raw tag text
+ * @returns a kebab-case slug
+ */
+export const slugifyTag = (tag: string = "") => {
+  return tag
+    .toString()
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+};

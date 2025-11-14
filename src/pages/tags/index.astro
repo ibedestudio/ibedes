@@ -1,0 +1,112 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Section from "../../components/common/Section.astro";
+import { GLOBAL } from "../../lib/variables";
+import { getArticles } from "../../lib/list";
+import { slugifyTag } from "../../lib/utils";
+
+const articles = await getArticles();
+
+const tagMap = new Map<
+  string,
+  {
+    tag: string;
+    count: number;
+    description: string;
+    latest: string;
+  }
+>();
+
+articles.forEach((article) => {
+  (article.tags ?? []).forEach((tag) => {
+    const slug = slugifyTag(tag);
+    if (!slug) return;
+    const existing = tagMap.get(slug);
+    if (existing) {
+      existing.count += 1;
+      if (article.timestamp > existing.latest) {
+        existing.latest = article.timestamp;
+        existing.description = article.description;
+      }
+    } else {
+      tagMap.set(slug, {
+        tag,
+        count: 1,
+        description: article.description,
+        latest: article.timestamp,
+      });
+    }
+  });
+});
+
+const tags = Array.from(tagMap.entries())
+  .map(([slug, value]) => ({
+    slug,
+    ...value,
+  }))
+  .sort((a, b) => b.count - a.count);
+---
+
+<Layout>
+  <Fragment slot="head">
+    <title>Eksplor Tag • {GLOBAL.username}</title>
+    <meta
+      name="description"
+      content="Jelajahi tulisan berdasarkan topik favorit: psikologi, refleksi, ekonomi, dan lainnya."
+    />
+    <meta property="og:title" content={`Eksplor Tag • ${GLOBAL.username}`} />
+    <meta
+      property="og:description"
+      content="Daftar tag untuk memudahkan pencarian tulisan berdasarkan tema."
+    />
+    <meta property="og:image" content={`${GLOBAL.rootUrl}/${GLOBAL.profileImage}`} />
+    <meta property="og:url" content={`${GLOBAL.rootUrl}/tags`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`Eksplor Tag • ${GLOBAL.username}`} />
+    <meta
+      name="twitter:description"
+      content="Daftar tag untuk memudahkan pencarian tulisan berdasarkan tema."
+    />
+    <meta name="twitter:image" content={`${GLOBAL.rootUrl}/${GLOBAL.profileImage}`} />
+    <meta http-equiv="content-language" content="id" />
+    <meta name="language" content="Indonesia" />
+    <link rel="canonical" href={`${GLOBAL.rootUrl}/tags`} />
+  </Fragment>
+
+  <Section class="my-12">
+    <div class="pt-8 pb-10 space-y-4 max-w-3xl">
+      <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">
+        Eksplorasi
+      </p>
+      <h1 class="font-display text-3xl sm:text-4xl leading-tight">
+        Jelajahi tulisan berdasarkan topik
+      </h1>
+      <p class="text-base sm:text-lg">
+        Semua tag yang pernah dipakai di blog ini saya kumpulkan agar kamu bisa fokus ke tema yang paling kamu butuhkan.
+      </p>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      {tags.map((tag) => (
+        <a
+          href={`/tags/${tag.slug}`}
+          class="rounded-2xl border border-black/15 dark:border-white/20 p-5 flex flex-col gap-3"
+          data-hover-glow
+        >
+          <div class="flex items-center justify-between">
+            <p class="font-display text-lg">{tag.tag}</p>
+            <span class="text-xs uppercase tracking-[0.3em] zag-muted">{tag.count} tulisan</span>
+          </div>
+          <p class="text-sm zag-muted leading-relaxed">{tag.description}</p>
+          <p class="text-[10px] uppercase tracking-[0.3em] zag-muted">
+            Update terakhir {new Date(tag.latest).toLocaleDateString("id-ID", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </p>
+        </a>
+      ))}
+    </div>
+  </Section>
+</Layout>

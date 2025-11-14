@@ -1,0 +1,230 @@
+---
+import { getSearchItems } from "../lib/search";
+import type { SearchItem } from "../lib/search";
+import { GLOBAL } from "../lib/variables";
+import { getShortDescription, slugifyTag } from "../lib/utils";
+
+type CommandItem = {
+  id: string;
+  title: string;
+  description?: string;
+  url: string;
+  type: string;
+  meta?: string;
+};
+
+const searchItems = await getSearchItems();
+
+const TYPE_LABEL: Record<SearchItem["type"], string> = {
+  article: "Artikel",
+  service: "Layanan",
+  project: "Projek",
+};
+
+const contentCommands: CommandItem[] = searchItems.map((item) => ({
+  id: `${item.type}-${item.url}`,
+  title: item.title,
+  description: item.description,
+  url: item.url,
+  type: TYPE_LABEL[item.type] ?? "Konten",
+  meta: item.tags?.[0],
+}));
+
+const tagCommands: CommandItem[] = Array.from(
+  new Map(
+    searchItems
+      .filter((item) => item.type === "article")
+      .flatMap((article) => article.tags ?? [])
+      .map((tag) => [slugifyTag(tag), tag]),
+  ).entries(),
+).map(([slug, tag]) => ({
+  id: `tag-${slug}`,
+  title: `Tag: ${tag}`,
+  description: getShortDescription(`Lihat tulisan dengan topik ${tag}`, 12),
+  url: `/tags/${slug}`,
+  type: "Tag",
+}));
+
+const quickLinks: CommandItem[] = Object.entries(GLOBAL.menu).map(([label, path]) => ({
+  id: `menu-${path}`,
+  title: label,
+  url: path,
+  type: "Halaman",
+}));
+
+const commandItems = [
+  ...contentCommands,
+  ...tagCommands,
+  ...quickLinks,
+];
+
+const serializedCommands = JSON.stringify(commandItems).replace(/</g, "\\u003c");
+---
+
+<div data-command-overlay aria-hidden="true">
+  <div class="command-panel" role="dialog" aria-modal="true" aria-label="Global search">
+    <input
+      class="command-panel__input"
+      type="search"
+      placeholder="Cari artikel, projek, atau layanan..."
+      data-command-input
+      aria-label="Ketik untuk mencari"
+    />
+    <div class="command-panel__results" data-command-results></div>
+    <div class="command-shortcuts">
+      <kbd>Esc</kbd> untuk keluar • <kbd>Ctrl</kbd> + <kbd>K</kbd> untuk buka
+    </div>
+  </div>
+</div>
+<script type="application/json" id="command-data" set:html={serializedCommands}></script>
+
+<script is:inline>
+  (() => {
+    if (typeof window === "undefined") return;
+    const overlay = document.querySelector("[data-command-overlay]");
+    const input = document.querySelector("[data-command-input]");
+    const results = document.querySelector("[data-command-results]");
+    const toggleButtons = Array.from(document.querySelectorAll("[data-command-toggle]"));
+    const dataEl = document.getElementById("command-data");
+    if (!overlay || !input || !results || !dataEl) return;
+
+    let items = [];
+    try {
+      items = JSON.parse(dataEl.textContent ?? "[]");
+    } catch (error) {
+      console.error("Gagal memuat data pencarian", error);
+      items = [];
+    }
+    let activeIndex = -1;
+
+    const renderResults = (filteredItems) => {
+      results.innerHTML = "";
+      if (!filteredItems.length) {
+        const empty = document.createElement("div");
+        empty.className = "command-empty";
+        empty.textContent = "Tidak ada hasil. Coba kata kunci lain.";
+        results.appendChild(empty);
+        return;
+      }
+      filteredItems.forEach((item, index) => {
+        const el = document.createElement("button");
+        el.type = "button";
+        el.className = "command-item";
+        el.dataset.index = index.toString();
+        el.dataset.active = index === activeIndex ? "true" : "false";
+        el.innerHTML = `
+          <div class="command-item__meta">
+            <span>${item.type}</span>
+            ${item.meta ? `<span>${item.meta}</span>` : ""}
+          </div>
+          <div class="text-base font-semibold">${item.title}</div>
+          ${item.description ? `<p class="text-sm opacity-70">${item.description}</p>` : ""}
+        `;
+        el.addEventListener("click", () => {
+          window.location.href = item.url;
+        });
+        results.appendChild(el);
+      });
+    };
+
+    let filteredItems = items;
+    renderResults(filteredItems);
+
+    const openPalette = () => {
+      overlay.dataset.visible = "true";
+      overlay.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      input.value = "";
+      filteredItems = items;
+      activeIndex = filteredItems.length ? 0 : -1;
+      renderResults(filteredItems);
+      input.focus();
+    };
+
+    const closePalette = () => {
+      overlay.dataset.visible = "false";
+      overlay.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    };
+
+    const updateActiveItem = (nextIndex) => {
+      activeIndex = nextIndex;
+      results.querySelectorAll(".command-item").forEach((node, index) => {
+        node.dataset.active = index === activeIndex ? "true" : "false";
+        if (index === activeIndex) {
+          node.scrollIntoView({ block: "nearest" });
+        }
+      });
+    };
+
+    const handleInput = () => {
+      const query = input.value.trim().toLowerCase();
+      if (!query) {
+        filteredItems = items;
+      } else {
+        filteredItems = items.filter((item) => {
+          return (
+            item.title.toLowerCase().includes(query) ||
+            (item.description ?? "").toLowerCase().includes(query) ||
+            item.type.toLowerCase().includes(query)
+          );
+        });
+      }
+      activeIndex = filteredItems.length ? 0 : -1;
+      renderResults(filteredItems);
+    };
+
+    input.addEventListener("input", handleInput);
+
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        if (!filteredItems.length) return;
+        const next = (activeIndex + 1) % filteredItems.length;
+        updateActiveItem(next);
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        if (!filteredItems.length) return;
+        const next = (activeIndex - 1 + filteredItems.length) % filteredItems.length;
+        updateActiveItem(next);
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        if (activeIndex >= 0 && filteredItems[activeIndex]) {
+          window.location.href = filteredItems[activeIndex].url;
+        }
+      } else if (event.key === "Escape") {
+        closePalette();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      const metaKey = event.metaKey || event.ctrlKey;
+      if (metaKey && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        if (overlay.dataset.visible === "true") {
+          closePalette();
+        } else {
+          openPalette();
+        }
+      } else if (event.key === "Escape" && overlay.dataset.visible === "true") {
+        closePalette();
+      }
+    });
+
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay) {
+        closePalette();
+      }
+    });
+
+    toggleButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        if (overlay.dataset.visible === "true") {
+          closePalette();
+        } else {
+          openPalette();
+        }
+      });
+    });
+  })();
+</script>

@@ -24,9 +24,9 @@ import ThemeToggle from "./ThemeToggle.astro";
     <div class="flex items-center gap-2">
       <button
         type="button"
-        class="hidden p-2 rounded-full border border-transparent text-sm uppercase tracking-[0.3em] sm:hidden"
-        aria-label="Buka pencarian blog"
-        data-blog-search-toggle
+        class="p-2 rounded-full border border-black/20 dark:border-white/30 sm:hidden"
+        aria-label="Buka pencarian global"
+        data-command-toggle
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -52,7 +52,7 @@ import ThemeToggle from "./ThemeToggle.astro";
       <Anchor url={i[1]}>{i[0]}</Anchor>
     ))}
     </div>
-    <div class="flex gap-4 justify-between px-4 sm:px-0">
+    <div class="flex gap-4 justify-between px-4 sm:px-0 items-center">
       {GLOBAL.githubProfile && (<Anchor url={GLOBAL.githubProfile} aria-label="Zaggonaut GitHub Repository">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -66,6 +66,28 @@ import ThemeToggle from "./ThemeToggle.astro";
           ></path>
         </svg>
       </Anchor>)}
+      <button
+        type="button"
+        class="hidden sm:inline-flex items-center gap-2 border border-black/20 dark:border-white/30 rounded-full px-4 py-2 text-[10px] uppercase tracking-[0.35em]"
+        data-command-toggle
+        aria-label="Buka pencarian global (Ctrl+K)"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="w-4 h-4 zag-fill zag-transition"
+          aria-hidden="true"
+        >
+          <path
+            d="M15.5 14h-.79l-.28-.27A6 6 0 1 0 14 15.5l.27.28v.79l5 5 1.5-1.5-5-5zm-5.5 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"
+            fill="currentColor"
+          />
+        </svg>
+        <span>Cari</span>
+        <span class="inline-flex gap-1 items-center text-[9px] tracking-[0.25em]">
+          <kbd>Ctrl</kbd>+<kbd>K</kbd>
+        </span>
+      </button>
       <ThemeToggle />
     </div>
   </nav>

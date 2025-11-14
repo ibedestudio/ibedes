@@ -1,0 +1,108 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Section from "../../components/common/Section.astro";
+import ArticleSnippet from "../../components/ArticleSnippet.astro";
+import { getArticles } from "../../lib/list";
+import { slugifyTag, getShortDescription } from "../../lib/utils";
+import { GLOBAL } from "../../lib/variables";
+
+type PageProps = {
+  tag: string;
+  articles: Awaited<ReturnType<typeof getArticles>>;
+};
+
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  const tagMap = new Map<
+    string,
+    {
+      tag: string;
+      articles: Awaited<ReturnType<typeof getArticles>>;
+      latest: string;
+    }
+  >();
+
+  articles.forEach((article) => {
+    (article.tags ?? []).forEach((tag) => {
+      const slug = slugifyTag(tag);
+      if (!slug) return;
+      const existing = tagMap.get(slug);
+      if (existing) {
+        existing.articles.push(article);
+        if (article.timestamp > existing.latest) {
+          existing.latest = article.timestamp;
+        }
+      } else {
+        tagMap.set(slug, {
+          tag,
+          articles: [article],
+          latest: article.timestamp,
+        });
+      }
+    });
+  });
+
+  return Array.from(tagMap.entries()).map(([slug, value]) => ({
+    params: { slug },
+    props: {
+      tag: value.tag,
+      articles: value.articles.sort(
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+      ),
+      latest: value.latest,
+    },
+  }));
+}
+
+const { tag, articles, latest } = Astro.props as PageProps & { latest: string };
+const pageTitle = `${tag} • ${GLOBAL.articlesName}`;
+const metaDescription = `Semua artikel bertopik ${tag} yang pernah ditulis di ${GLOBAL.username}.`;
+---
+
+<Layout>
+  <Fragment slot="head">
+    <title>{pageTitle}</title>
+    <meta name="description" content={getShortDescription(metaDescription, 40)} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:image" content={`${GLOBAL.rootUrl}/${GLOBAL.profileImage}`} />
+    <meta property="og:url" content={`${GLOBAL.rootUrl}/tags/${slugifyTag(tag)}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={metaDescription} />
+    <meta name="twitter:image" content={`${GLOBAL.rootUrl}/${GLOBAL.profileImage}`} />
+    <meta http-equiv="content-language" content="id" />
+    <meta name="language" content="Indonesia" />
+    <link rel="canonical" href={`${GLOBAL.rootUrl}/tags/${slugifyTag(tag)}`} />
+  </Fragment>
+
+  <Section class="my-8">
+    <div class="pt-8 pb-6 space-y-4">
+      <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">
+        Tag
+      </p>
+      <h1 class="font-display text-3xl sm:text-4xl leading-tight">{tag}</h1>
+      <p class="zag-muted text-sm">
+        {articles.length} tulisan • diperbarui {new Date(latest).toLocaleDateString("id-ID", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}
+      </p>
+    </div>
+
+    <ul>
+      {articles.map((article) => (
+        <li>
+          <ArticleSnippet
+            title={article.title}
+            description={article.description}
+            duration={`${article.time} min`}
+            url={article.filename}
+            timestamp={article.timestamp}
+          />
+        </li>
+      ))}
+    </ul>
+  </Section>
+</Layout>

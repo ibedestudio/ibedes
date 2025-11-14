@@ -127,33 +127,51 @@ const articleSchema = JSON.stringify(
   >
     <span></span>
   </div>
-  <Section class="pt-8">
-  <div class="max-w-prose mx-auto w-full">
-    <Breadcrumbs items={breadcrumbs} />
-    <div class="flex flex-col gap-4 mt-8 mb-16 w-full">
-      <h1
-        class="text-3xl sm:text-4xl leading-tight font-display break-words"
-      >
-        {frontmatter.title}
-      </h1>
+  <div class="article-shell">
+    <Section class="pt-8 article-section">
+      <div class="max-w-prose w-full mx-auto lg:mx-0">
+        <Breadcrumbs items={breadcrumbs} />
+        <div class="flex flex-col gap-4 mt-8 mb-16 w-full">
+          <h1
+            class="text-3xl sm:text-4xl leading-tight font-display break-words"
+          >
+            {frontmatter.title}
+          </h1>
 
-      <div class="flex justify-between items-center text-sm w-full">
-        <span class="whitespace-nowrap">{articleDate}</span>
-        <span class="whitespace-nowrap">{frontmatter.time} min</span>
+          <div class="flex justify-between items-center text-sm w-full">
+            <span class="whitespace-nowrap">{articleDate}</span>
+            <span class="whitespace-nowrap">{frontmatter.time} min</span>
+          </div>
+        </div>
+
+        <div
+          class="article-main"
+          data-article-body
+          data-article-title={frontmatter.title}
+          data-article-url={sourceUrl}
+        >
+          <Prose>
+            <slot />
+          </Prose>
+        </div>
+
+        <div class="my-12">
+          <ShareActions title={frontmatter.title} url={frontmatter.url ?? sourceUrl} />
+        </div>
+
+        <div class="my-12">
+          <ArticleEngagement slug={frontmatter.filename} title={frontmatter.title} />
+        </div>
+
+        {
+          relatedArticles.length > 0 && (
+            <div class="my-12">
+              <RelatedArticles articles={relatedArticles} />
+            </div>
+          )
+        }
       </div>
-    </div>
-
-   <div class="article-layout">
-    <div
-      class="article-main"
-      data-article-body
-      data-article-title={frontmatter.title}
-      data-article-url={sourceUrl}
-    >
-      <Prose>
-        <slot />
-      </Prose>
-    </div>
+    </Section>
     <aside
       class="article-toc"
       data-toc-container
@@ -161,36 +179,19 @@ const articleSchema = JSON.stringify(
       aria-label="Daftar isi artikel"
       hidden
     >
-      <p class="article-toc__title">Daftar Isi</p>
+      <div class="article-toc__header">
+        <p class="article-toc__title">Daftar Isi</p>
+        <span class="article-toc__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+            <path d="M96 64C42.98 64 0 106.1 0 160v256c0 53 42.98 96 96 96h272c44.18 0 80-35.82 80-80V96c0-17.67-14.33-32-32-32H96zm320 368c0 17.64-14.36 32-32 32H96c-35.34 0-64-28.66-64-64s28.66-64 64-64h288v96zm0-128H96c-24.53 0-47.03 7.359-66.07 19.94C28.82 341.2 32 330.9 32 320V160c0-35.34 28.66-64 64-64h320v208z"/>
+          </svg>
+        </span>
+      </div>
       <nav aria-label="Daftar isi">
         <ol data-toc-list></ol>
       </nav>
     </aside>
   </div>
-
-    <div class="my-12">
-      <ShareActions title={frontmatter.title} url={frontmatter.url ?? sourceUrl} />
-    </div>
-
-    <div class="my-12">
-      <ArticleEngagement slug={frontmatter.filename} title={frontmatter.title} />
-    </div>
-
-    {
-      relatedArticles.length > 0 && (
-        <div class="my-12">
-          <RelatedArticles articles={relatedArticles} />
-        </div>
-      )
-    }
-
-   
-
- 
-
-
-  </div>
-</Section>
 
 </Layout>
 

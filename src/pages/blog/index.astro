@@ -63,7 +63,7 @@ const allTags = Array.from(
     <link rel="canonical" href={`${GLOBAL.rootUrl}/blog`} />
   </Fragment>
   <Section class="my-8">
-    <div class="flex flex-col gap-4 pt-8 pb-8">
+    <div class="flex flex-col gap-4 pt-8 pb-4 md:pb-8">
       <div class="flex items-center gap-4">
         <h1 class="font-display text-3xl sm:text-4xl leading-loose">{GLOBAL.articlesName}</h1>
       </div>
@@ -71,78 +71,86 @@ const allTags = Array.from(
         Telusuri arsip tulisan lewat pencarian cepat atau saring berdasarkan topik favoritmu.
       </p>
     </div>
-    <div class="flex flex-col gap-6 pb-8">
-      <div class="flex flex-col gap-2">
-        <label for="blog-search" class="text-sm font-semibold tracking-wide uppercase text-zag-dark/80 dark:text-zag-light/80">
-          Cari artikel
-        </label>
-        <div
-          class="flex items-center gap-2 rounded-2xl border-2 border-black/50 dark:border-white/60 bg-white/70 dark:bg-zinc-900/60 px-4 py-3"
-        >
-          <svg viewBox="0 0 24 24" class="w-5 h-5 text-zag-dark/70 dark:text-zag-light/70" aria-hidden="true">
-            <path
-              d="M15.5 14h-.79l-.28-.27A6 6 0 1 0 14 15.5l.27.28v.79l5 5 1.5-1.5-5-5zm-5.5 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"
-              fill="currentColor"
+    <div class="hidden md:block" data-filter-home>
+      <div
+        class="flex flex-col gap-4 md:rounded-3xl md:border md:border-black/20 md:dark:border-white/10 md:bg-white/80 md:dark:bg-zinc-900/70 md:p-5 md:shadow-sm"
+        data-blog-filter-panel
+      >
+        <div class="flex flex-col gap-2">
+          <label for="blog-search" class="text-xs font-semibold tracking-[0.25em] uppercase text-zag-dark/70 dark:text-zag-light/70">
+            Cari artikel
+          </label>
+          <div
+            class="flex items-center gap-2 rounded-2xl border border-black/40 dark:border-white/50 bg-white dark:bg-zinc-900 px-3 py-2.5 shadow-sm"
+          >
+            <svg viewBox="0 0 24 24" class="w-4 h-4 text-zag-dark/70 dark:text-zag-light/70" aria-hidden="true">
+              <path
+                d="M15.5 14h-.79l-.28-.27A6 6 0 1 0 14 15.5l.27.28v.79l5 5 1.5-1.5-5-5zm-5.5 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"
+                fill="currentColor"
+              />
+            </svg>
+            <input
+              id="blog-search"
+              type="search"
+              placeholder="Cari judul, ide, atau kata kunci..."
+              class="w-full bg-transparent border-none focus:outline-none font-mono text-sm"
+              data-blog-search
+              aria-label="Cari artikel blog"
             />
-          </svg>
-          <input
-            id="blog-search"
-            type="search"
-            placeholder="Ketik kata kunci…"
-            class="w-full bg-transparent border-none focus:outline-none font-mono"
-            data-blog-search
-            aria-label="Cari artikel blog"
-          />
-        </div>
-      </div>
-      {allTags.length > 0 && (
-        <div class="flex flex-col gap-3">
-          <div class="flex items-center justify-between gap-4">
-            <p class="text-sm font-semibold tracking-wide uppercase text-zag-dark/80 dark:text-zag-light/80">
-              Filter topik
-            </p>
-            <button
-              type="button"
-              data-tag-reset
-              class="text-xs font-mono uppercase tracking-[0.3em] text-zag-dark/70 dark:text-zag-light/70 underline underline-offset-4 transition-opacity"
-            >
-              Reset
-            </button>
           </div>
-          <div class="relative" data-tag-scroll>
-            <div
-              class="flex flex-nowrap md:flex-wrap gap-2 overflow-x-auto md:overflow-visible pb-3 -mx-4 px-4 md:mx-0 md:px-0 scroll-smooth"
-              data-tag-list
-              data-tag-scroll-container
-              style="scrollbar-width: none;"
-            >
-              {allTags.map((tag) => (
-                <button
-                  type="button"
-                  data-tag-button={tag.toLowerCase()}
-                  class="px-4 py-2 rounded-full border-2 border-black/20 dark:border-white/30 bg-white/60 dark:bg-zinc-900/60 text-sm font-medium transition-all shrink-0 data-[active=true]:border-black data-[active=true]:dark:border-white data-[active=true]:bg-black data-[active=true]:dark:bg-white data-[active=true]:text-white data-[active=true]:dark:text-black"
-                >
-                  {tag}
-                </button>
-              ))}
+        </div>
+        {allTags.length > 0 && (
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between gap-4">
+              <p class="text-xs font-semibold tracking-[0.25em] uppercase text-zag-dark/70 dark:text-zag-light/70">
+                Filter topik
+              </p>
+              <button
+                type="button"
+                data-tag-reset
+                class="text-[10px] font-semibold uppercase tracking-[0.4em] text-zag-dark/50 dark:text-zag-light/60 underline underline-offset-4 transition-opacity"
+              >
+                Reset
+              </button>
             </div>
-            <span
-              aria-hidden="true"
-              data-scroll-fade="left"
-              class="pointer-events-none absolute inset-y-4 left-0 w-10 bg-gradient-to-r from-white/95 via-white/70 to-transparent dark:from-zinc-950/95 dark:via-zinc-950/60 md:hidden opacity-0 data-[visible=true]:opacity-100 transition-opacity"
-            ></span>
-            <span
-              aria-hidden="true"
-              data-scroll-fade="right"
-              class="pointer-events-none absolute inset-y-4 right-0 w-10 bg-gradient-to-l from-white/95 via-white/70 to-transparent dark:from-zinc-950/95 dark:via-zinc-950/60 md:hidden opacity-0 data-[visible=true]:opacity-100 transition-opacity"
-            ></span>
+            <div class="relative" data-tag-scroll>
+              <div
+                class="flex flex-nowrap md:flex-wrap gap-1.5 overflow-x-auto md:overflow-visible pb-2 -mx-2 px-2 md:mx-0 md:px-0 scroll-smooth"
+                data-tag-list
+                data-tag-scroll-container
+                style="scrollbar-width: none;"
+              >
+                {allTags.map((tag) => (
+                  <button
+                    type="button"
+                    data-tag-button={tag.toLowerCase()}
+                    class="px-3 py-1.5 rounded-full border border-black/20 dark:border-white/20 bg-white/70 dark:bg-zinc-900/70 text-xs sm:text-sm font-semibold transition-all shrink-0 data-[active=true]:border-black data-[active=true]:dark:border-white data-[active=true]:bg-black data-[active=true]:dark:bg-white data-[active=true]:text-white data-[active=true]:dark:text-black"
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+              <span
+                aria-hidden="true"
+                data-scroll-fade="left"
+                class="pointer-events-none absolute inset-y-3 left-0 w-8 bg-gradient-to-r from-white/95 via-white/60 to-transparent dark:from-zinc-950/95 dark:via-zinc-950/60 md:hidden opacity-0 data-[visible=true]:opacity-100 transition-opacity"
+              ></span>
+              <span
+                aria-hidden="true"
+                data-scroll-fade="right"
+                class="pointer-events-none absolute inset-y-3 right-0 w-8 bg-gradient-to-l from-white/95 via-white/60 to-transparent dark:from-zinc-950/95 dark:via-zinc-950/60 md:hidden opacity-0 data-[visible=true]:opacity-100 transition-opacity"
+              ></span>
+            </div>
           </div>
-        </div>
-      )}
-      <p class="text-sm zag-muted">
-        Menampilkan <span data-results-count>{totalArticles}</span> dari {totalArticles} tulisan.
-      </p>
+        )}
+        <p class="text-xs text-zag-dark/70 dark:text-zag-light/70">
+          Menampilkan <span data-results-count>{totalArticles}</span> tulisan.
+        </p>
+      </div>
     </div>
+    <p class="text-sm zag-muted md:hidden">
+      Menampilkan <span data-results-count>{totalArticles}</span> dari {totalArticles} tulisan.
+    </p>
     <ul>
       {
         searchableArticles.map((article) => (
@@ -171,6 +179,36 @@ const allTags = Array.from(
   </Section>
 </Layout>
 
+<div data-filter-overlay class="fixed inset-0 z-40 hidden md:hidden" aria-hidden="true">
+  <div class="absolute inset-0 bg-black/55 backdrop-blur-[3px]" data-filter-close></div>
+  <div class="relative z-10 min-h-full flex flex-col items-center pt-16 px-4 pb-8">
+    <div
+      class="w-full max-w-md bg-white/95 dark:bg-zinc-950/95 border border-black/20 dark:border-white/15 rounded-3xl p-5 shadow-[0_18px_50px_rgba(0,0,0,0.45)] flex flex-col gap-4"
+    >
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <p class="text-[10px] uppercase tracking-[0.35em] text-zag-dark/60 dark:text-zag-light/60">
+            Cari &amp; filter
+          </p>
+          <h2 class="font-display text-2xl leading-tight">Telusuri tulisan</h2>
+        </div>
+        <button
+          type="button"
+          class="p-2 rounded-full border border-black/25 dark:border-white/30 text-xs font-semibold uppercase tracking-[0.3em]"
+          aria-label="Tutup panel filter"
+          data-filter-close
+        >
+          ✕
+        </button>
+      </div>
+      <div class="text-xs text-zag-dark/70 dark:text-zag-light/70">
+        Cari ide spesifik atau mix & match topik tanpa menutup halaman artikel.
+      </div>
+      <div class="max-h-[60vh] overflow-y-auto pr-1" data-filter-overlay-target></div>
+    </div>
+  </div>
+</div>
+
 <script type="module" is:inline>
   (() => {
     if (typeof window === "undefined") return;
@@ -178,16 +216,29 @@ const allTags = Array.from(
     const tagButtons = Array.from(document.querySelectorAll("[data-tag-button]"));
     const resetButton = document.querySelector("[data-tag-reset]");
     const articles = Array.from(document.querySelectorAll("[data-article-item]"));
-    const resultCount = document.querySelector("[data-results-count]");
+    const resultCounters = Array.from(document.querySelectorAll("[data-results-count]"));
     const emptyState = document.querySelector("[data-empty-state]");
     const scrollContainer = document.querySelector("[data-tag-scroll-container]");
     const fadeLeft = document.querySelector("[data-scroll-fade='left']");
     const fadeRight = document.querySelector("[data-scroll-fade='right']");
-    if (!searchInput || articles.length === 0 || !resultCount) return;
+    const filterPanel = document.querySelector("[data-blog-filter-panel]");
+    const filterHome = document.querySelector("[data-filter-home]");
+    const overlay = document.querySelector("[data-filter-overlay]");
+    const overlayTarget = document.querySelector("[data-filter-overlay-target]");
+    const overlayCloseEls = overlay ? Array.from(overlay.querySelectorAll("[data-filter-close]")) : [];
+    const searchToggleButtons = Array.from(document.querySelectorAll("[data-blog-search-toggle]"));
+    if (!searchInput || articles.length === 0 || resultCounters.length === 0 || !filterPanel) return;
+
+    searchToggleButtons.forEach((btn) => btn.classList.remove("hidden"));
 
     const activeTags = new Set();
     const total = articles.length;
-    resultCount.textContent = total.toString();
+    const updateResultCounters = (value) => {
+      resultCounters.forEach((counter) => {
+        counter.textContent = value.toString();
+      });
+    };
+    updateResultCounters(total);
 
     const toggleChipState = (button, isActive) => {
       if (!button) return;
@@ -216,7 +267,7 @@ const allTags = Array.from(
         if (shouldShow) visible += 1;
       });
 
-      resultCount.textContent = visible.toString();
+      updateResultCounters(visible);
       if (emptyState) emptyState.hidden = visible !== 0;
     };
 
@@ -260,8 +311,60 @@ const allTags = Array.from(
       }
     };
 
+    const desktopMedia = window.matchMedia("(min-width: 768px)");
+    const openOverlay = () => {
+      if (!overlay) return;
+      if (desktopMedia.matches) {
+        filterHome?.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+      overlay.classList.remove("hidden");
+      overlay.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      window.requestAnimationFrame(updateScrollHints);
+    };
+
+    const closeOverlay = () => {
+      if (!overlay) return;
+      overlay.classList.add("hidden");
+      overlay.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    };
+
+    const syncPanelPlacement = () => {
+      if (!filterPanel || !filterHome || !overlayTarget) return;
+      if (desktopMedia.matches) {
+        if (filterPanel.parentElement !== filterHome) {
+          filterHome.appendChild(filterPanel);
+        }
+        closeOverlay();
+      } else {
+        if (filterPanel.parentElement !== overlayTarget) {
+          overlayTarget.appendChild(filterPanel);
+        }
+      }
+      updateScrollHints();
+    };
+
+    searchToggleButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        openOverlay();
+      });
+    });
+
+    overlayCloseEls.forEach((el) => {
+      el.addEventListener("click", () => {
+        closeOverlay();
+      });
+    });
+
     scrollContainer?.addEventListener("scroll", updateScrollHints, { passive: true });
     window.addEventListener("resize", updateScrollHints);
+    desktopMedia.addEventListener("change", () => {
+      syncPanelPlacement();
+    });
+
+    syncPanelPlacement();
     updateScrollHints();
   })();
 </script>

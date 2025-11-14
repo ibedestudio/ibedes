@@ -78,6 +78,17 @@ const relatedArticles = [...prioritized.slice(0, 3), ...fallback].slice(0, 3).ma
     <meta name="language" content="indonesia" />
     <link rel="canonical" href={sourceUrl} />
   </Fragment>
+  <div
+    class="reading-progress"
+    data-reading-progress
+    role="progressbar"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="0"
+    aria-label="Progress membaca artikel"
+  >
+    <span></span>
+  </div>
   <Section class="pt-8">
   <div class="max-w-prose mx-auto w-full">
     <Breadcrumbs items={breadcrumbs} />
@@ -94,9 +105,11 @@ const relatedArticles = [...prioritized.slice(0, 3), ...fallback].slice(0, 3).ma
       </div>
     </div>
 
-   <Prose>
-  <slot />
-</Prose>
+   <div data-article-body>
+    <Prose>
+      <slot />
+    </Prose>
+  </div>
 
     <div class="my-12">
       <ShareActions title={frontmatter.title} url={frontmatter.url ?? sourceUrl} />
@@ -123,3 +136,105 @@ const relatedArticles = [...prioritized.slice(0, 3), ...fallback].slice(0, 3).ma
 </Section>
 
 </Layout>
+
+<script is:inline>
+  (() => {
+    if (typeof window === "undefined") return;
+    const progressBarContainer = document.querySelector("[data-reading-progress]");
+    const progressBar = progressBarContainer?.querySelector("span");
+    const articleBody = document.querySelector("[data-article-body]");
+
+    const clamp = (value, min = 0, max = 1) => Math.min(Math.max(value, min), max);
+
+    const updateProgress = () => {
+      if (!progressBar || !articleBody) return;
+      const articleRect = articleBody.getBoundingClientRect();
+      const articleTop = window.scrollY + articleRect.top;
+      const articleHeight = articleBody.scrollHeight;
+      const viewportHeight = window.innerHeight;
+      const maxScrollable = Math.max(articleHeight - viewportHeight, 0.00001);
+      const progress = clamp((window.scrollY - articleTop) / maxScrollable);
+      progressBar.style.transform = `scaleX(${progress})`;
+      progressBar.setAttribute("aria-valuenow", (progress * 100).toFixed(0));
+    };
+
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateProgress();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", updateProgress);
+    updateProgress();
+
+    if (!articleBody) return;
+    const markerPattern = /^\s*\[!highlight\]\s*/i;
+    const blockquotes = Array.from(articleBody.querySelectorAll("blockquote"));
+
+    blockquotes.forEach((blockquote) => {
+      const firstParagraph = blockquote.querySelector("p");
+      if (firstParagraph) {
+        const paragraphHtml = firstParagraph.innerHTML;
+        if (markerPattern.test(firstParagraph.textContent ?? "")) {
+          firstParagraph.innerHTML = paragraphHtml.replace(markerPattern, "").trim();
+          blockquote.classList.add("highlight-block");
+        }
+      }
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "quote-copy-button";
+      button.setAttribute("aria-label", "Salin kutipan");
+      button.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 2H5a2 2 0 0 0-2 2v14h2V4h4zm10 4h-8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm0 14h-8V8h8z" />
+        </svg>
+        <span>Salin</span>
+      `;
+      const setLabel = (text) => {
+        const label = button.querySelector("span");
+        if (label) {
+          label.textContent = text;
+        }
+      };
+      const handleCopy = async () => {
+        const clone = blockquote.cloneNode(true);
+        clone.querySelector(".quote-copy-button")?.remove();
+        const text = clone.textContent?.trim() ?? "";
+        try {
+          if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(text);
+          } else {
+            const shadow = document.createElement("textarea");
+            shadow.value = text;
+            shadow.setAttribute("readonly", "");
+            shadow.style.position = "absolute";
+            shadow.style.left = "-9999px";
+            document.body.appendChild(shadow);
+            shadow.select();
+            document.execCommand("copy");
+            document.body.removeChild(shadow);
+          }
+          button.dataset.state = "copied";
+          setLabel("Disalin!");
+        } catch (error) {
+          button.dataset.state = "error";
+          setLabel("Gagal");
+        } finally {
+          setTimeout(() => {
+            button.dataset.state = "idle";
+            setLabel("Salin");
+          }, 1800);
+        }
+      };
+      button.addEventListener("click", handleCopy);
+      blockquote.appendChild(button);
+    });
+  })();
+</script>

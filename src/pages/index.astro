@@ -1,24 +1,27 @@
 ---
 import { featuredArticles, featuredProjects } from "../lib/featured";
 import { GLOBAL } from "../lib/variables";
+import { stripHtml } from "../lib/utils";
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/home/Hero.astro";
 import Section from "../components/common/Section.astro";
 import FeaturedProjects from "../components/home/FeaturedProjects.astro";
 import FeaturedArticles from "../components/home/FeaturedArticles.astro";
 import SubscribeCard from "../components/SubscribeCard.astro";
+
+const shortDescriptionPlain = stripHtml(GLOBAL.shortDescription);
 ---
 
 <Layout>
   <Fragment slot="head">
-    <title>{GLOBAL.username} • {GLOBAL.shortDescription}</title>
+    <title>{GLOBAL.username} • {shortDescriptionPlain}</title>
     <meta
       name="description"
       content={GLOBAL.longDescription}
     />
     <meta
       property="og:title"
-      content={`${GLOBAL.username} • ${GLOBAL.shortDescription}`}
+      content={`${GLOBAL.username} • ${shortDescriptionPlain}`}
     />
     <meta
       property="og:description"
@@ -29,7 +32,7 @@ import SubscribeCard from "../components/SubscribeCard.astro";
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
-      content={`${GLOBAL.username} • ${GLOBAL.shortDescription}`}
+      content={`${GLOBAL.username} • ${shortDescriptionPlain}`}
     />
     <meta
       name="twitter:description"

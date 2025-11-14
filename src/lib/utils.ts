@@ -107,3 +107,16 @@ export const slugifyTag = (tag: string = "") => {
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
 };
+
+/**
+ * Removes HTML tags from a string and normalizes whitespace.
+ * Useful when the text may include markup for display purposes but needs a plain value for metadata.
+ * @param content the string that may contain HTML
+ * @returns a plain text version of the string
+ */
+export const stripHtml = (content: string = "") => {
+  return content
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+};

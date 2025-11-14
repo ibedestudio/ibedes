@@ -37,7 +37,7 @@ import "../styles/global.css";
     />
     <slot name="head" />
   </head>
-  <body class="zag-bg zag-text zag-transition font-mono">
+  <body class="zag-bg zag-text zag-transition font-mono" data-current-path={Astro.url.pathname}>
     <div class="retro-marquee" aria-hidden="true">
       <div class="retro-marquee__track">
         <span>{GLOBAL.username} • Keep building • Stay curious • Nikmati perjalanan belajar •</span>
@@ -50,5 +50,92 @@ import "../styles/global.css";
     </main>
     <Footer />
     <CommandPalette />
+    <div class="reading-reminder-banner" data-reading-reminder hidden>
+      <div class="reading-reminder-banner__content">
+        <p class="reading-reminder-banner__label">Lanjutkan membaca?</p>
+        <p class="reading-reminder-banner__title" data-reminder-title></p>
+        <p class="reading-reminder-banner__progress" data-reminder-progress></p>
+      </div>
+      <div class="reading-reminder-banner__actions">
+        <button type="button" data-reminder-continue>Teruskan</button>
+        <button type="button" data-reminder-dismiss aria-label="Tutup pengingat">×</button>
+      </div>
+    </div>
+    <script is:inline>
+      (() => {
+        if (typeof window === "undefined") return;
+        const reminderKey = "ibedes:reading-reminder";
+        const banner = document.querySelector("[data-reading-reminder]");
+        if (!banner) return;
+        const titleEl = banner.querySelector("[data-reminder-title]");
+        const progressEl = banner.querySelector("[data-reminder-progress]");
+        const continueBtn = banner.querySelector("[data-reminder-continue]");
+        const dismissBtn = banner.querySelector("[data-reminder-dismiss]");
+        const currentPath = document.body?.getAttribute("data-current-path") ?? window.location.pathname;
+        let reminderData = null;
+
+        const parseReminder = () => {
+          try {
+            const raw = localStorage.getItem(reminderKey);
+            return raw ? JSON.parse(raw) : null;
+          } catch (error) {
+            console.warn("Tidak dapat membaca pengingat baca", error);
+            return null;
+          }
+        };
+
+        const hideBanner = () => {
+          banner.dataset.visible = "false";
+          banner.hidden = true;
+        };
+
+        const showBanner = () => {
+          if (!reminderData) {
+            hideBanner();
+            return;
+          }
+          if (!reminderData.url || reminderData.url.includes(currentPath)) {
+            hideBanner();
+            return;
+          }
+          if (titleEl) titleEl.textContent = reminderData.title ?? "Artikel sebelumnya";
+          if (progressEl) progressEl.textContent = `Terakhir dibaca hingga ${reminderData.progress ?? 0}%`;
+          banner.hidden = false;
+          banner.dataset.visible = "true";
+        };
+
+        const syncReminder = () => {
+          reminderData = parseReminder();
+          showBanner();
+        };
+
+        continueBtn?.addEventListener("click", () => {
+          if (!reminderData?.url) return;
+          window.location.href = reminderData.url;
+        });
+
+        dismissBtn?.addEventListener("click", () => {
+          try {
+            localStorage.removeItem(reminderKey);
+          } catch (error) {
+            console.warn("Gagal menghapus pengingat baca", error);
+          }
+          reminderData = null;
+          hideBanner();
+        });
+
+        window.addEventListener("storage", (event) => {
+          if (event.key === reminderKey) {
+            syncReminder();
+          }
+        });
+
+        window.addEventListener("ibedes:reading-reminder", () => {
+          syncReminder();
+        });
+
+        syncReminder();
+      })();
+    </script>
   </body>
 </html>

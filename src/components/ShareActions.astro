@@ -59,6 +59,7 @@ const shareTargets = [
   data-share-section
   data-share-url={absoluteUrl}
   data-share-title={title}
+  data-site-name={GLOBAL.username}
 >
   <div class="flex flex-col gap-1">
     <p class="font-display text-xs uppercase tracking-[0.25em] zag-muted">
@@ -95,6 +96,13 @@ const shareTargets = [
     >
       Share via…
     </button>
+    <button
+      type="button"
+      data-share-preview
+      class="px-4 py-2 rounded-2xl border-2 border-emerald-500 font-mono text-xs uppercase tracking-[0.2em] text-emerald-700 dark:text-emerald-300 zag-transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+    >
+      Preview Card
+    </button>
   </div>
 
   <p
@@ -103,6 +111,25 @@ const shareTargets = [
   >
     Link sudah tersalin!
   </p>
+
+  <div class="share-preview" data-share-preview-panel hidden>
+    <img
+      data-share-preview-image
+      alt="Social preview"
+      class="share-preview__image"
+    />
+    <div class="share-preview__actions">
+      <a
+        data-share-preview-download
+        href="#"
+        class="share-preview__download"
+        download="ibedes-preview.png"
+      >
+        Unduh PNG
+      </a>
+      <button type="button" data-share-preview-dismiss>Close</button>
+    </div>
+  </div>
 
   <script is:inline>
     (() => {
@@ -115,6 +142,12 @@ const shareTargets = [
       const shareBtn = section.querySelector("[data-web-share]");
       const shareUrl = section.getAttribute("data-share-url") ?? window.location.href;
       const shareTitle = section.getAttribute("data-share-title") ?? document.title;
+      const siteName = section.getAttribute("data-site-name") ?? "ibedes.xyz";
+      const previewBtn = section.querySelector("[data-share-preview]");
+      const previewPanel = section.querySelector("[data-share-preview-panel]");
+      const previewImage = section.querySelector("[data-share-preview-image]");
+      const previewDownload = section.querySelector("[data-share-preview-download]");
+      const previewDismiss = section.querySelector("[data-share-preview-dismiss]");
 
       const showFeedback = () => {
         if (!feedback) return;
@@ -152,6 +185,71 @@ const shareTargets = [
           }
         });
       }
+
+      const wrapText = (ctx, text, x, y, maxWidth, lineHeight) => {
+        const words = text.split(" ");
+        let line = "";
+        let drawY = y;
+        words.forEach((word, index) => {
+          const testLine = `${line}${word} `;
+          const metrics = ctx.measureText(testLine);
+          if (metrics.width > maxWidth && index > 0) {
+            ctx.fillText(line, x, drawY);
+            line = `${word} `;
+            drawY += lineHeight;
+          } else {
+            line = testLine;
+          }
+        });
+        if (line) ctx.fillText(line.trim(), x, drawY);
+        return drawY + lineHeight;
+      };
+
+      const generatePreview = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1200;
+        canvas.height = 630;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return null;
+        const gradient = ctx.createLinearGradient(0, 0, 1200, 630);
+        gradient.addColorStop(0, "#0f172a");
+        gradient.addColorStop(1, "#064e3b");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "rgba(255,255,255,0.15)";
+        ctx.fillRect(60, 60, 1080, 510);
+
+        ctx.fillStyle = "#ecfccb";
+        ctx.font = "bold 60px 'IBM Plex Mono', monospace";
+        ctx.textBaseline = "top";
+        wrapText(ctx, shareTitle, 120, 150, 960, 70);
+
+        ctx.fillStyle = "#d1fae5";
+        ctx.font = "28px 'IBM Plex Mono', monospace";
+        ctx.fillText(siteName, 120, 470);
+
+        ctx.fillStyle = "#bbf7d0";
+        ctx.font = "20px 'IBM Plex Mono', monospace";
+        ctx.fillText(shareUrl.replace(/^https?:\/\//, ""), 120, 520);
+
+        return canvas.toDataURL("image/png");
+      };
+
+      previewBtn?.addEventListener("click", () => {
+        const dataUrl = generatePreview();
+        if (!dataUrl || !previewImage || !previewPanel || !previewDownload) return;
+        previewImage.src = dataUrl;
+        previewPanel.hidden = false;
+        previewDownload.href = dataUrl;
+        previewDownload.download = `${siteName.toLowerCase().replace(/\s+/g, "-")}-preview.png`;
+      });
+
+      previewDismiss?.addEventListener("click", () => {
+        if (previewPanel) {
+          previewPanel.hidden = true;
+        }
+      });
     })();
   </script>
 </section>

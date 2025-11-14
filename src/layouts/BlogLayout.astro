@@ -126,6 +126,15 @@ const articleSchema = JSON.stringify(
     aria-label="Progress membaca artikel"
   >
     <span></span>
+    <div class="reading-progress__milestone" data-milestone="25">
+      <span>25%</span>
+    </div>
+    <div class="reading-progress__milestone" data-milestone="50">
+      <span>50%</span>
+    </div>
+    <div class="reading-progress__milestone" data-milestone="75">
+      <span>75%</span>
+    </div>
   </div>
   <div class="article-shell">
     <Section class="pt-8 article-section">
@@ -149,6 +158,7 @@ const articleSchema = JSON.stringify(
           data-article-body
           data-article-title={frontmatter.title}
           data-article-url={sourceUrl}
+          data-article-slug={frontmatter.filename}
         >
           <Prose>
             <slot />
@@ -180,14 +190,24 @@ const articleSchema = JSON.stringify(
       hidden
     >
       <div class="article-toc__header">
-        <p class="article-toc__title">Daftar Isi</p>
-        <span class="article-toc__icon" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-            <path d="M96 64C42.98 64 0 106.1 0 160v256c0 53 42.98 96 96 96h272c44.18 0 80-35.82 80-80V96c0-17.67-14.33-32-32-32H96zm320 368c0 17.64-14.36 32-32 32H96c-35.34 0-64-28.66-64-64s28.66-64 64-64h288v96zm0-128H96c-24.53 0-47.03 7.359-66.07 19.94C28.82 341.2 32 330.9 32 320V160c0-35.34 28.66-64 64-64h320v208z"/>
-          </svg>
-        </span>
+        <div class="article-toc__title-wrap">
+          <p class="article-toc__title">Daftar Isi</p>
+          <span class="article-toc__icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+              <path d="M96 64C42.98 64 0 106.1 0 160v256c0 53 42.98 96 96 96h272c44.18 0 80-35.82 80-80V96c0-17.67-14.33-32-32-32H96zm320 368c0 17.64-14.36 32-32 32H96c-35.34 0-64-28.66-64-64s28.66-64 64-64h288v96zm0-128H96c-24.53 0-47.03 7.359-66.07 19.94C28.82 341.2 32 330.9 32 320V160c0-35.34 28.66-64 64-64h320v208z"/>
+            </svg>
+          </span>
+        </div>
+        <button
+          type="button"
+          class="article-toc__toggle"
+          data-toc-toggle
+          aria-expanded="true"
+        >
+          Sembunyikan
+        </button>
       </div>
-      <nav aria-label="Daftar isi">
+      <nav aria-label="Daftar isi" data-toc-body>
         <ol data-toc-list></ol>
       </nav>
     </aside>
@@ -203,8 +223,14 @@ const articleSchema = JSON.stringify(
     const articleBody = document.querySelector("[data-article-body]");
     const tocContainer = document.querySelector("[data-toc-container]");
     const tocList = document.querySelector("[data-toc-list]");
+    const tocToggle = tocContainer?.querySelector("[data-toc-toggle]");
+    const tocBody = tocContainer?.querySelector("[data-toc-body]");
     const articleTitle = articleBody?.getAttribute("data-article-title") ?? document.title;
     const articleSourceUrl = articleBody?.getAttribute("data-article-url") ?? window.location.href;
+    const articleSlug = articleBody?.getAttribute("data-article-slug") ?? "";
+    if (articleSlug) {
+      document.body.dataset.currentArticle = articleSlug;
+    }
 
     const clamp = (value, min = 0, max = 1) => Math.min(Math.max(value, min), max);
     const slugify = (value = "") =>
@@ -216,6 +242,43 @@ const articleSchema = JSON.stringify(
         .replace(/\s+/g, "-")
         .replace(/-+/g, "-");
 
+    const milestoneEls = progressBarContainer
+      ? Array.from(progressBarContainer.querySelectorAll("[data-milestone]"))
+      : [];
+    const reminderKey = "ibedes:reading-reminder";
+
+    const updateMilestones = (progress) => {
+      milestoneEls.forEach((node) => {
+        const value = Number(node.getAttribute("data-milestone")) / 100;
+        node.dataset.active = progress >= value ? "true" : "false";
+      });
+    };
+
+    const saveReminderProgress = (progress) => {
+      if (!articleSlug) return;
+      if (progress >= 0.95) {
+        try {
+          localStorage.removeItem(reminderKey);
+        } catch (error) {
+          console.warn("Gagal menghapus pengingat baca", error);
+        }
+        return;
+      }
+      try {
+        const payload = {
+          slug: articleSlug,
+          title: articleTitle,
+          url: articleSourceUrl,
+          progress: Number((progress * 100).toFixed(0)),
+          updatedAt: Date.now(),
+        };
+        localStorage.setItem(reminderKey, JSON.stringify(payload));
+        window.dispatchEvent(new CustomEvent("ibedes:reading-reminder", { detail: payload }));
+      } catch (error) {
+        console.warn("Tidak dapat menyimpan progress baca", error);
+      }
+    };
+
     const updateProgress = () => {
       if (!progressBar || !articleBody) return;
       const articleRect = articleBody.getBoundingClientRect();
@@ -226,6 +289,8 @@ const articleSchema = JSON.stringify(
       const progress = clamp((window.scrollY - articleTop) / maxScrollable);
       progressBar.style.transform = `scaleX(${progress})`;
       progressBar.setAttribute("aria-valuenow", (progress * 100).toFixed(0));
+      updateMilestones(progress);
+      saveReminderProgress(progress);
     };
 
     let ticking = false;
@@ -244,6 +309,29 @@ const articleSchema = JSON.stringify(
     updateProgress();
 
     if (!articleBody) return;
+
+    const setTocState = (collapsed) => {
+      if (!tocContainer || !tocToggle) return;
+      tocContainer.dataset.collapsed = collapsed ? "true" : "false";
+      tocToggle.textContent = collapsed ? "Tampilkan" : "Sembunyikan";
+      tocToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
+    };
+
+    const initializeTocState = () => {
+      if (!tocContainer || !tocToggle) return;
+      const prefersCollapsed = window.matchMedia("(max-width: 1023px)").matches;
+      setTocState(prefersCollapsed);
+    };
+
+    tocToggle?.addEventListener("click", () => {
+      if (!tocContainer) return;
+      const collapsed = tocContainer.dataset.collapsed === "true";
+      setTocState(!collapsed);
+    });
+
+    window.addEventListener("resize", () => {
+      initializeTocState();
+    });
 
     if (tocContainer && tocList) {
       const headingMap = {};
@@ -266,6 +354,7 @@ const articleSchema = JSON.stringify(
           item.appendChild(link);
           tocList.appendChild(item);
         });
+        initializeTocState();
       }
     }
 

@@ -344,8 +344,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.article-toc__title-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .article-toc__icon {
@@ -363,6 +369,35 @@
 
 :where(.dark, .dark *) .article-toc__icon {
   color: var(--color-zag-light-muted);
+}
+
+.article-toc__toggle {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.article-toc__toggle:hover {
+  transform: translateY(-1px);
+}
+
+:where(.dark, .dark *) .article-toc__toggle {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--color-zag-light);
+}
+
+.article-toc[data-collapsed="true"] nav {
+  display: none;
+}
+
+.article-toc[data-collapsed="true"] {
+  padding-bottom: 0.75rem;
 }
 
 .prose blockquote {
@@ -494,6 +529,171 @@
   border-color: rgba(248, 113, 113, 0.6);
   background: rgba(248, 113, 113, 0.15);
   color: var(--color-rose-200);
+}
+
+.reading-progress__milestone {
+  position: absolute;
+  top: -10px;
+  width: 2px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.6);
+  transform: translateX(-50%);
+}
+
+.reading-progress__milestone span {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.6rem;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.reading-progress__milestone[data-active="true"] {
+  background: #34d399;
+}
+
+.reading-progress__milestone[data-active="true"] span {
+  opacity: 1;
+}
+
+.reading-progress__milestone[data-milestone="25"] {
+  left: 25%;
+}
+.reading-progress__milestone[data-milestone="50"] {
+  left: 50%;
+}
+.reading-progress__milestone[data-milestone="75"] {
+  left: 75%;
+}
+
+.share-preview {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 1.5rem;
+  padding: 1rem;
+  margin-top: 1rem;
+  background: rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.share-preview__image {
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #000;
+}
+
+.share-preview__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.share-preview__actions a,
+.share-preview__actions button {
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  background: transparent;
+  cursor: pointer;
+}
+
+:where(.dark, .dark *) .share-preview {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+:where(.dark, .dark *) .share-preview__image {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+:where(.dark, .dark *) .share-preview__actions a,
+:where(.dark, .dark *) .share-preview__actions button {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--color-zag-light);
+}
+
+.reading-reminder-banner {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  right: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  z-index: 60;
+}
+
+.reading-reminder-banner[hidden] {
+  display: none;
+}
+
+.reading-reminder-banner__label {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-zag-dark-muted);
+}
+
+.reading-reminder-banner__title {
+  font-weight: 600;
+  margin: 0.15rem 0;
+}
+
+.reading-reminder-banner__progress {
+  font-size: 0.8rem;
+  color: var(--color-zag-dark-muted);
+}
+
+.reading-reminder-banner__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reading-reminder-banner__actions button {
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  background: transparent;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+}
+
+.reading-reminder-banner__actions [data-reminder-dismiss] {
+  font-size: 1rem;
+  padding: 0.4rem 0.6rem;
+}
+
+:where(.dark, .dark *) .reading-reminder-banner {
+  background: rgba(15, 23, 42, 0.92);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--color-zag-light);
+}
+
+:where(.dark, .dark *) .reading-reminder-banner__label,
+:where(.dark, .dark *) .reading-reminder-banner__progress {
+  color: var(--color-zag-light-muted);
+}
+
+:where(.dark, .dark *) .reading-reminder-banner__actions button {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--color-zag-light);
 }
 
 .cta-button {

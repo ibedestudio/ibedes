@@ -15,7 +15,7 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
 ---
 
 <section
-  class="rounded-3xl border-2 border-black/70 dark:border-white/60 bg-white/80 dark:bg-zinc-900/70 p-6 flex flex-col gap-8"
+  class="relative block"
   data-engagement
   data-slug={safeSlug}
   data-title={title}
@@ -24,17 +24,6 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
   data-supabase-url={supabaseEnabled ? supabaseUrl : undefined}
   data-supabase-key={supabaseEnabled ? supabaseAnonKey : undefined}
 >
-  <div class="flex flex-col gap-2">
-    <p class="font-display text-xs uppercase tracking-[0.3em] zag-muted">interaksi</p>
-    <h2 class="text-2xl">Terima kasih sudah membaca.</h2>
-    <p class="text-sm text-zag-dark/70 dark:text-zag-light/80">
-      Tinggalkan satu ❤️ atau komentar singkat untuk bantu kami memahami apa yang paling berkesan buatmu.
-      {supabaseEnabled
-        ? "Semua interaksi akan tersimpan aman di Supabase."
-        : "Saat Supabase belum siap, interaksi akan disimpan sementara di browser kamu."}
-    </p>
-  </div>
-
   <div class="engagement-fab" data-floating-controls hidden>
     <button
       type="button"
@@ -48,7 +37,7 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
     <button
       type="button"
       class="engagement-fab__button"
-      data-scroll-comments
+      data-comment-toggle
       aria-label="Buka komentar"
     >
       💬
@@ -69,90 +58,97 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
     <button
       type="button"
       class="engagement-mobile-bar__action"
-      data-scroll-comments
+      data-comment-toggle
       aria-label="Menuju komentar"
     >
       <span aria-hidden="true">💬</span>
       <span class="font-mono text-xs uppercase tracking-[0.3em]">Komentar</span>
     </button>
   </div>
-
-  <div class="flex flex-wrap gap-4">
-    <button
-      type="button"
-      class="relative inline-flex items-center gap-2 rounded-2xl border-2 border-black/70 dark:border-white/70 px-4 py-3 font-mono text-xs uppercase tracking-[0.2em] zag-transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:opacity-60 overflow-visible"
-      data-like-button
-      aria-live="polite"
+  <div
+    class="comment-modal"
+    data-comment-modal
+    hidden
+    aria-hidden="true"
+  >
+    <div class="comment-modal__overlay" data-comment-close></div>
+    <div
+      class="comment-modal__panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="comment-modal-title"
+      data-comment-panel
+      tabindex="-1"
     >
-      <span aria-hidden="true">❤️</span>
-      <span class="font-semibold text-base" data-like-count>0</span>
-      <span class="sr-only">total suka untuk artikel ini</span>
-      <span class="font-mono text-[0.6rem] uppercase tracking-[0.3em]">Suka</span>
-      <span
-        class="pointer-events-none absolute inset-0 overflow-visible"
-        aria-hidden="true"
-        data-like-animator
-      ></span>
-    </button>
-    <p class="text-xs text-zag-dark/70 dark:text-zag-light/70">
-      Kami menyaring spam secara otomatis dan bisa menghapus kiriman yang tidak relevan.
-    </p>
-  </div>
-
-  <div class="flex flex-col gap-4 w-full">
-    <div class="flex flex-col gap-2">
-      <h3 class="font-display text-lg uppercase tracking-[0.2em]">Komentar</h3>
+      <div class="comment-modal__header">
+        <div class="flex flex-col gap-1">
+          <p class="font-display text-xs uppercase tracking-[0.3em] zag-muted">Komentar</p>
+          <h3
+            class="font-display text-lg uppercase tracking-[0.2em]"
+            id="comment-modal-title"
+          >
+            Bagikan responmu
+          </h3>
+        </div>
+        <button
+          type="button"
+          class="comment-modal__close"
+          data-comment-close
+          aria-label="Tutup popup komentar"
+        >
+          ✕
+        </button>
+      </div>
       <p class="text-sm text-zag-dark/80 dark:text-zag-light/80">
         Ceritakan satu hal yang kamu rasakan setelah membaca artikel ini.
       </p>
-    </div>
-    <p
-      class="text-xs text-zag-dark/70 dark:text-zag-light/60"
-      data-loading-state
-    >
-      Menyiapkan data interaksi...
-    </p>
-    <p
-      class="text-sm font-mono uppercase tracking-[0.3em] text-emerald-700 dark:text-emerald-300 hidden"
-      data-status-message
-      aria-live="polite"
-    ></p>
-    <ul class="flex flex-col gap-4" data-comment-list></ul>
-    <p
-      class="text-sm text-zag-dark/70 dark:text-zag-light/70 italic"
-      data-empty-comments
-    >
-      Belum ada komentar. Mulai duluan, yuk?
-    </p>
-    <form class="flex flex-col gap-4" data-comment-form>
-      <label class="flex flex-col gap-1 text-sm">
-        <span>Nama (opsional)</span>
-        <input
-          type="text"
-          name="name"
-          class="rounded-2xl border-2 border-black/40 dark:border-white/40 bg-transparent px-4 py-2 outline-none focus-visible:border-emerald-400"
-          placeholder="Mis. Nadya, Teman Belajar"
-          autocomplete="name"
-        />
-      </label>
-      <label class="flex flex-col gap-1 text-sm">
-        <span>Pesan</span>
-        <textarea
-          name="comment"
-          class="rounded-2xl border-2 border-black/40 dark:border-white/40 bg-transparent px-4 py-2 outline-none focus-visible:border-emerald-400 min-h-[120px]"
-          placeholder="Apa bagian favoritmu, atau apa yang ingin kamu coba setelah ini?"
-          required
-        ></textarea>
-      </label>
-      <button
-        type="submit"
-        class="self-start rounded-2xl border-2 border-black/70 dark:border-white/70 px-4 py-3 font-mono text-xs uppercase tracking-[0.3em] zag-transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:opacity-60"
+      <p
+        class="text-xs text-zag-dark/70 dark:text-zag-light/60"
+        data-loading-state
       >
-        Kirim Komentar
-      </button>
-    </form>
+        Menyiapkan data interaksi...
+      </p>
+      <p
+        class="text-sm font-mono uppercase tracking-[0.3em] text-emerald-700 dark:text-emerald-300 hidden"
+        data-status-message
+        aria-live="polite"
+      ></p>
+      <ul class="flex flex-col gap-4" data-comment-list></ul>
+      <p
+        class="text-sm text-zag-dark/70 dark:text-zag-light/70 italic"
+        data-empty-comments
+      >
+        Belum ada komentar. Mulai duluan, yuk?
+      </p>
+      <form class="flex flex-col gap-4" data-comment-form>
+        <label class="flex flex-col gap-1 text-sm">
+          <span>Nama (opsional)</span>
+          <input
+            type="text"
+            name="name"
+            class="rounded-2xl border-2 border-black/40 dark:border-white/40 bg-transparent px-4 py-2 outline-none focus-visible:border-emerald-400"
+            placeholder="Mis. Nadya, Teman Belajar"
+            autocomplete="name"
+          />
+        </label>
+        <label class="flex flex-col gap-1 text-sm">
+          <span>Pesan</span>
+          <textarea
+            name="comment"
+            class="rounded-2xl border-2 border-black/40 dark:border-white/40 bg-transparent px-4 py-2 outline-none focus-visible:border-emerald-400 min-h-[120px]"
+            placeholder="Apa bagian favoritmu, atau apa yang ingin kamu coba setelah ini?"
+            required
+          ></textarea>
+        </label>
+        <button
+          type="submit"
+          class="self-start rounded-2xl border-2 border-black/70 dark:border-white/70 px-4 py-3 font-mono text-xs uppercase tracking-[0.3em] zag-transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:opacity-60"
+        >
+          Kirim Komentar
+        </button>
+      </form>
+    </div>
   </div>
-
   <script is:inline>
     (() => {
       if (typeof window === "undefined") return;
@@ -169,7 +165,6 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
       const likeButtons = Array.from(root.querySelectorAll("[data-like-button]"));
       const primaryLikeButton = likeButtons[0] ?? null;
       const likeCountEls = Array.from(root.querySelectorAll("[data-like-count]"));
-      const likeAnimator = root.querySelector("[data-like-animator]");
       const commentList = root.querySelector("[data-comment-list]");
       const emptyState = root.querySelector("[data-empty-comments]");
       const form = root.querySelector("[data-comment-form]");
@@ -178,7 +173,10 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
       const submitButton = form?.querySelector?.("button[type='submit']");
       const loadingState = root.querySelector("[data-loading-state]");
       const statusMessage = root.querySelector("[data-status-message]");
-      const commentButtons = Array.from(root.querySelectorAll("[data-scroll-comments]"));
+      const commentModal = root.querySelector("[data-comment-modal]");
+      const commentPanel = commentModal?.querySelector?.("[data-comment-panel]");
+      const commentToggleButtons = Array.from(root.querySelectorAll("[data-comment-toggle]"));
+      const commentCloseButtons = Array.from(root.querySelectorAll("[data-comment-close]"));
       const floatingControls = Array.from(root.querySelectorAll("[data-floating-controls]"));
 
       const likesKey = `ibedes:likes:${slug}`;
@@ -215,6 +213,8 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
       };
 
       let likesState = normalizeLikesState(parseJSON(window.localStorage.getItem(likesKey)));
+      let lastFocusedElement = null;
+      let modalHideTimeout = null;
 
       const setStatusMessage = (message = "", variant = "info") => {
         if (!statusMessage) return;
@@ -264,24 +264,37 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
 
       const userHash = getUserHash();
 
-      const spawnFloatingHeart = () => {
-        if (!likeAnimator) return;
-        const heart = document.createElement("span");
-        heart.className = "floating-heart";
-        heart.textContent = "❤️";
-        heart.style.setProperty("--heart-spread", `${(Math.random() - 0.5) * 40}px`);
-        heart.style.setProperty("--heart-scale", `${0.8 + Math.random() * 0.5}`);
-        likeAnimator.appendChild(heart);
-        heart.addEventListener(
-          "animationend",
-          () => {
-            heart.remove();
-          },
-          { once: true },
-        );
+      const emitFlyingLove = (anchorButton, count = 3) => {
+        if (!anchorButton || !document?.body) return;
+        const floatingRoot = anchorButton.closest("[data-floating-controls]");
+        if (!floatingRoot || window.getComputedStyle(floatingRoot).display === "none") return;
+        const rect = anchorButton.getBoundingClientRect();
+        const originX = rect.left + rect.width / 2;
+        const originY = rect.top + rect.height / 2;
+        const total = Math.max(1, count);
+        for (let i = 0; i < total; i += 1) {
+          const heart = document.createElement("span");
+          heart.className = "love-particle";
+          heart.textContent = Math.random() > 0.6 ? "💖" : "❤️";
+          heart.style.setProperty("--love-left", `${originX}px`);
+          heart.style.setProperty("--love-top", `${originY}px`);
+          heart.style.setProperty("--love-offset-x", `${(Math.random() - 0.5) * 160}px`);
+          heart.style.setProperty("--love-scale", `${0.8 + Math.random() * 0.8}`);
+          heart.style.setProperty("--love-delay", `${i * 70}ms`);
+          heart.style.setProperty("--love-duration", `${1.7 + Math.random() * 0.9}s`);
+          heart.style.setProperty("--love-rotation", `${(Math.random() - 0.5) * 50}deg`);
+          document.body.appendChild(heart);
+          heart.addEventListener(
+            "animationend",
+            () => {
+              heart.remove();
+            },
+            { once: true },
+          );
+        }
       };
 
-      const applyClapLocally = () => {
+      const applyClapLocally = (anchorButton) => {
         likesState = {
           ...likesState,
           count: likesState.count + 1,
@@ -289,7 +302,7 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
         };
         persistLikes();
         updateLikeUI();
-        spawnFloatingHeart();
+        emitFlyingLove(anchorButton, 4);
       };
 
       updateLikeUI();
@@ -323,10 +336,61 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
         }
       };
 
-      commentButtons.forEach((button) => {
-        button.addEventListener("click", () => {
+      const openCommentModal = () => {
+        if (!commentModal) {
           scrollToComments();
+          return;
+        }
+        window.clearTimeout(modalHideTimeout);
+        lastFocusedElement =
+          document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        commentModal.hidden = false;
+        commentModal.setAttribute("aria-hidden", "false");
+        window.requestAnimationFrame(() => {
+          commentModal.classList.add("comment-modal--visible");
         });
+        document.body.classList.add("comment-modal-open");
+        window.setTimeout(() => {
+          commentPanel?.focus();
+        }, 60);
+      };
+
+      const closeCommentModal = () => {
+        if (!commentModal || commentModal.hidden) return;
+        commentModal.classList.remove("comment-modal--visible");
+        commentModal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("comment-modal-open");
+        modalHideTimeout = window.setTimeout(() => {
+          if (!commentModal.classList.contains("comment-modal--visible")) {
+            commentModal.hidden = true;
+          }
+        }, 220);
+        lastFocusedElement?.focus?.();
+        lastFocusedElement = null;
+      };
+
+      commentToggleButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          openCommentModal();
+        });
+      });
+
+      commentCloseButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          closeCommentModal();
+        });
+      });
+
+      commentModal?.addEventListener("click", (event) => {
+        if (event.target === commentModal) {
+          closeCommentModal();
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !commentModal?.hidden) {
+          closeCommentModal();
+        }
       });
 
       const renderEmptyState = () => {
@@ -546,18 +610,18 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
         sendToSupabase();
       });
 
-      const handleSupabaseLike = async () => {
+      const handleSupabaseLike = async (anchorButton = primaryLikeButton) => {
         if (likesState.claps >= MAX_CLAPS) {
           setStatusMessage("Kamu sudah memberi 50 tepuk untuk artikel ini.", "error");
           return;
         }
 
         if (!useRemote) {
-          applyClapLocally();
+          applyClapLocally(anchorButton);
           setStatusMessage(`Tepuk tersimpan di perangkatmu (${likesState.claps}/${MAX_CLAPS}).`);
           return;
         }
-        primaryLikeButton?.setAttribute("data-loading", "true");
+        anchorButton?.setAttribute("data-loading", "true");
         setStatusMessage("Mengirim suka...");
         try {
           const response = await fetch(`${supabaseUrl}/rest/v1/article_likes`, {
@@ -574,7 +638,7 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
           if (!response.ok) {
             throw new Error("Gagal menambahkan suka");
           }
-          applyClapLocally();
+          applyClapLocally(anchorButton);
           setStatusMessage(
             likesState.claps >= MAX_CLAPS
               ? "Terima kasih! Batas 50 tepuk sudah kamu capai."
@@ -584,7 +648,7 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
           console.error(error);
           setStatusMessage("Suka gagal dikirim. Coba lagi.", "error");
         } finally {
-          primaryLikeButton?.removeAttribute("data-loading");
+          anchorButton?.removeAttribute("data-loading");
         }
       };
 
@@ -594,7 +658,7 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
             setStatusMessage("Kamu sudah memberi 50 tepuk untuk artikel ini.", "error");
             return;
           }
-          handleSupabaseLike();
+          handleSupabaseLike(button);
         });
       });
 
@@ -608,6 +672,136 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
 </section>
 
 <style>
+  .comment-modal {
+    position: fixed;
+    inset: 0;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 220ms ease;
+    z-index: 60;
+  }
+
+  .comment-modal[hidden] {
+    display: none;
+  }
+
+  .comment-modal--visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .comment-modal__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(3px);
+  }
+
+  .comment-modal__panel {
+    position: relative;
+    width: min(600px, 100%);
+    max-height: min(90vh, 720px);
+    overflow-y: auto;
+    border-radius: 1.5rem;
+    border: 2px solid rgba(0, 0, 0, 0.7);
+    background: rgba(255, 255, 255, 0.98);
+    padding: 2rem;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transform: translateY(12px);
+    transition: transform 220ms ease;
+  }
+
+  .comment-modal--visible .comment-modal__panel {
+    transform: translateY(0);
+  }
+
+  .comment-modal__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .comment-modal__close {
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background: rgba(0, 0, 0, 0.05);
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1rem;
+    transition: background 150ms ease;
+  }
+
+  .comment-modal__close:hover {
+    background: rgba(16, 185, 129, 0.15);
+  }
+
+  :global(.dark) [data-engagement] .comment-modal__panel {
+    background: rgba(24, 24, 27, 0.96);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #f8fafc;
+    box-shadow: 0 30px 80px rgba(3, 7, 18, 0.9);
+  }
+
+  :global(.dark) [data-engagement] .comment-modal__close {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  :global(body.comment-modal-open) {
+    overflow: hidden;
+  }
+
+  :global(.love-particle) {
+    position: fixed;
+    top: var(--love-top, 0px);
+    left: var(--love-left, 0px);
+    font-size: 1.4rem;
+    animation: loveParticleFloat var(--love-duration, 1.8s) ease-out forwards;
+    animation-delay: var(--love-delay, 0ms);
+    transform: translate3d(0, 0, 0);
+    pointer-events: none;
+    filter: drop-shadow(0 12px 24px rgba(244, 63, 94, 0.45));
+    z-index: 70;
+  }
+
+  @keyframes loveParticleFloat {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 12px, 0)
+        scale(calc(var(--love-scale, 1) * 0.8))
+        rotate(var(--love-rotation, 0deg));
+    }
+    20% {
+      opacity: 1;
+      transform: translate3d(var(--love-offset-x, 0px), -10px, 0)
+        scale(var(--love-scale, 1))
+        rotate(var(--love-rotation, 0deg));
+    }
+    100% {
+      opacity: 0;
+      transform: translate3d(calc(var(--love-offset-x, 0px) * 1.3), -260px, 0)
+        scale(calc(var(--love-scale, 1) + 0.45))
+        rotate(var(--love-rotation, 0deg));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .comment-modal {
+      padding: 1rem;
+    }
+    .comment-modal__panel {
+      padding: 1.25rem;
+      border-radius: 1.25rem;
+    }
+  }
+
   .engagement-floating-container {
     opacity: 0;
     transform: translateY(12px);
@@ -725,35 +919,4 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
     color: #ecfdf5;
   }
 
-  [data-like-animator] {
-    pointer-events: none;
-  }
-
-  :global(.floating-heart) {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1.4rem;
-    animation: heartFloat 900ms cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-    opacity: 0.95;
-    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.2));
-    will-change: transform, opacity;
-  }
-
-  @keyframes heartFloat {
-    0% {
-      transform: translate(-50%, -50%) translateX(var(--heart-spread, 0px))
-        scale(var(--heart-scale, 0.8));
-      opacity: 0.95;
-    }
-    70% {
-      opacity: 1;
-    }
-    100% {
-      transform: translate(-50%, -180%) translateX(calc(var(--heart-spread, 0px) * 1.5))
-        scale(calc(var(--heart-scale, 0.8) + 0.35));
-      opacity: 0;
-    }
-  }
 </style>

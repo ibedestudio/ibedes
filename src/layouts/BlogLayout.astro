@@ -158,7 +158,6 @@ const articleSchema = JSON.stringify(
           data-article-body
           data-article-title={frontmatter.title}
           data-article-url={sourceUrl}
-          data-article-slug={frontmatter.filename}
         >
           <Prose>
             <slot />
@@ -182,35 +181,6 @@ const articleSchema = JSON.stringify(
         }
       </div>
     </Section>
-    <aside
-      class="article-toc"
-      data-toc-container
-      data-visible="false"
-      aria-label="Daftar isi artikel"
-      hidden
-    >
-      <div class="article-toc__header">
-        <div class="article-toc__title-wrap">
-          <p class="article-toc__title">Daftar Isi</p>
-          <span class="article-toc__icon" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-              <path d="M96 64C42.98 64 0 106.1 0 160v256c0 53 42.98 96 96 96h272c44.18 0 80-35.82 80-80V96c0-17.67-14.33-32-32-32H96zm320 368c0 17.64-14.36 32-32 32H96c-35.34 0-64-28.66-64-64s28.66-64 64-64h288v96zm0-128H96c-24.53 0-47.03 7.359-66.07 19.94C28.82 341.2 32 330.9 32 320V160c0-35.34 28.66-64 64-64h320v208z"/>
-            </svg>
-          </span>
-        </div>
-        <button
-          type="button"
-          class="article-toc__toggle"
-          data-toc-toggle
-          aria-expanded="true"
-        >
-          Sembunyikan
-        </button>
-      </div>
-      <nav aria-label="Daftar isi" data-toc-body>
-        <ol data-toc-list></ol>
-      </nav>
-    </aside>
   </div>
 
 </Layout>
@@ -221,23 +191,10 @@ const articleSchema = JSON.stringify(
     const progressBarContainer = document.querySelector("[data-reading-progress]");
     const progressBar = progressBarContainer?.querySelector("span");
     const articleBody = document.querySelector("[data-article-body]");
-    const tocContainer = document.querySelector("[data-toc-container]");
-    const tocList = document.querySelector("[data-toc-list]");
-    const tocToggle = tocContainer?.querySelector("[data-toc-toggle]");
-    const tocBody = tocContainer?.querySelector("[data-toc-body]");
     const articleTitle = articleBody?.getAttribute("data-article-title") ?? document.title;
     const articleSourceUrl = articleBody?.getAttribute("data-article-url") ?? window.location.href;
-    const articleSlug = articleBody?.getAttribute("data-article-slug") ?? "";
 
     const clamp = (value, min = 0, max = 1) => Math.min(Math.max(value, min), max);
-    const slugify = (value = "") =>
-      value
-        .toString()
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, "")
-        .replace(/\s+/g, "-")
-        .replace(/-+/g, "-");
 
     const milestoneEls = progressBarContainer
       ? Array.from(progressBarContainer.querySelectorAll("[data-milestone]"))
@@ -279,55 +236,6 @@ const articleSchema = JSON.stringify(
     updateProgress();
 
     if (!articleBody) return;
-
-    const setTocState = (collapsed) => {
-      if (!tocContainer || !tocToggle) return;
-      tocContainer.dataset.collapsed = collapsed ? "true" : "false";
-      tocToggle.textContent = collapsed ? "Tampilkan" : "Sembunyikan";
-      tocToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
-    };
-
-    const isMobile = () => window.matchMedia("(max-width: 1023px)").matches;
-
-    const initializeTocState = () => {
-      if (!tocContainer || !tocToggle) return;
-      setTocState(isMobile());
-    };
-
-    tocToggle?.addEventListener("click", () => {
-      if (!tocContainer) return;
-      const collapsed = tocContainer.dataset.collapsed === "true";
-      setTocState(collapsed ? false : isMobile() ? true : false);
-    });
-
-    window.addEventListener("resize", () => {
-      initializeTocState();
-    });
-
-    if (tocContainer && tocList) {
-      const headingMap = {};
-      const headings = Array.from(articleBody.querySelectorAll("h2, h3"));
-      if (headings.length) {
-        tocContainer.dataset.visible = "true";
-        tocContainer.removeAttribute("hidden");
-        headings.forEach((heading) => {
-          const text = heading.textContent?.trim();
-          if (!text) return;
-          const baseSlug = slugify(text);
-          headingMap[baseSlug] = (headingMap[baseSlug] ?? 0) + 1;
-          const finalSlug = headingMap[baseSlug] > 1 ? `${baseSlug}-${headingMap[baseSlug]}` : baseSlug;
-          if (!heading.id) heading.id = finalSlug;
-          const item = document.createElement("li");
-          item.dataset.level = heading.tagName.toLowerCase();
-          const link = document.createElement("a");
-          link.href = `#${finalSlug}`;
-          link.textContent = text;
-          item.appendChild(link);
-          tocList.appendChild(item);
-        });
-        initializeTocState();
-      }
-    }
 
     const markerPattern = /^\s*\[!highlight\]\s*/i;
     const blockquotes = Array.from(articleBody.querySelectorAll("blockquote"));

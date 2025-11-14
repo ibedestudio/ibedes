@@ -17,6 +17,9 @@ export type ServiceDetail = {
   summary: string;
   intro: string;
   bestFor: string;
+  goals: string[];
+  challenges: string[];
+  budgetLevels: string[];
   problems: string[];
   priceList: ServicePriceTier[];
   benefits: string[];
@@ -33,6 +36,9 @@ export const SERVICES: ServiceDetail[] = [
     intro:
       "Kami bantu urus kalender konten, copywriting, sampai report performa supaya kamu fokus ke operasional bisnis.",
     bestFor: "UMKM, brand lokal, dan kreator yang butuh presence konsisten.",
+    goals: ["awareness", "engagement", "content-system"],
+    challenges: ["tim-kecil", "butuh-guideline"],
+    budgetLevels: ["hemat", "menengah", "premium"],
     problems: [
       "Konten berhenti karena tim kecil",
       "Tidak ada guideline visual dan tone",
@@ -107,6 +113,9 @@ export const SERVICES: ServiceDetail[] = [
     intro:
       "Bangun landing page atau company profile dengan performa tinggi menggunakan stack modern (Astro + Tailwind).",
     bestFor: "Founder, agen kreatif, atau brand yang butuh rumah digital yang solid.",
+    goals: ["website", "credibility", "automation"],
+    challenges: ["butuh-guideline", "kejar-timeline"],
+    budgetLevels: ["menengah", "premium"],
     problems: [
       "Website lama lambat dan sulit di-update",
       "Belum punya struktur konten yang jelas",
@@ -181,6 +190,9 @@ export const SERVICES: ServiceDetail[] = [
     intro:
       "Kami bantu dari riset audiens, materi iklan, sampai optimasi harian supaya budget iklan tidak kebakar percuma.",
     bestFor: "Bisnis dengan produk jelas yang ingin scale lewat Meta Ads / Google Ads.",
+    goals: ["ads", "sales", "awareness"],
+    challenges: ["budget-terbatas", "butuh-guideline", "kejar-timeline"],
+    budgetLevels: ["menengah", "premium"],
     problems: [
       "CPC mahal tapi leads nihil",
       "Tidak ada funnel iklan yang rapi",
@@ -255,6 +267,9 @@ export const SERVICES: ServiceDetail[] = [
     intro:
       "Sesi konsultasi 1:1 untuk audit channel, tentukan prioritas, dan susun action plan yang realistis.",
     bestFor: "Owner atau marketer yang butuh second opinion sebelum eksekusi.",
+    goals: ["strategy", "roadmap", "team-upskilling"],
+    challenges: ["budget-terbatas", "butuh-guideline", "tim-kecil"],
+    budgetLevels: ["hemat", "menengah"],
     problems: [
       "Bingung pilih channel yang efektif",
       "Budget terbatas tapi target besar",
@@ -329,6 +344,9 @@ export const SERVICES: ServiceDetail[] = [
     intro:
       "Mulai dari shortlist influencer, negosiasi, hingga laporan performa kampanye.",
     bestFor: "Brand yang ingin boost awareness dengan influencer relevan.",
+    goals: ["awareness", "kol", "launch"],
+    challenges: ["kejar-timeline", "butuh-guideline"],
+    budgetLevels: ["menengah", "premium"],
     problems: [
       "Sulit memilih KOL yang audiensnya cocok",
       "Proses negosiasi memakan waktu",

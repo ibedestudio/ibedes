@@ -46,6 +46,49 @@ const contactChannels = [
   { label: "Lokasi", value: contactLocation },
 ];
 
+const goalOptions = [
+  { value: "content-system", label: "Konten sosial media konsisten" },
+  { value: "website", label: "Bangun / upgrade website" },
+  { value: "ads", label: "Iklan digital & konversi" },
+  { value: "strategy", label: "Sparring & konsultasi strategi" },
+  { value: "kol", label: "Kolaborasi dengan KOL" },
+  { value: "awareness", label: "Perkuat awareness brand" },
+];
+
+const challengeOptions = [
+  { value: "tim-kecil", label: "Tim internal kecil" },
+  { value: "butuh-guideline", label: "Butuh guideline & struktur" },
+  { value: "budget-terbatas", label: "Budget harus efisien" },
+  { value: "kejar-timeline", label: "Kejar timeline atau kampanye tertentu" },
+];
+
+const budgetOptions = [
+  { value: "hemat", label: "< Rp3 juta" },
+  { value: "menengah", label: "Rp3-6 juta" },
+  { value: "premium", label: "> Rp6 juta" },
+  { value: "fleksibel", label: "Belum tahu, rekomendasikan saja" },
+];
+
+const recommendationServices = SERVICES.map((service) => {
+  const highlightTier = service.priceList.find((tier) => tier.highlight) ?? service.priceList[0];
+  return {
+    slug: service.slug,
+    title: service.title,
+    summary: service.summary,
+    url: `/services/${service.slug}`,
+    goals: service.goals,
+    challenges: service.challenges,
+    budgetLevels: service.budgetLevels,
+    highlightTier: highlightTier
+      ? {
+          name: highlightTier.name,
+          price: highlightTier.price,
+          description: highlightTier.description,
+        }
+      : null,
+  };
+});
+
 ---
 
 <Layout>
@@ -104,6 +147,303 @@ const contactChannels = [
         }
       </div>
     </div>
+  </Section>
+
+  <Section class="py-12">
+    <div class="rounded-3xl border border-black/10 dark:border-white/15 bg-white/70 dark:bg-zinc-900/60 p-6 md:p-10">
+      <div class="grid gap-8 sm:gap-10 grid-cols-1 lg:grid-cols-[1fr,1.1fr] lg:items-start">
+        <div class="space-y-5">
+          <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">
+            Butuh saran cepat?
+          </p>
+          <h2 class="text-2xl sm:text-3xl font-display leading-tight">
+            Rekomendasi layanan interaktif
+          </h2>
+          <p class="text-base sm:text-lg max-w-xl">
+            Jawab tiga pertanyaan singkat dan kami tunjukkan layanan + paket yang paling mendekati kebutuhanmu. Tanpa form panjang, bisa langsung lanjut konsultasi bila cocok.
+          </p>
+          <ul class="space-y-3 text-sm">
+            <li class="flex gap-3">
+              <span aria-hidden="true">①</span>
+              <span>Isi tujuan, kendala utama, dan kisaran budget.</span>
+            </li>
+            <li class="flex gap-3">
+              <span aria-hidden="true">②</span>
+              <span>Lihat rekomendasi layanan beserta paket yang kami sarankan.</span>
+            </li>
+            <li class="flex gap-3">
+              <span aria-hidden="true">③</span>
+              <span>Langsung klik untuk pelajari detail atau hubungi tim kami.</span>
+            </li>
+          </ul>
+        </div>
+        <div class="rounded-3xl border border-black/10 dark:border-white/15 bg-white dark:bg-zinc-900/80 shadow-[0_10px_40px_rgba(15,15,15,0.08)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] p-5 sm:p-6 space-y-5">
+          <form class="space-y-4" data-recommendation-form>
+            <label class="flex flex-col gap-2 text-sm">
+              <span class="font-semibold">Tujuan utama</span>
+              <select
+                class="rounded-2xl border border-black/15 dark:border-white/25 bg-transparent px-4 py-3 outline-none focus-visible:border-emerald-400 text-sm w-full"
+                name="goal"
+              >
+                <option value="">Pilih salah satu</option>
+                {goalOptions.map((goal) => (
+                  <option value={goal.value}>{goal.label}</option>
+                ))}
+              </select>
+            </label>
+
+            <label class="flex flex-col gap-2 text-sm">
+              <span class="font-semibold">Tantangan yang paling kerasa</span>
+              <select
+                class="rounded-2xl border border-black/15 dark:border-white/25 bg-transparent px-4 py-3 outline-none focus-visible:border-emerald-400 text-sm w-full"
+                name="challenge"
+              >
+                <option value="">Pilih salah satu</option>
+                {challengeOptions.map((challenge) => (
+                  <option value={challenge.value}>{challenge.label}</option>
+                ))}
+              </select>
+            </label>
+
+            <label class="flex flex-col gap-2 text-sm">
+              <span class="font-semibold">Kisaran budget</span>
+              <select
+                class="rounded-2xl border border-black/15 dark:border-white/25 bg-transparent px-4 py-3 outline-none focus-visible:border-emerald-400 text-sm w-full"
+                name="budget"
+              >
+                <option value="">Pilih salah satu</option>
+                {budgetOptions.map((budget) => (
+                  <option value={budget.value}>{budget.label}</option>
+                ))}
+              </select>
+            </label>
+
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2 text-xs text-zag-dark/70 dark:text-zag-light/70">
+              <p>Jawabanmu langsung diproses otomatis.</p>
+              <button
+                type="button"
+                class="underline underline-offset-4 hover:text-emerald-600 dark:hover:text-emerald-300 self-start sm:self-auto"
+                data-recommendation-reset
+              >
+                Reset
+              </button>
+            </div>
+          </form>
+
+          <div
+            class="rounded-2xl border border-dashed border-black/20 dark:border-white/25 p-4 space-y-3 bg-white/60 dark:bg-zinc-900/60"
+            data-recommendation-output
+          >
+            <p class="text-sm">
+              Pilih minimal satu opsi untuk memunculkan rekomendasi.
+            </p>
+            <p class="text-xs text-zag-dark/70 dark:text-zag-light/70">
+              Tips: kombinasi tujuan + budget akan memberi hasil yang lebih akurat.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      type="application/json"
+      id="service-recommendation-data"
+      set:html={JSON.stringify(recommendationServices)}
+    ></script>
+
+    <script is:inline>
+      (() => {
+        if (typeof window === "undefined") return;
+
+        const dataScript = document.getElementById("service-recommendation-data");
+        const form = document.querySelector("[data-recommendation-form]");
+        const output = document.querySelector("[data-recommendation-output]");
+        const resetButton = document.querySelector("[data-recommendation-reset]");
+
+        if (!dataScript || !form || !output) return;
+
+        let services = [];
+        try {
+          services = JSON.parse(dataScript.textContent || "[]");
+        } catch (error) {
+          console.error("Gagal memuat data rekomendasi layanan", error);
+          return;
+        }
+
+        const escapeHtml = (value) =>
+          String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+
+        const defaultView = () => {
+          output.innerHTML = `
+            <p class="text-sm">Pilih minimal satu opsi untuk memunculkan rekomendasi.</p>
+            <p class="text-xs text-zag-dark/70 dark:text-zag-light/70">
+              Tips: kombinasi tujuan + budget akan memberi hasil yang lebih akurat.
+            </p>
+          `;
+        };
+
+        const getState = () => {
+          const formData = new FormData(form);
+          return {
+            goal: formData.get("goal")?.toString() ?? "",
+            challenge: formData.get("challenge")?.toString() ?? "",
+            budget: formData.get("budget")?.toString() ?? "",
+          };
+        };
+
+        const scoreService = (service, state) => {
+          const matches = {
+            goal: state.goal ? service.goals.includes(state.goal) : false,
+            challenge: state.challenge ? service.challenges.includes(state.challenge) : false,
+            budget:
+              state.budget && state.budget !== "fleksibel"
+                ? service.budgetLevels.includes(state.budget)
+                : false,
+          };
+
+          let score = 0;
+          if (matches.goal) score += 4;
+          if (matches.challenge) score += 3;
+          if (matches.budget) score += 2;
+          if (state.budget === "fleksibel") score += 1; // user masih eksplor
+
+          // sedikit dorong layanan yang memang spesifik sesuai goal tertentu
+          if (state.goal === "kol" && service.slug === "kol-specialist") score += 2;
+          if (state.goal === "strategy" && service.slug === "digital-marketing-consulting") score += 2;
+
+          return { ...service, matches, score };
+        };
+
+        const renderRecommendation = (service, alternatives, state) => {
+          if (!service) {
+            output.innerHTML = `
+              <p class="text-sm">Belum ada rekomendasi yang pas. Coba ubah kombinasi pilihanmu.</p>
+            `;
+            return;
+          }
+
+          const matchLabels = [];
+          if (service.matches.goal) matchLabels.push("Tujuan sesuai");
+          if (service.matches.challenge) matchLabels.push("Menjawab tantanganmu");
+          if (service.matches.budget || state.budget === "fleksibel")
+            matchLabels.push("Selaras dengan budget");
+
+          const highlight = service.highlightTier ?? {};
+          const badgeMarkup = matchLabels
+            .map(
+              (label) => `
+                <span class="text-xs uppercase tracking-[0.25em] px-3 py-1 rounded-full border border-black/15 dark:border-white/25">
+                  ${escapeHtml(label)}
+                </span>
+              `
+            )
+            .join("");
+
+          const alternativeMarkup = alternatives.length
+            ? `
+              <div class="pt-4 mt-2 border-t border-dashed border-black/15 dark:border-white/20 space-y-2">
+                <p class="text-xs uppercase tracking-[0.25em] zag-muted">Alternatif lain</p>
+                <ul class="space-y-1 text-sm">
+                  ${alternatives
+                    .map(
+                      (alt) => `
+                        <li>
+                          <a href="${escapeHtml(alt.url)}" class="underline decoration-dotted underline-offset-4 hover:text-emerald-600 dark:hover:text-emerald-300">
+                            ${escapeHtml(alt.title)}
+                          </a>
+                        </li>
+                      `
+                    )
+                    .join("")}
+                </ul>
+              </div>
+            `
+            : "";
+
+          const highlightMarkup = highlight?.price
+            ? `
+              <div class="rounded-2xl border border-black/15 dark:border-white/20 p-4 space-y-1 bg-white/70 dark:bg-zinc-900/60">
+                <p class="text-xs uppercase tracking-[0.3em] zag-muted">Paket disarankan</p>
+                <p class="text-lg font-display">${escapeHtml(highlight.price)}</p>
+                <p class="text-sm font-semibold">${escapeHtml(highlight.name ?? "")}</p>
+                <p class="text-xs text-zag-dark/70 dark:text-zag-light/70">${escapeHtml(
+                  highlight.description ?? ""
+                )}</p>
+              </div>
+            `
+            : "";
+
+          output.innerHTML = `
+            <div class="space-y-4">
+              <div class="space-y-2">
+                <p class="text-xs uppercase tracking-[0.35em] zag-muted">Rekomendasi utama</p>
+                <h3 class="text-xl font-display">${escapeHtml(service.title)}</h3>
+                <p class="text-sm leading-relaxed text-zag-dark/80 dark:text-zag-light/80">
+                  ${escapeHtml(service.summary)}
+                </p>
+              </div>
+              ${badgeMarkup ? `<div class="flex flex-wrap gap-2">${badgeMarkup}</div>` : ""}
+              ${highlightMarkup}
+              <a
+                href="${escapeHtml(service.url)}"
+                class="cta-button cta-button--primary w-full sm:w-auto text-center"
+              >
+                Pelajari layanan
+              </a>
+              ${alternativeMarkup}
+            </div>
+          `;
+        };
+
+        const handleChange = () => {
+          const state = getState();
+          const hasInput = Boolean(state.goal || state.challenge || state.budget);
+
+          if (!hasInput) {
+            defaultView();
+            return;
+          }
+
+          const scored = services
+            .map((service) => scoreService(service, state))
+            .sort((a, b) => {
+              if (b.score === a.score) {
+                return a.title.localeCompare(b.title);
+              }
+              return b.score - a.score;
+            });
+
+          const best = scored[0];
+          if (!best) {
+            defaultView();
+            return;
+          }
+
+          const alternatives = scored
+            .slice(1)
+            .filter((item) => item.score >= Math.max(best.score - 2, 1))
+            .slice(0, 2);
+          renderRecommendation(best, alternatives, state);
+        };
+
+        form.addEventListener("change", handleChange);
+        form.addEventListener("input", handleChange);
+
+        if (resetButton) {
+          resetButton.addEventListener("click", () => {
+            form.reset();
+            defaultView();
+          });
+        }
+
+        defaultView();
+      })();
+    </script>
   </Section>
 
   <Section class="py-12 space-y-6">

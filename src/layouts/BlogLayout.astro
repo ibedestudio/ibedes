@@ -183,6 +183,36 @@ const articleSchema = JSON.stringify(
     </Section>
   </div>
 
+  <div
+    class="selection-share"
+    data-selection-share
+    hidden
+    aria-hidden="true"
+  >
+    <div class="selection-share__actions">
+      <button
+        type="button"
+        class="selection-share__button"
+        data-selection-copy
+        data-default-label="Salin"
+        aria-label="Salin teks yang dipilih"
+      >
+        <i class="fa-regular fa-copy" aria-hidden="true"></i>
+        <span>Salin</span>
+      </button>
+      <button
+        type="button"
+        class="selection-share__button selection-share__button--accent"
+        data-selection-share-action
+        data-default-label="Bagikan"
+        aria-label="Bagikan teks yang dipilih"
+      >
+        <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
+        <span>Bagikan</span>
+      </button>
+    </div>
+  </div>
+
 </Layout>
 
 <script is:inline>
@@ -366,5 +396,221 @@ const articleSchema = JSON.stringify(
       actions.append(copyButton, shareButton);
       blockquote.appendChild(actions);
     });
+
+    const selectionPopover = document.querySelector("[data-selection-share]");
+    const selectionCopyBtn = selectionPopover?.querySelector("[data-selection-copy]");
+    const selectionShareBtn = selectionPopover?.querySelector("[data-selection-share-action]");
+    const MIN_SELECTION_LENGTH = 20;
+    let currentSelectionText = "";
+
+    const hideSelectionPopover = () => {
+      if (!selectionPopover) return;
+      selectionPopover.hidden = true;
+      selectionPopover.removeAttribute("data-visible");
+    };
+
+    const positionSelectionPopover = (rect) => {
+      if (!selectionPopover) return;
+      const scrollX = window.scrollX || document.documentElement.scrollLeft || 0;
+      const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      const top = scrollY + rect.top - 12;
+      const centerX = scrollX + rect.left + rect.width / 2;
+      selectionPopover.style.setProperty("--selection-share-left", `${centerX}px`);
+      selectionPopover.style.setProperty("--selection-share-top", `${top}px`);
+      selectionPopover.hidden = false;
+      selectionPopover.setAttribute("data-visible", "true");
+    };
+
+    const getSelectionRect = (selection) => {
+      if (!selection || selection.rangeCount === 0) return null;
+      try {
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        if (rect && (rect.width || rect.height)) return rect;
+        const clientRects = range.getClientRects();
+        return clientRects.length ? clientRects[0] : null;
+      } catch {
+        return null;
+      }
+    };
+
+    const handleSelectionChange = () => {
+      if (!selectionPopover) return;
+      const selection = window.getSelection();
+      if (!selection || selection.isCollapsed) {
+        hideSelectionPopover();
+        return;
+      }
+      const text = selection.toString().trim();
+      if (text.length < MIN_SELECTION_LENGTH) {
+        hideSelectionPopover();
+        return;
+      }
+      const rect = getSelectionRect(selection);
+      if (!rect) {
+        hideSelectionPopover();
+        return;
+      }
+      currentSelectionText = text;
+      positionSelectionPopover(rect);
+    };
+
+    const handleSelectionCopy = async () => {
+      if (!currentSelectionText || !selectionCopyBtn) return;
+      try {
+        await writeToClipboard(currentSelectionText);
+        flashState(selectionCopyBtn, "success", "Disalin!");
+      } catch (error) {
+        console.error(error);
+        flashState(selectionCopyBtn, "error", "Gagal");
+      }
+    };
+
+    const handleSelectionShare = async () => {
+      if (!currentSelectionText || !selectionShareBtn) return;
+      const payload = {
+        title: articleTitle,
+        text: currentSelectionText,
+        url: articleSourceUrl,
+      };
+      if (navigator.share) {
+        try {
+          await navigator.share(payload);
+          flashState(selectionShareBtn, "success", "Dibagikan!");
+          hideSelectionPopover();
+          return;
+        } catch (error) {
+          if (error?.name === "AbortError") {
+            return;
+          }
+          console.error(error);
+        }
+      }
+      try {
+        await writeToClipboard(`${currentSelectionText}\n\n${articleTitle}\n${articleSourceUrl}`);
+        flashState(selectionShareBtn, "success", "Link siap!");
+      } catch (error) {
+        console.error(error);
+        flashState(selectionShareBtn, "error", "Gagal");
+      }
+    };
+
+    selectionCopyBtn?.addEventListener("click", handleSelectionCopy);
+    selectionShareBtn?.addEventListener("click", handleSelectionShare);
+
+    const handlePointerUp = () => {
+      window.setTimeout(handleSelectionChange, 10);
+    };
+
+    document.addEventListener("selectionchange", handleSelectionChange);
+    document.addEventListener("mouseup", handlePointerUp);
+    document.addEventListener("keyup", (event) => {
+      if (event.key === "Escape") {
+        hideSelectionPopover();
+        window.getSelection()?.removeAllRanges();
+        return;
+      }
+      handleSelectionChange();
+    });
+    document.addEventListener("touchend", handlePointerUp, { passive: true });
+    window.addEventListener("scroll", hideSelectionPopover, { passive: true });
   })();
 </script>
+
+<style>
+  .selection-share {
+    position: absolute;
+    left: var(--selection-share-left, -9999px);
+    top: var(--selection-share-top, -9999px);
+    transform: translate(-50%, calc(-100% - 12px));
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 160ms ease, transform 160ms ease;
+  }
+
+  .selection-share[data-visible="true"] {
+    opacity: 1;
+    transform: translate(-50%, calc(-100% - 16px));
+  }
+
+  .selection-share__actions {
+    position: relative;
+    display: inline-flex;
+    gap: 0.35rem;
+    padding: 0.35rem;
+    border-radius: 999px;
+    border: 2px solid rgba(0, 0, 0, 0.7);
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.25);
+    pointer-events: auto;
+  }
+
+  .selection-share__actions::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -8px;
+    transform: translateX(-50%);
+    border-width: 8px 8px 0 8px;
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.95) transparent transparent transparent;
+    filter: drop-shadow(0 2px 4px rgba(15, 23, 42, 0.25));
+  }
+
+  .selection-share__button {
+    border: none;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #111;
+  }
+
+  .selection-share__button i {
+    font-size: 0.9rem;
+  }
+
+  .selection-share__button--accent {
+    background: rgba(16, 185, 129, 0.12);
+    color: #047857;
+  }
+
+  :global(.dark) .selection-share__actions {
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(24, 24, 27, 0.95);
+  }
+
+  :global(.dark) .selection-share__actions::after {
+    border-color: rgba(24, 24, 27, 0.95) transparent transparent transparent;
+  }
+
+  :global(.dark) .selection-share__button {
+    color: #f4f4f5;
+  }
+
+  :global(.dark) .selection-share__button--accent {
+    color: #bbf7d0;
+  }
+
+  @media (max-width: 640px) {
+    .selection-share__actions {
+      padding: 0.25rem;
+    }
+
+    .selection-share__button {
+      padding: 0.3rem 0.7rem;
+      font-size: 0.75rem;
+    }
+
+    .selection-share__button i {
+      font-size: 0.8rem;
+    }
+  }
+</style>

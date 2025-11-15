@@ -2,7 +2,6 @@
 import { GLOBAL } from "../lib/variables";
 import Anchor from "./common/Anchor.astro";
 import ThemeToggle from "./ThemeToggle.astro";
-import NotificationCenter from "./NotificationCenter.astro";
 import EnhancedSearch from "./EnhancedSearch.astro";
 ---
 
@@ -12,7 +11,7 @@ import EnhancedSearch from "./EnhancedSearch.astro";
   <div
     class="zag-bg zag-transition sm:hidden relative z-50 py-4 px-4 flex items-center justify-between"
   >
-    <button class="p-2" aria-label="Toggle navigation menu" data-nav-toggle>
+    <button class="p-2" aria-label="Toggle navigation menu" aria-expanded="false" data-nav-toggle>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="32"
@@ -42,39 +41,18 @@ import EnhancedSearch from "./EnhancedSearch.astro";
           />
         </svg>
       </button>
-      <button
-        type="button"
-        class="p-2 rounded-full border border-black/20 dark:border-white/30 sm:hidden relative"
-        aria-label="Notifikasi"
-        data-notification-toggle
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          class="w-6 h-6 zag-fill zag-transition"
-          aria-hidden="true"
-        >
-          <path
-            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-            fill="currentColor"
-          />
-        </svg>
-        <!-- Notification badge -->
-        <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full hidden" data-notification-badge></div>
-      </button>
     </div>
   </div>
   <nav
-    class="zag-bg zag-border-b zag-transition fixed sm:relative inset-x-0 top-0 h-auto sm:px-4 flex flex-col gap-5 py-4 text-lg sm:text-xl sm:flex-row sm:items-center sm:justify-between sm:gap-4 max-w-4xl mx-auto sm:pt-4 sm:border-none"
+    class="zag-bg zag-border-b zag-transition fixed sm:relative inset-x-0 top-16 sm:top-0 h-auto sm:px-4 flex flex-col gap-5 py-4 text-lg sm:text-xl sm:flex-row sm:items-center sm:justify-between sm:gap-4 max-w-4xl mx-auto sm:pt-4 sm:border-none z-40 hidden sm:flex"
+    id="main-nav"
   >
     <div
-      class="flex flex-col font-mono font-medium gap-3 sm:flex-row sm:gap-5 px-4 sm:px-0 mt-16 sm:mt-0 sm:flex-nowrap sm:items-center sm:text-left sm:flex-1"
+      class="flex flex-col font-mono font-medium gap-3 sm:flex-row sm:gap-5 px-4 sm:px-0 sm:flex-nowrap sm:items-center sm:text-left sm:flex-1"
     >
     {Object.entries(GLOBAL.menu).map((i) => (
       <Anchor url={i[1]}>{i[0]}</Anchor>
     ))}
-    <!-- Analytics Link -->
-    <Anchor url="/analytics">📊 Analytics</Anchor>
     </div>
     <div class="flex gap-3 justify-between px-4 sm:px-0 items-center sm:justify-end sm:flex-shrink-0">
       {GLOBAL.githubProfile && (<Anchor url={GLOBAL.githubProfile} aria-label="Zaggonaut GitHub Repository">
@@ -115,38 +93,12 @@ import EnhancedSearch from "./EnhancedSearch.astro";
         </span>
       </button>
       
-      <!-- Notification Bell -->
-      <button
-        type="button"
-        class="hidden sm:inline-flex items-center gap-2 border border-black/20 dark:border-white/30 rounded-full px-3 py-2 relative"
-        data-notification-toggle
-        aria-label="Notifikasi"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          class="w-4 h-4 zag-fill zag-transition"
-          aria-hidden="true"
-        >
-          <path
-            d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"
-            fill="currentColor"
-          />
-        </svg>
-        <span class="text-[10px] uppercase tracking-[0.35em]">Notifikasi</span>
-        <!-- Notification badge -->
-        <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full hidden" data-notification-badge></div>
-      </button>
-      
       <ThemeToggle />
     </div>
   </nav>
   
   <!-- Enhanced Search Component -->
   <EnhancedSearch isOpen={false} />
-  
-  <!-- Notification Center Component -->
-  <NotificationCenter isOpen={false} />
 </header>
 
 <script>
@@ -155,59 +107,52 @@ const nav = document.querySelector("header nav");
 let isNavOpen = false;
 
 // Enhanced search functionality
-const searchToggle = document.querySelector("[data-enhanced-search-toggle]");
+const searchToggle = document.querySelectorAll("[data-enhanced-search-toggle]");
 const searchComponent = document.querySelector("[data-enhanced-search]");
-
-// Notification functionality
-const notificationToggle = document.querySelectorAll("[data-notification-toggle]");
-const notificationComponent = document.querySelector("[data-notification-center]");
-const notificationBadge = document.querySelectorAll("[data-notification-badge]");
 
 const updateNavState = () => {
   if (!nav) return;
   const isMobile = window.matchMedia("(max-width: 640px)").matches;
   if (isMobile) {
-    nav.style.transform = isNavOpen ? "translateY(0)" : "translateY(-100%)";
+    const navElement = nav as HTMLElement;
+    if (isNavOpen) {
+      navElement.classList.remove("hidden");
+      navElement.classList.add("flex");
+    } else {
+      navElement.classList.add("hidden");
+      navElement.classList.remove("flex");
+    }
   } else {
-    nav.style.transform = "translateY(0)";
+    const navElement = nav as HTMLElement;
+    navElement.classList.remove("hidden");
+    navElement.classList.add("flex");
     isNavOpen = false;
+    const toggleButton = document.querySelector("[data-nav-toggle]") as HTMLElement;
+    if (toggleButton) {
+      toggleButton.setAttribute("aria-expanded", "false");
+    }
   }
 };
 
 const toggleNav = () => {
   isNavOpen = !isNavOpen;
+  const toggleButton = document.querySelector("[data-nav-toggle]") as HTMLElement;
+  if (toggleButton) {
+    toggleButton.setAttribute("aria-expanded", isNavOpen.toString());
+  }
   updateNavState();
 };
 
 const toggleSearch = () => {
   if (searchComponent) {
-    searchComponent.style.display = searchComponent.style.display === 'none' ? 'block' : 'none';
+    const searchElement = searchComponent as HTMLElement;
+    searchElement.classList.toggle('hidden');
   }
-};
-
-const toggleNotifications = () => {
-  if (notificationComponent) {
-    notificationComponent.style.display = notificationComponent.style.display === 'none' ? 'block' : 'none';
-  }
-};
-
-// Update notification badge
-const updateNotificationBadge = () => {
-  // This would check for unread notifications
-  const hasUnread = false; // Placeholder - implement actual check
-  notificationBadge.forEach(badge => {
-    if (hasUnread) {
-      badge.classList.remove('hidden');
-    } else {
-      badge.classList.add('hidden');
-    }
-  });
 };
 
 // Event listeners
 navToggle?.addEventListener("click", toggleNav);
-searchToggle?.addEventListener("click", toggleSearch);
-notificationToggle?.forEach(btn => btn.addEventListener("click", toggleNotifications));
+searchToggle?.forEach(btn => btn.addEventListener("click", toggleSearch));
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
@@ -219,11 +164,9 @@ document.addEventListener('keydown', (e) => {
   
   // ESC to close modals
   if (e.key === 'Escape') {
-    if (searchComponent && searchComponent.style.display !== 'none') {
-      searchComponent.style.display = 'none';
-    }
-    if (notificationComponent && notificationComponent.style.display !== 'none') {
-      notificationComponent.style.display = 'none';
+    if (searchComponent) {
+      const searchElement = searchComponent as HTMLElement;
+      searchElement.classList.add('hidden');
     }
   }
 });
@@ -231,7 +174,6 @@ document.addEventListener('keydown', (e) => {
 // Initialize
 window.addEventListener("resize", updateNavState);
 updateNavState();
-updateNotificationBadge();
 
 // Check for service worker updates
 if ('serviceWorker' in navigator) {

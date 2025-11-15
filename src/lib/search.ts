@@ -7,6 +7,7 @@ export type SearchItem = {
   url: string;
   type: "article" | "service" | "project";
   tags?: string[];
+  timestamp?: string;
 };
 
 /**
@@ -25,6 +26,7 @@ export const getSearchItems = async (): Promise<SearchItem[]> => {
     url: article.filename,
     type: "article",
     tags: article.tags,
+    timestamp: article.timestamp,
   }));
 
   const projectItems: SearchItem[] = projects.map((project) => ({
@@ -33,6 +35,7 @@ export const getSearchItems = async (): Promise<SearchItem[]> => {
     url: project.filename,
     type: "project",
     tags: project.tags,
+    timestamp: project.timestamp,
   }));
 
   const serviceItems: SearchItem[] = SERVICES.map((service) => ({

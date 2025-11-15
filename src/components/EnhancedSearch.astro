@@ -3,26 +3,28 @@
 import { getSearchItems } from "../lib/search";
 
 interface Props {
-  isOpen: boolean;
+   isOpen: boolean;
 }
 
 const { isOpen } = Astro.props;
 
-// Get search items
+// Get search items for initial render and tag extraction
 const searchItems = await getSearchItems();
 
 // Extract all available tags
 const allTags = [...new Set(searchItems.flatMap(item => item.tags || []))].sort();
+
+// For client-side, we'll fetch fresh data from API
+const searchItemsJSON = JSON.stringify([]);
 ---
 
-{isOpen && (
-  <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-16" data-enhanced-search>
+<div class={`fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-16 ${isOpen ? '' : 'hidden'}`} data-enhanced-search>
     <div class="command-panel w-full max-w-4xl max-h-[90vh] overflow-hidden">
       <!-- Search Header -->
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-bold zag-text font-display">Pencarian Cerdas</h2>
         <button
-          onclick="this.closest('[data-enhanced-search]').style.display='none'"
+          onclick="this.closest('[data-enhanced-search]').classList.add('hidden')"
           class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,7 +40,6 @@ const allTags = [...new Set(searchItems.flatMap(item => item.tags || []))].sort(
           placeholder="Cari artikel, layanan, atau proyek..."
           class="command-panel__input"
           id="enhanced-search-input"
-          oninput="handleEnhancedSearch(this.value)"
         />
         <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,39 +103,7 @@ const allTags = [...new Set(searchItems.flatMap(item => item.tags || []))].sort(
       <!-- Search Results -->
       <div class="command-panel__results" id="enhanced-search-results">
         <div class="space-y-2" id="search-results-list">
-          {searchItems.map((item) => (
-            <div class="command-item" data-type={item.type}>
-              <div class="flex items-start justify-between">
-                <div class="flex-1">
-                  <div class="command-item__title font-medium zag-text mb-1">
-                    {item.title}
-                  </div>
-                  <div class="command-item__meta text-xs zag-muted mb-2">
-                    <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">
-                      {item.type === 'article' ? '📝 Artikel' : 
-                       item.type === 'service' ? '🛠️ Layanan' : '🚀 Proyek'}
-                    </span>
-                    <span class="ml-2">{item.description}</span>
-                  </div>
-                  {item.tags && item.tags.length > 0 && (
-                    <div class="flex flex-wrap gap-1">
-                      {item.tags.slice(0, 3).map((tag) => (
-                        <span class="px-2 py-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 text-xs rounded">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <button
-                  onclick={`navigateToResult('${item.url}')`}
-                  class="px-3 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors ml-4"
-                >
-                  Buka
-                </button>
-              </div>
-            </div>
-          ))}
+          <!-- Results will be loaded dynamically -->
         </div>
       </div>
 
@@ -150,17 +119,31 @@ const allTags = [...new Set(searchItems.flatMap(item => item.tags || []))].sort(
       </div>
     </div>
   </div>
-)}
 
-<script>
-  // Global state
-  let searchItems = {searchItems};
-  let searchQuery = '';
-  let selectedFilters = {
-    type: 'all',
-    tags: [],
-    sortBy: 'relevance'
-  };
+<script define:vars={{ searchItemsJSON }}>
+   // Global state
+   let searchItems = [];
+   let searchQuery = '';
+   let selectedFilters = {
+     type: 'all',
+     tags: [],
+     sortBy: 'relevance'
+   };
+
+   // Fetch search items from API
+   async function loadSearchItems() {
+     try {
+       const response = await fetch('/api/search.json');
+       if (response.ok) {
+         searchItems = await response.json();
+         filterAndSortResults();
+       } else {
+         console.error('Failed to load search items');
+       }
+     } catch (error) {
+       console.error('Error loading search items:', error);
+     }
+   }
 
   // Enhanced search functionality
   function handleEnhancedSearch(query) {
@@ -247,7 +230,11 @@ const allTags = [...new Set(searchItems.flatMap(item => item.tags || []))].sort(
         results.sort((a, b) => a.title.localeCompare(b.title));
         break;
       case 'date':
-        // This would need actual date data
+        results.sort((a, b) => {
+          const dateA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+          const dateB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+          return dateB - dateA; // Newer first
+        });
         break;
       case 'relevance':
       default:
@@ -310,7 +297,7 @@ const allTags = [...new Set(searchItems.flatMap(item => item.tags || []))].sort(
   // Keyboard navigation
   document.addEventListener('keydown', function(e) {
     const searchContainer = document.querySelector('[data-enhanced-search]');
-    if (!searchContainer || searchContainer.style.display === 'none') return;
+    if (!searchContainer || searchContainer.classList.contains('hidden')) return;
     
     const results = document.querySelectorAll('#search-results-list .command-item');
     let currentIndex = -1;
@@ -343,17 +330,28 @@ const allTags = [...new Set(searchItems.flatMap(item => item.tags || []))].sort(
         }
         break;
       case 'Escape':
-        searchContainer.style.display = 'none';
+        searchContainer.classList.add('hidden');
         break;
     }
   });
 
   // Initialize component
   document.addEventListener('DOMContentLoaded', function() {
-    // Focus search input
-    setTimeout(function() {
-      const input = document.getElementById('enhanced-search-input');
-      if (input) input.focus();
-    }, 100);
+    // Add input event listener for search
+    const input = document.getElementById('enhanced-search-input');
+    if (input) {
+      input.addEventListener('input', function(e) {
+        handleEnhancedSearch(e.target.value);
+      });
+
+      // Focus search input
+      setTimeout(function() {
+        input.focus();
+      }, 100);
+    }
+
+    // Load search items from API
+    loadSearchItems();
   });
 </script>
+

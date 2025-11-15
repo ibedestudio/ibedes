@@ -18,12 +18,9 @@ export const getArticles = async () => {
   const items = await processContentInDir<ArticleFrontmatter, ArticleListItem>(
     "blog",
     (data) => {
-      const shortDescription = getShortDescription(
-        data.frontmatter.description,
-      );
       return {
         title: data.frontmatter.title,
-        description: shortDescription,
+        description: data.frontmatter.description,
         tags: data.frontmatter.tags,
         time: data.frontmatter.time,
         featured: data.frontmatter.featured,
@@ -41,12 +38,9 @@ export const getProjects = async () => {
   const items = await processContentInDir<ProjectFrontmatter, ProjectListItem>(
     "projects",
     (data) => {
-      const shortDescription = getShortDescription(
-        data.frontmatter.description,
-      );
       return {
         title: data.frontmatter.title,
-        description: shortDescription,
+        description: data.frontmatter.description,
         tags: data.frontmatter.tags,
         githubUrl: data.frontmatter.githubUrl,
         liveUrl: data.frontmatter.liveUrl,

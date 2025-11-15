@@ -2,7 +2,7 @@
 import { GLOBAL } from "../lib/variables";
 import Anchor from "./common/Anchor.astro";
 import ThemeToggle from "./ThemeToggle.astro";
-import EnhancedSearch from "./EnhancedSearch.astro";
+import CommandPalette from "./CommandPalette.astro";
 ---
 
 <header
@@ -27,7 +27,7 @@ import EnhancedSearch from "./EnhancedSearch.astro";
         type="button"
         class="p-2 rounded-full border border-black/20 dark:border-white/30 sm:hidden"
         aria-label="Buka pencarian global"
-        data-enhanced-search-toggle
+        data-command-toggle
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -73,7 +73,7 @@ import EnhancedSearch from "./EnhancedSearch.astro";
       <button
         type="button"
         class="hidden sm:inline-flex items-center gap-2 border border-black/20 dark:border-white/30 rounded-full px-4 py-2 text-[10px] uppercase tracking-[0.35em]"
-        data-enhanced-search-toggle
+        data-command-toggle
         aria-label="Buka pencarian cerdas (Ctrl+K)"
       >
         <svg
@@ -97,8 +97,8 @@ import EnhancedSearch from "./EnhancedSearch.astro";
     </div>
   </nav>
   
-  <!-- Enhanced Search Component -->
-  <EnhancedSearch isOpen={false} />
+  <!-- Simple Command Palette (original search) -->
+  <CommandPalette />
 </header>
 
 <script>
@@ -106,9 +106,6 @@ const navToggle = document.querySelector("[data-nav-toggle]");
 const nav = document.querySelector("header nav");
 let isNavOpen = false;
 
-// Enhanced search functionality
-const searchToggle = document.querySelectorAll("[data-enhanced-search-toggle]");
-const searchComponent = document.querySelector("[data-enhanced-search]");
 
 const updateNavState = () => {
   if (!nav) return;
@@ -143,33 +140,10 @@ const toggleNav = () => {
   updateNavState();
 };
 
-const toggleSearch = () => {
-  if (searchComponent) {
-    const searchElement = searchComponent as HTMLElement;
-    searchElement.classList.toggle('hidden');
-  }
-};
-
 // Event listeners
 navToggle?.addEventListener("click", toggleNav);
-searchToggle?.forEach(btn => btn.addEventListener("click", toggleSearch));
 
-// Keyboard shortcuts
-document.addEventListener('keydown', (e) => {
-  // Ctrl+K for search
-  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-    e.preventDefault();
-    toggleSearch();
-  }
-  
-  // ESC to close modals
-  if (e.key === 'Escape') {
-    if (searchComponent) {
-      const searchElement = searchComponent as HTMLElement;
-      searchElement.classList.add('hidden');
-    }
-  }
-});
+// Keyboard shortcuts for search are handled inside CommandPalette
 
 // Initialize
 window.addEventListener("resize", updateNavState);

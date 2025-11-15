@@ -129,6 +129,7 @@ const searchItemsJSON = JSON.stringify([]);
      tags: [],
      sortBy: 'relevance'
    };
+   let isInitialized = false;
 
    // Fetch search items from API
    async function loadSearchItems() {
@@ -205,11 +206,16 @@ const searchItemsJSON = JSON.stringify([]);
 
     // Filter by search query
     if (query) {
-      results = results.filter(item => 
-        item.title.toLowerCase().includes(query) ||
-        item.description.toLowerCase().includes(query) ||
-        (item.tags && item.tags.some(tag => tag.toLowerCase().includes(query)))
-      );
+      results = results.filter(item => {
+        const title = (item.title || '').toLowerCase();
+        const desc = (item.description || '').toLowerCase();
+        const tags = Array.isArray(item.tags) ? item.tags : [];
+        return (
+          title.includes(query) ||
+          desc.includes(query) ||
+          tags.some(tag => (tag || '').toLowerCase().includes(query))
+        );
+      });
     }
 
     // Filter by type
@@ -335,23 +341,44 @@ const searchItemsJSON = JSON.stringify([]);
     }
   });
 
-  // Initialize component
-  document.addEventListener('DOMContentLoaded', function() {
+  // Initialize component (idempotent)
+  function initEnhancedSearch() {
+    if (isInitialized) return;
+    isInitialized = true;
+
     // Add input event listener for search
     const input = document.getElementById('enhanced-search-input');
     if (input) {
       input.addEventListener('input', function(e) {
-        handleEnhancedSearch(e.target.value);
+        // Plain JS for browser compatibility
+        // @ts-ignore - target is HTMLInputElement
+        handleEnhancedSearch(e.target && e.target.value ? e.target.value : '');
       });
 
-      // Focus search input
+      // Focus search input when panel is first shown
       setTimeout(function() {
         input.focus();
       }, 100);
     }
 
-    // Load search items from API
+    // Load search items from API immediately
     loadSearchItems();
-  });
-</script>
+  }
 
+  // Run init now if DOM already loaded; otherwise wait for DOMContentLoaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initEnhancedSearch);
+  } else {
+    initEnhancedSearch();
+  }
+
+  // Also initialize when the overlay becomes visible (in case HTML was injected late)
+  const overlay = document.querySelector('[data-enhanced-search]');
+  if (overlay) {
+    const observer = new MutationObserver(() => {
+      const isHidden = overlay.classList.contains('hidden');
+      if (!isHidden) initEnhancedSearch();
+    });
+    observer.observe(overlay, { attributes: true, attributeFilter: ['class'] });
+  }
+</script>

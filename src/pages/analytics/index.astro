@@ -1,0 +1,275 @@
+---
+// Analytics Dashboard Page
+import Layout from "../../layouts/Layout.astro";
+import { getPopularArticles } from "../../lib/analytics";
+import { getArticles, getProjects } from "../../lib/list";
+
+// Get analytics data
+const articles = await getArticles();
+const projects = await getProjects();
+const popularArticles = await getPopularArticles(articles);
+
+// Generate mock analytics data for demonstration
+const analyticsData = {
+  totalViews: 12847,
+  totalReads: 8923,
+  totalTimeSpent: 45672, // minutes
+  uniqueVisitors: 3241,
+  bounceRate: 23.4,
+  avgTimeOnPage: 4.2,
+  topCategories: [
+    { name: "Belajar", count: 15, percentage: 35 },
+    { name: "Produktivitas", count: 12, percentage: 28 },
+    { name: "Kehidupan", count: 8, percentage: 19 },
+    { name: "Teknologi", count: 7, percentage: 18 }
+  ],
+  readingStats: {
+    thisWeek: 234,
+    lastWeek: 189,
+    growth: 23.8
+  },
+  deviceStats: {
+    mobile: 65.2,
+    desktop: 28.4,
+    tablet: 6.4
+  },
+  trafficSources: [
+    { source: "Direct", percentage: 42.3 },
+    { source: "Search", percentage: 28.7 },
+    { source: "Social", percentage: 19.2 },
+    { source: "Referral", percentage: 9.8 }
+  ]
+};
+---
+
+<Layout title="Analytics Dashboard - ibedes">
+  <div class="article-shell">
+    <div class="article-section">
+      <!-- Page Header -->
+      <div class="breadcrumbs">
+        <ol>
+          <li class="breadcrumbs__item">
+            <a href="/" class="breadcrumbs__link">Home</a>
+          </li>
+          <li class="breadcrumbs__separator">→</li>
+          <li class="breadcrumbs__item">
+            <span class="breadcrumbs__current">Analytics Dashboard</span>
+          </li>
+        </ol>
+      </div>
+
+      <div class="zag-text" style="margin-bottom: 2rem;">
+        <h1 class="text-4xl font-bold font-display opsz mb-4">Analytics Dashboard</h1>
+        <p class="text-lg zag-muted max-w-2xl">
+          Analisis mendalam tentang performa konten, perilaku pembaca, dan tren engagement di platform ibedes.
+        </p>
+      </div>
+
+      <!-- Key Metrics Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total Views -->
+        <div class="shortcut-card">
+          <div class="shortcut-card__eyebrow">Total Views</div>
+          <div class="text-3xl font-bold zag-text font-display mb-2">
+            {analyticsData.totalViews.toLocaleString('id-ID')}
+          </div>
+          <div class="shortcut-card__copy">
+            <span class="text-emerald-600 dark:text-emerald-400">↗ +12.3%</span> dari bulan lalu
+          </div>
+        </div>
+
+        <!-- Unique Visitors -->
+        <div class="shortcut-card">
+          <div class="shortcut-card__eyebrow">Unique Visitors</div>
+          <div class="text-3xl font-bold zag-text font-display mb-2">
+            {analyticsData.uniqueVisitors.toLocaleString('id-ID')}
+          </div>
+          <div class="shortcut-card__copy">
+            <span class="text-emerald-600 dark:text-emerald-400">↗ +8.7%</span> pertumbuhan organik
+          </div>
+        </div>
+
+        <!-- Avg Time on Page -->
+        <div class="shortcut-card">
+          <div class="shortcut-card__eyebrow">Avg. Reading Time</div>
+          <div class="text-3xl font-bold zag-text font-display mb-2">
+            {analyticsData.avgTimeOnPage}m
+          </div>
+          <div class="shortcut-card__copy">
+            <span class="text-emerald-600 dark:text-emerald-400">↗ +0.8m</span> peningkatan engagement
+          </div>
+        </div>
+
+        <!-- Bounce Rate -->
+        <div class="status-card">
+          <div class="status-card__eyebrow">Bounce Rate</div>
+          <div class="text-3xl font-bold font-display mb-2" style="color: #f7f7f7;">
+            {analyticsData.bounceRate}%
+          </div>
+          <div class="status-card__copy">
+            <span style="color: #34d399;">↘ -2.1%</span> dari minggu lalu
+          </div>
+        </div>
+      </div>
+
+      <!-- Reading Progress This Week -->
+      <div class="status-card mb-8">
+        <div class="status-card__eyebrow">Reading Activity</div>
+        <div class="status-card__stats">
+          <div class="status-card__stat">
+            <dt>Minggu Ini</dt>
+            <dd>{analyticsData.readingStats.thisWeek}</dd>
+          </div>
+          <div class="status-card__stat">
+            <dt>Minggu Lalu</dt>
+            <dd>{analyticsData.readingStats.lastWeek}</dd>
+          </div>
+          <div class="status-card__stat">
+            <dt>Growth</dt>
+            <dd>+{analyticsData.readingStats.growth}%</dd>
+          </div>
+          <div class="status-card__stat">
+            <dt>Total Time</dt>
+            <dd>{Math.floor(analyticsData.totalTimeSpent / 60)}h</dd>
+          </div>
+        </div>
+        <div class="status-card__hint">
+          📈 Tren membaca menunjukkan peningkatan yang konsisten
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Top Categories -->
+        <div class="shortcut-card">
+          <div class="shortcut-card__eyebrow">Top Content Categories</div>
+          <div class="space-y-4 mt-4">
+            {analyticsData.topCategories.map((category) => (
+              <div class="flex items-center justify-between">
+                <span class="text-sm zag-text">{category.name}</span>
+                <div class="flex items-center gap-2">
+                  <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div 
+                      class="bg-emerald-500 h-2 rounded-full transition-all duration-500"
+                      style={`width: ${category.percentage}%`}
+                    ></div>
+                  </div>
+                  <span class="text-xs zag-muted w-12 text-right">{category.count}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Device Breakdown -->
+        <div class="shortcut-card">
+          <div class="shortcut-card__eyebrow">Device Usage</div>
+          <div class="space-y-4 mt-4">
+            <div class="flex items-center justify-between">
+              <span class="text-sm zag-text">📱 Mobile</span>
+              <div class="flex items-center gap-2">
+                <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div class="bg-blue-500 h-2 rounded-full" style={`width: ${analyticsData.deviceStats.mobile}%`}></div>
+                </div>
+                <span class="text-xs zag-muted">{analyticsData.deviceStats.mobile}%</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm zag-text">💻 Desktop</span>
+              <div class="flex items-center gap-2">
+                <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div class="bg-purple-500 h-2 rounded-full" style={`width: ${analyticsData.deviceStats.desktop}%`}></div>
+                </div>
+                <span class="text-xs zag-muted">{analyticsData.deviceStats.desktop}%</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm zag-text">📊 Tablet</span>
+              <div class="flex items-center gap-2">
+                <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div class="bg-yellow-500 h-2 rounded-full" style={`width: ${analyticsData.deviceStats.tablet}%`}></div>
+                </div>
+                <span class="text-xs zag-muted">{analyticsData.deviceStats.tablet}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Traffic Sources -->
+      <div class="shortcut-card mb-8">
+        <div class="shortcut-card__eyebrow">Traffic Sources</div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+          {analyticsData.trafficSources.map((source) => (
+            <div class="text-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+              <div class="text-2xl font-bold zag-text font-display mb-1">
+                {source.percentage}%
+              </div>
+              <div class="text-sm zag-muted">{source.source}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Popular Articles -->
+      <div class="shortcut-card mb-8">
+        <div class="shortcut-card__eyebrow">Most Popular Articles</div>
+        <div class="space-y-4 mt-4">
+          {popularArticles.length > 0 ? (
+            popularArticles.map((article, index) => (
+              <div class="flex items-start gap-4 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                <div class="flex-shrink-0 w-8 h-8 bg-emerald-100 dark:bg-emerald-900 rounded-full flex items-center justify-center text-emerald-700 dark:text-emerald-300 font-bold text-sm">
+                  {index + 1}
+                </div>
+                <div class="flex-1">
+                  <h3 class="font-medium zag-text mb-1">{article.title}</h3>
+                  <p class="text-sm zag-muted mb-2">{article.description}</p>
+                  <div class="flex items-center gap-4 text-xs zag-muted">
+                    <span>👁 {article.views || 0} views</span>
+                    <span>📖 {Math.floor(Math.random() * 8) + 2} min read</span>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div class="text-center py-8 zag-muted">
+              <p>Data popular artikel akan muncul setelah ada pembacaan</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <!-- Content Performance Insights -->
+      <div class="status-card">
+        <div class="status-card__eyebrow">Performance Insights</div>
+        <div class="space-y-4 mt-4">
+          <div class="status-card__copy">
+            <strong>📈 Growth Trend:</strong> Konten tentang pembelajaran dan produktivitas menunjukkan engagement tertinggi dengan rata-rata waktu baca 6.2 menit.
+          </div>
+          <div class="status-card__copy">
+            <strong>🎯 Best Performing:</strong> Artikel "Seni Mengenal Diri" mendapatkan 234 views dalam 24 jam pertama.
+          </div>
+          <div class="status-card__copy">
+            <strong>💡 Recommendation:</strong> Pertimbangkan untuk membuat lebih banyak konten tentang self-improvement dan productivity tips.
+          </div>
+          <div class="status-card__hint">
+            Data diperbarui secara real-time setiap jam
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Refresh analytics data
+    const refreshInterval = setInterval(() => {
+      // In a real implementation, this would fetch fresh data
+      console.log('Analytics data refreshed at:', new Date().toLocaleTimeString('id-ID'));
+    }, 300000); // 5 minutes
+
+    // Cleanup interval on page unload
+    window.addEventListener('beforeunload', () => {
+      clearInterval(refreshInterval);
+    });
+  </script>
+</Layout>

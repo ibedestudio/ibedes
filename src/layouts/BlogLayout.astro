@@ -65,10 +65,10 @@ const resolveImageUrl = (value?: string) => {
   return value.startsWith("http") ? value : `${GLOBAL.rootUrl}/${value.replace(/^\/+/, "")}`;
 };
 const rawArticleImage =
-  frontmatter.image ??
-  frontmatter.cover ??
-  frontmatter.hero ??
-  frontmatter.socialImage;
+  (frontmatter as any).image ??
+  (frontmatter as any).cover ??
+  (frontmatter as any).hero ??
+  (frontmatter as any).socialImage;
 const articleImage = resolveImageUrl(rawArticleImage) ?? `${GLOBAL.rootUrl}/${GLOBAL.profileImage}`;
 const articleSchema = JSON.stringify(
   {
@@ -115,6 +115,14 @@ const articleSchema = JSON.stringify(
     <meta name="language" content="indonesia" />
     <link rel="canonical" href={sourceUrl} />
     <script type="application/ld+json" set:html={articleSchema}></script>
+    <!-- Load analytics module -->
+    <script type="module">
+      import { trackView } from "../lib/simple-analytics.ts";
+      
+      // Track this page view
+      const slug = "{frontmatter.filename}".split('/').pop()?.replace('.md', '') || "{frontmatter.filename}";
+      trackView(slug, "{frontmatter.title}");
+    </script>
   </Fragment>
   <div
     class="reading-progress"
@@ -218,6 +226,7 @@ const articleSchema = JSON.stringify(
 <script is:inline>
   (() => {
     if (typeof window === "undefined") return;
+    
     const progressBarContainer = document.querySelector("[data-reading-progress]");
     const progressBar = progressBarContainer?.querySelector("span");
     const articleBody = document.querySelector("[data-article-body]");

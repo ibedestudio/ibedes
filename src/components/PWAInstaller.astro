@@ -1,0 +1,293 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<div class={`pwa-installer ${className}`} data-pwa-installer>
+  <!-- Installation prompt will be shown here -->
+  <div 
+    class="pwa-install-prompt hidden"
+    data-install-prompt
+  >
+    <div class="zag-bg zag-border zag-rounded-lg p-4 shadow-lg max-w-sm">
+      <div class="flex items-start gap-3">
+        <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-800 rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-300" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-semibold text-sm zag-text mb-1">Install ibedes</h3>
+          <p class="text-xs zag-muted mb-3">Install app untuk akses offline dan notifikasi</p>
+          <div class="flex gap-2">
+            <button 
+              class="cta-button cta-button--primary text-xs px-3 py-1"
+              data-install-button
+            >
+              Install
+            </button>
+            <button 
+              class="cta-button cta-button--secondary text-xs px-3 py-1"
+              data-dismiss-button
+            >
+              Nanti
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Update available notification -->
+  <div 
+    class="pwa-update-prompt hidden"
+    data-update-prompt
+  >
+    <div class="zag-bg zag-border zag-rounded-lg p-4 shadow-lg max-w-sm">
+      <div class="flex items-start gap-3">
+        <div class="w-12 h-12 bg-amber-100 dark:bg-amber-800 rounded-lg flex items-center justify-center flex-shrink-0">
+          <svg class="w-6 h-6 text-amber-600 dark:text-amber-300" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-semibold text-sm zag-text mb-1">Update Available</h3>
+          <p class="text-xs zag-muted mb-3">Versi baru aplikasi tersedia</p>
+          <div class="flex gap-2">
+            <button 
+              class="cta-button cta-button--primary text-xs px-3 py-1"
+              data-update-button
+            >
+              Update
+            </button>
+            <button 
+              class="cta-button cta-button--secondary text-xs px-3 py-1"
+              data-dismiss-update
+            >
+              Nanti
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .pwa-install-prompt,
+  .pwa-update-prompt {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .pwa-install-prompt.hidden,
+  .pwa-update-prompt.hidden {
+    display: none;
+  }
+
+  .zag-rounded-lg {
+    border-radius: 0.75rem;
+  }
+
+  .zag-border {
+    border: 1px solid;
+    border-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .dark .zag-border {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .pwa-install-prompt,
+    .pwa-update-prompt {
+      left: 1rem;
+      right: 1rem;
+      bottom: 1rem;
+    }
+  }
+</style>
+
+<script>
+  // PWA Installation and Update Manager
+  class PWAInstaller {
+    deferredPrompt: any = null;
+    isInstalled: boolean = false;
+    isUpdateAvailable: boolean = false;
+
+    constructor() {
+      this.init();
+    }
+
+    async init() {
+      await this.registerServiceWorker();
+      this.setupInstallPrompt();
+      this.setupUpdatePrompt();
+      this.checkIfInstalled();
+    }
+
+    async registerServiceWorker() {
+      if ('serviceWorker' in navigator) {
+        try {
+          const registration = await navigator.serviceWorker.register('/sw.js');
+          console.log('Service Worker registered:', registration);
+
+          // Check for updates
+          registration.addEventListener('updatefound', () => {
+            this.handleServiceWorkerUpdate(registration);
+          });
+
+        } catch (error) {
+          console.log('Service Worker registration failed:', error);
+        }
+      }
+    }
+
+    handleServiceWorkerUpdate(registration: any) {
+      const newWorker = registration.installing;
+      if (newWorker) {
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            this.isUpdateAvailable = true;
+            this.showUpdatePrompt();
+          }
+        });
+      }
+    }
+
+    setupInstallPrompt() {
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        this.deferredPrompt = e;
+        this.showInstallPrompt();
+      });
+    }
+
+    setupUpdatePrompt() {
+      // Listen for the custom update event
+      window.addEventListener('pwa-update-available', () => {
+        this.isUpdateAvailable = true;
+        this.showUpdatePrompt();
+      });
+    }
+
+    checkIfInstalled() {
+      // Check if app is already installed
+      if (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone) {
+        this.isInstalled = true;
+      }
+    }
+
+    showInstallPrompt() {
+      if (this.isInstalled || !this.deferredPrompt) return;
+
+      const installPrompt = document.querySelector('[data-install-prompt]');
+      const installButton = document.querySelector('[data-install-button]');
+      const dismissButton = document.querySelector('[data-dismiss-button]');
+
+      if (installPrompt) {
+        installPrompt.classList.remove('hidden');
+
+        installButton?.addEventListener('click', () => {
+          this.installApp();
+        });
+
+        dismissButton?.addEventListener('click', () => {
+          this.dismissInstallPrompt();
+        });
+
+        // Auto-dismiss after 10 seconds
+        setTimeout(() => {
+          this.dismissInstallPrompt();
+        }, 10000);
+      }
+    }
+
+    showUpdatePrompt() {
+      const updatePrompt = document.querySelector('[data-update-prompt]');
+      const updateButton = document.querySelector('[data-update-button]');
+      const dismissButton = document.querySelector('[data-dismiss-update]');
+
+      if (updatePrompt) {
+        updatePrompt.classList.remove('hidden');
+
+        updateButton?.addEventListener('click', () => {
+          this.updateApp();
+        });
+
+        dismissButton?.addEventListener('click', () => {
+          this.dismissUpdatePrompt();
+        });
+      }
+    }
+
+    async installApp() {
+      if (!this.deferredPrompt) return;
+
+      try {
+        const result = await this.deferredPrompt.prompt();
+        if (result.outcome === 'accepted') {
+          console.log('PWA installed');
+          this.isInstalled = true;
+        }
+      } catch (error) {
+        console.log('Installation failed:', error);
+      }
+
+      this.dismissInstallPrompt();
+    }
+
+    async updateApp() {
+      // Send message to service worker to skip waiting
+      if ('serviceWorker' in navigator) {
+        const registration = await navigator.serviceWorker.getRegistration();
+        if (registration && registration.waiting) {
+          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+      }
+      
+      this.dismissUpdatePrompt();
+      
+      // Reload the page to use new version
+      window.location.reload();
+    }
+
+    dismissInstallPrompt() {
+      const installPrompt = document.querySelector('[data-install-prompt]');
+      if (installPrompt) {
+        installPrompt.classList.add('hidden');
+      }
+      this.deferredPrompt = null;
+    }
+
+    dismissUpdatePrompt() {
+      const updatePrompt = document.querySelector('[data-update-prompt]');
+      if (updatePrompt) {
+        updatePrompt.classList.add('hidden');
+      }
+      this.isUpdateAvailable = false;
+    }
+  }
+
+  // Initialize PWA installer when DOM is ready
+  if (typeof window !== 'undefined') {
+    new PWAInstaller();
+  }
+</script>

@@ -121,6 +121,17 @@ const { class: className = "" } = Astro.props;
       left: 1rem;
       right: 1rem;
       bottom: 1rem;
+      max-width: none;
+    }
+  }
+
+  /* Better mobile positioning */
+  @media (max-width: 480px) {
+    .pwa-install-prompt,
+    .pwa-update-prompt {
+      left: 0.5rem;
+      right: 0.5rem;
+      bottom: 0.5rem;
     }
   }
 </style>
@@ -178,6 +189,9 @@ const { class: className = "" } = Astro.props;
         this.deferredPrompt = e;
         this.showInstallPrompt();
       });
+
+      // Fallback for browsers that don't support beforeinstallprompt
+      this.checkInstallFallback();
     }
 
     setupUpdatePrompt() {
@@ -195,8 +209,37 @@ const { class: className = "" } = Astro.props;
       }
     }
 
+    checkInstallFallback() {
+      // Show install prompt for mobile browsers that don't support beforeinstallprompt
+      // This is a fallback for browsers like Firefox mobile, older Safari, etc.
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+      // Only show fallback on mobile devices and after some user interaction
+      if (isMobile && !this.isInstalled && !this.deferredPrompt) {
+        // Listen for user interaction to show the prompt
+        const showPromptOnInteraction = () => {
+          // Remove listeners after first interaction
+          document.removeEventListener('click', showPromptOnInteraction);
+          document.removeEventListener('touchstart', showPromptOnInteraction);
+          document.removeEventListener('scroll', showPromptOnInteraction);
+
+          // Delay showing the prompt to avoid being too aggressive
+          setTimeout(() => {
+            if (!this.isInstalled && !this.deferredPrompt) {
+              this.showInstallPrompt();
+            }
+          }, 10000); // Show after 10 seconds of interaction
+        };
+
+        // Add listeners for user interaction
+        document.addEventListener('click', showPromptOnInteraction, { once: true });
+        document.addEventListener('touchstart', showPromptOnInteraction, { once: true });
+        document.addEventListener('scroll', showPromptOnInteraction, { once: true });
+      }
+    }
+
     showInstallPrompt() {
-      if (this.isInstalled || !this.deferredPrompt) return;
+      if (this.isInstalled) return;
 
       const installPrompt = document.querySelector('[data-install-prompt]');
       const installButton = document.querySelector('[data-install-button]');
@@ -204,6 +247,15 @@ const { class: className = "" } = Astro.props;
 
       if (installPrompt) {
         installPrompt.classList.remove('hidden');
+
+        // Update button text based on whether we have deferredPrompt
+        if (installButton) {
+          if (this.deferredPrompt) {
+            installButton.textContent = 'Install';
+          } else {
+            installButton.textContent = 'Petunjuk Install';
+          }
+        }
 
         installButton?.addEventListener('click', () => {
           this.installApp();
@@ -213,10 +265,7 @@ const { class: className = "" } = Astro.props;
           this.dismissInstallPrompt();
         });
 
-        // Auto-dismiss after 10 seconds
-        setTimeout(() => {
-          this.dismissInstallPrompt();
-        }, 10000);
+        // Don't auto-dismiss - let user decide
       }
     }
 
@@ -239,19 +288,54 @@ const { class: className = "" } = Astro.props;
     }
 
     async installApp() {
-      if (!this.deferredPrompt) return;
-
-      try {
-        const result = await this.deferredPrompt.prompt();
-        if (result.outcome === 'accepted') {
-          console.log('PWA installed');
-          this.isInstalled = true;
+      if (this.deferredPrompt) {
+        // Standard PWA install flow
+        try {
+          const result = await this.deferredPrompt.prompt();
+          if (result.outcome === 'accepted') {
+            console.log('PWA installed');
+            this.isInstalled = true;
+          }
+        } catch (error) {
+          console.log('Installation failed:', error);
         }
-      } catch (error) {
-        console.log('Installation failed:', error);
+      } else {
+        // Fallback for browsers without beforeinstallprompt support
+        // Show instructions or try alternative installation methods
+        this.showInstallInstructions();
+        return; // Don't dismiss the prompt
       }
 
       this.dismissInstallPrompt();
+    }
+
+    showInstallInstructions() {
+      // For browsers that don't support beforeinstallprompt,
+      // show instructions on how to manually install
+      const installPrompt = document.querySelector('[data-install-prompt]');
+      if (installPrompt) {
+        const content = installPrompt.querySelector('.flex-1');
+        if (content) {
+          content.innerHTML = `
+            <h3 class="font-semibold text-sm zag-text mb-1">Install Manual</h3>
+            <p class="text-xs zag-muted mb-3">
+              Browser Anda tidak mendukung install otomatis.<br>
+              Gunakan menu browser untuk menambahkan ke layar utama.
+            </p>
+            <div class="flex gap-2">
+              <button class="cta-button cta-button--secondary text-xs px-3 py-1" data-dismiss-button>
+                Mengerti
+              </button>
+            </div>
+          `;
+
+          // Re-attach dismiss handler
+          const dismissButton = installPrompt.querySelector('[data-dismiss-button]');
+          dismissButton?.addEventListener('click', () => {
+            this.dismissInstallPrompt();
+          });
+        }
+      }
     }
 
     async updateApp() {

@@ -1,0 +1,499 @@
+---
+export interface Props {
+  id?: string;
+  type?: 'install' | 'update' | 'success' | 'info' | 'error';
+  title?: string;
+  message?: string;
+  actionText?: string;
+  dismissText?: string;
+  duration?: number;
+  class?: string;
+}
+
+const {
+  id = `toast-${Math.random().toString(36).slice(2, 10)}`,
+  type = 'info',
+  title,
+  message,
+  actionText,
+  dismissText = 'Tutup',
+  duration = 5000,
+  class: className = '',
+} = Astro.props;
+
+const defaults = {
+  install: {
+    title: 'Install ibedes',
+    message: 'Akses offline & notifikasi push',
+    actionText: 'Install',
+  },
+  update: {
+    title: 'Update Tersedia',
+    message: 'Versi baru aplikasi siap diinstall',
+    actionText: 'Update',
+  },
+  success: {
+    title: 'Berhasil!',
+    message: 'Operasi berhasil dilakukan',
+    actionText: undefined,
+  },
+  info: {
+    title: 'Informasi',
+    message: 'Pesan informasi',
+    actionText: undefined,
+  },
+  error: {
+    title: 'Error',
+    message: 'Terjadi kesalahan',
+    actionText: undefined,
+  }
+};
+
+const toastConfig = defaults[type];
+const finalTitle = title || toastConfig.title;
+const finalMessage = message || toastConfig.message;
+const finalActionText = actionText || toastConfig.actionText;
+---
+
+<div
+  id={id}
+  class={`toast toast--${type} hidden`}
+  data-toast
+  data-type={type}
+  data-duration={duration}
+>
+  <div class="toast__content">
+    <div class="toast__icon">
+      {type === 'install' || type === 'update' ? (
+        <svg fill="currentColor" viewBox="0 0 24 24">
+          <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+        </svg>
+      ) : type === 'success' ? (
+        <svg fill="currentColor" viewBox="0 0 24 24">
+          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+        </svg>
+      ) : type === 'error' ? (
+        <svg fill="currentColor" viewBox="0 0 24 24">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+      ) : (
+        <svg fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+      )}
+    </div>
+    <div class="toast__text">
+      <h3 class="toast__title">{finalTitle}</h3>
+      <p class="toast__message">{finalMessage}</p>
+    </div>
+  </div>
+  
+  {finalActionText && (
+    <div class="toast__actions">
+      <button class="toast__button toast__button--primary" data-action-button>
+        {finalActionText}
+      </button>
+    </div>
+  )}
+  
+  <button class="toast__dismiss" data-dismiss-button aria-label="Tutup">
+    <svg fill="currentColor" viewBox="0 0 24 24">
+      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+    </svg>
+  </button>
+</div>
+
+<style is:global>
+  .toast {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    max-width: 320px;
+    width: 100%;
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.3s ease-out;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .dark .toast {
+    background: rgb(31, 41, 55);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  }
+
+  .toast--success {
+    border-left: 4px solid rgb(16, 185, 129);
+  }
+
+  .toast--error {
+    border-left: 4px solid rgb(239, 68, 68);
+  }
+
+  .toast--info {
+    border-left: 4px solid rgb(59, 130, 246);
+  }
+
+  .toast--install,
+  .toast--update {
+    border-left: 4px solid rgb(16, 185, 129);
+  }
+
+  .toast__content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1rem 0.5rem 1rem;
+  }
+
+  .toast__icon {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(16, 185, 129);
+  }
+
+  .toast--error .toast__icon {
+    color: rgb(239, 68, 68);
+  }
+
+  .toast--info .toast__icon {
+    color: rgb(59, 130, 246);
+  }
+
+  .toast__text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .toast__title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgb(17, 24, 39);
+    margin: 0 0 0.25rem 0;
+  }
+
+  .dark .toast__title {
+    color: white;
+  }
+
+  .toast__message {
+    font-size: 0.75rem;
+    color: rgb(107, 114, 128);
+    margin: 0;
+    line-height: 1.25;
+  }
+
+  .dark .toast__message {
+    color: rgb(156, 163, 175);
+  }
+
+  .toast__actions {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0 1rem 1rem 1rem;
+    justify-content: flex-end;
+  }
+
+  .toast__button {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1.75rem;
+    background-color: transparent;
+    color: rgb(107, 114, 128);
+    border-color: rgb(209, 213, 219);
+  }
+
+  .toast__button:hover {
+    background-color: rgb(243, 244, 246);
+    border-color: rgb(156, 163, 175);
+  }
+
+  .dark .toast__button {
+    color: rgb(156, 163, 175);
+    border-color: rgb(55, 65, 81);
+  }
+
+  .dark .toast__button:hover {
+    background-color: rgb(31, 41, 55);
+    border-color: rgb(75, 85, 99);
+  }
+
+  .toast__button--primary {
+    background-color: rgb(16, 185, 129);
+    color: white;
+    border-color: rgb(16, 185, 129);
+  }
+
+  .toast__button--primary:hover {
+    background-color: rgb(5, 150, 105);
+    border-color: rgb(5, 150, 105);
+  }
+
+  .toast__dismiss {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    color: rgb(107, 114, 128);
+    cursor: pointer;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .toast__dismiss:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: rgb(75, 85, 99);
+  }
+
+  .dark .toast__dismiss {
+    color: rgb(156, 163, 175);
+  }
+
+  .dark .toast__dismiss:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: rgb(209, 213, 219);
+  }
+
+  .toast__dismiss svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  .toast.hidden {
+    display: none;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideOut {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+  }
+
+  .toast.hiding {
+    animation: slideOut 0.3s ease-in forwards;
+  }
+
+  @media (max-width: 640px) {
+    .toast {
+      left: 1rem;
+      right: 1rem;
+      bottom: 1rem;
+      max-width: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .toast {
+      left: 0.5rem;
+      right: 0.5rem;
+      bottom: 0.5rem;
+    }
+  }
+</style>
+
+<script>
+  class Toast {
+    static toasts = new Map();
+
+    static show(options) {
+      const {
+        type = 'info',
+        title,
+        message,
+        actionText,
+        dismissText,
+        duration = 5000,
+        onAction,
+        onDismiss
+      } = options;
+
+      // Create toast element
+      const toast = document.createElement('div');
+      toast.className = `toast toast--${type}`;
+      toast.dataset.type = type;
+      toast.dataset.duration = duration;
+
+      const iconSvg = this.getIconSvg(type);
+      const finalTitle = title || this.getDefaults(type).title;
+      const finalMessage = message || this.getDefaults(type).message;
+      const finalActionText = actionText || this.getDefaults(type).actionText;
+
+      toast.innerHTML = `
+        <div class="toast__content">
+          <div class="toast__icon">
+            ${iconSvg}
+          </div>
+          <div class="toast__text">
+            <h3 class="toast__title">${finalTitle}</h3>
+            <p class="toast__message">${finalMessage}</p>
+          </div>
+        </div>
+        ${finalActionText ? `
+          <div class="toast__actions">
+            <button class="toast__button toast__button--primary" data-action-button>
+              ${finalActionText}
+            </button>
+          </div>
+        ` : ''}
+        <button class="toast__dismiss" data-dismiss-button aria-label="Tutup">
+          <svg fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      `;
+
+      // Add to DOM
+      document.body.appendChild(toast);
+
+      // Show toast
+      setTimeout(() => {
+        toast.classList.remove('hidden');
+      }, 10);
+
+      // Setup event handlers
+      const actionButton = toast.querySelector('[data-action-button]');
+      const dismissButton = toast.querySelector('[data-dismiss-button]');
+
+      actionButton?.addEventListener('click', () => {
+        if (onAction) onAction();
+        this.hide(toast);
+      });
+
+      dismissButton?.addEventListener('click', () => {
+        if (onDismiss) onDismiss();
+        this.hide(toast);
+      });
+
+      // Auto hide (duration <= 0 means sticky)
+      let timeoutId = null;
+      const ms = Number(duration);
+      if (Number.isFinite(ms) && ms > 0) {
+        timeoutId = setTimeout(() => {
+          this.hide(toast);
+        }, ms);
+      }
+
+      this.toasts.set(toast, timeoutId);
+
+      return toast;
+    }
+
+    static hide(toast) {
+      if (!toast) return;
+
+      if (this.toasts.has(toast)) {
+        const timeoutId = this.toasts.get(toast);
+        if (timeoutId) clearTimeout(timeoutId);
+        this.toasts.delete(toast);
+      }
+
+      toast.classList.add('hiding');
+      setTimeout(() => {
+        if (toast.parentNode) {
+          toast.parentNode.removeChild(toast);
+        }
+      }, 300);
+    }
+
+    static getIconSvg(type) {
+      switch (type) {
+        case 'install':
+        case 'update':
+          return `
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+            </svg>
+          `;
+        case 'success':
+          return `
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+            </svg>
+          `;
+        case 'error':
+          return `
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+          `;
+        default:
+          return `
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+          `;
+      }
+    }
+
+    static getDefaults(type) {
+      const defaults = {
+        install: {
+          title: 'Install ibedes',
+          message: 'Akses offline & notifikasi push',
+          actionText: 'Install',
+        },
+        update: {
+          title: 'Update Tersedia',
+          message: 'Versi baru aplikasi siap diinstall',
+          actionText: 'Update',
+        },
+        success: {
+          title: 'Berhasil!',
+          message: 'Operasi berhasil dilakukan',
+          actionText: undefined,
+        },
+        info: {
+          title: 'Informasi',
+          message: 'Pesan informasi',
+          actionText: undefined,
+        },
+        error: {
+          title: 'Error',
+          message: 'Terjadi kesalahan',
+          actionText: undefined,
+        }
+      };
+      return defaults[type] || defaults.info;
+    }
+  }
+
+  // Make Toast globally available
+  window.Toast = Toast;
+</script>

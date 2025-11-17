@@ -66,10 +66,9 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Handle different types of requests
-  if (request.method !== 'GET') {
-    return;
-  }
+  // Only handle same-origin or http(s) requests. Skip chrome-extension, file, etc.
+  if (request.method !== 'GET') return;
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
 
   // Cache strategy for different types of content
   if (isStaticAsset(request)) {

@@ -1,0 +1,34 @@
+---
+import AboutLayout from "../layouts/AboutLayout.astro";
+import Prose from "../components/Prose.astro";
+import { GLOBAL } from "../lib/variables";
+import Dither from "../components/reactbits/Dither";
+
+const title = `Tentang • ${GLOBAL.username}`;
+const description = GLOBAL.longDescription;
+const canonicalUrl = `${GLOBAL.rootUrl}/tentang`;
+---
+
+<AboutLayout title={title} description={description} canonicalUrl={canonicalUrl}>
+  <div style="width: 100%; height: 600px; position: relative;">
+    <Dither
+      client:load
+      waveColor={[0.5, 0.5, 0.5]}
+      disableAnimation={false}
+      enableMouseInteraction={true}
+      mouseRadius={0.3}
+      colorNum={4}
+      waveAmplitude={0.3}
+      waveFrequency={3}
+      waveSpeed={0.05}
+    />
+  </div>
+
+  <Prose>
+    <p>
+      Halo! Ini adalah halaman tentang yang sedang dalam pengembangan.
+      Efek di atas dirender dengan React Three Fiber dan dihidupkan di sisi
+      klien melalui <code>client:load</code>.
+    </p>
+  </Prose>
+</AboutLayout>

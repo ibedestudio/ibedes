@@ -24,6 +24,7 @@ const { class: className = "" } = Astro.props;
     isInstalled: boolean = false;
     isUpdateAvailable: boolean = false;
     currentToast: any = null;
+    SEEN_KEY = 'pwa_install_toast_seen';
 
     constructor() {
       this.init();
@@ -87,15 +88,13 @@ const { class: className = "" } = Astro.props;
 
     checkInstallFallback() {
       const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      if (isMobile && !this.isInstalled && !this.deferredPrompt) {
+      if (isMobile && !this.isInstalled && !this.deferredPrompt && !this.hasSeenInstallToast()) {
         const showPromptOnInteraction = () => {
           document.removeEventListener('click', showPromptOnInteraction);
           document.removeEventListener('touchstart', showPromptOnInteraction);
           document.removeEventListener('scroll', showPromptOnInteraction);
           setTimeout(() => {
-            if (!this.isInstalled && !this.deferredPrompt) {
-              this.showManualInstallToast();
-            }
+            if (!this.isInstalled && !this.deferredPrompt) this.showManualInstallToast();
           }, 10000);
         };
         document.addEventListener('click', showPromptOnInteraction, { once: true });
@@ -105,7 +104,7 @@ const { class: className = "" } = Astro.props;
     }
 
     showInstallToast() {
-      if (this.isInstalled) return;
+      if (this.isInstalled || this.hasSeenInstallToast()) return;
       this.showSingleToast({
         type: 'install',
         title: 'Install ibedes',
@@ -115,6 +114,7 @@ const { class: className = "" } = Astro.props;
         onAction: () => this.installApp(),
         onDismiss: () => {}
       });
+      this.markInstallToastSeen();
     }
 
     showUpdateToast() {
@@ -130,6 +130,7 @@ const { class: className = "" } = Astro.props;
     }
 
     showManualInstallToast() {
+      if (this.hasSeenInstallToast()) return;
       this.showSingleToast({
         type: 'info',
         title: 'Install Manual',
@@ -139,6 +140,7 @@ const { class: className = "" } = Astro.props;
         onAction: () => this.dismissCurrentToast(),
         onDismiss: () => this.dismissCurrentToast()
       });
+      this.markInstallToastSeen();
     }
 
     showSingleToast(options: any) {
@@ -156,6 +158,17 @@ const { class: className = "" } = Astro.props;
         window.Toast.hide(this.currentToast);
         this.currentToast = null;
       }
+    }
+
+    hasSeenInstallToast() {
+      try {
+        return localStorage.getItem(this.SEEN_KEY) === '1';
+      } catch (_) { return false; }
+    }
+    markInstallToastSeen() {
+      try {
+        localStorage.setItem(this.SEEN_KEY, '1');
+      } catch (_) {}
     }
 
     async installApp() {

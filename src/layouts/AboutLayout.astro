@@ -1,0 +1,112 @@
+---
+import Layout from "./Layout.astro";
+import Section from "../components/common/Section.astro";
+import { GLOBAL } from "../lib/variables";
+
+type Hero = {
+  title?: string;
+  subtitle?: string;
+  image?: string; // contoh: "/images/microsoft_dicoding.jpg" atau URL absolut
+};
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalUrl: string;
+  hero?: Hero;
+}
+
+const { title, description, canonicalUrl, hero } = Astro.props as Props;
+
+const resolveAbs = (path?: string) => {
+  if (!path) return `${GLOBAL.rootUrl}/${GLOBAL.profileImage}`;
+  return path.startsWith("http")
+    ? path
+    : `${GLOBAL.rootUrl}${path.startsWith("/") ? "" : "/"}${path}`;
+};
+const ogImage = resolveAbs(hero?.image);
+
+const pageSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": title,
+  "description": description,
+  "url": canonicalUrl,
+  "image": ogImage,
+  "publisher": {
+    "@type": "Organization",
+    "name": GLOBAL.username,
+    "logo": `${GLOBAL.rootUrl}/${GLOBAL.profileImage}`
+  }
+}).replace(/</g, "\\u003c");
+---
+
+<Layout>
+  <Fragment slot="head">
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <link rel="canonical" href={canonicalUrl} />
+    <script type="application/ld+json" set:html={pageSchema}></script>
+  </Fragment>
+
+  <Section class="my-10">
+    <div class="relative rounded-3xl overflow-hidden border border-black/10 dark:border-white/10">
+      {hero?.image && (
+        <img
+          src={hero.image}
+          alt={hero.title ?? "About hero"}
+          class="w-full h-64 sm:h-96 object-cover"
+          loading="eager"
+        />
+      )}
+      <div class:list={[
+        "absolute inset-0",
+        hero?.image ? "bg-gradient-to-t from-black/60 via-black/30 to-transparent" : ""
+      ]}></div>
+      <div class="absolute inset-0 p-6 sm:p-10 flex flex-col justify-end gap-3">
+        <p class="text-[10px] uppercase tracking-[0.35em] text-white/80">Tentang</p>
+        <h1 class:list={[
+          "font-display text-4xl sm:text-6xl",
+          hero?.image ? "text-white" : ""
+        ]}>
+          {hero?.title ?? GLOBAL.username}
+        </h1>
+        <p class:list={[
+          "max-w-2xl",
+          hero?.image ? "text-white/90" : "zag-muted"
+        ]}>
+          {hero?.subtitle ?? description}
+        </p>
+      </div>
+    </div>
+  </Section>
+
+  <Section class="py-10">
+    <div class="grid gap-6 md:grid-cols-[2fr,1fr]">
+      <div class="space-y-6">
+        <slot />
+      </div>
+      <aside class="space-y-4">
+        <slot name="sidebar">
+          <div class="rounded-xl p-4 border border-black/10 dark:border-white/20">
+            <p class="font-semibold mb-2">Kontak</p>
+            <p class="text-sm"><b>Email:</b> {GLOBAL.contactEmail}</p>
+            <p class="text-sm"><b>Telepon:</b> {GLOBAL.contactPhone}</p>
+            <p class="text-sm"><b>Lokasi:</b> {GLOBAL.contactLocation}</p>
+            <div class="pt-3 flex gap-3">
+              <a href={GLOBAL.contactWhatsApp} class="cta-button cta-button--primary">WhatsApp</a>
+            </div>
+          </div>
+        </slot>
+      </aside>
+    </div>
+  </Section>
+</Layout>

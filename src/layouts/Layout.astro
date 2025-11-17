@@ -65,7 +65,7 @@ import "../styles/global.css";
     </main>
     <Footer />
 
-    <!-- PWA Installer -->
-    <PWAInstaller />
+    <!-- PWA Installer: only on homepage -->
+    {Astro.url.pathname === '/' && <PWAInstaller />}
   </body>
 </html>

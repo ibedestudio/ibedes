@@ -1,0 +1,320 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Section from "../../components/common/Section.astro";
+import { GLOBAL } from "../../lib/variables";
+
+type LinkItem = { name: string; url: string; note?: string };
+type Category = { title: string; items: LinkItem[] };
+
+const categories: Category[] = [
+  {
+    title: "Overlay & Video Assets",
+    items: [
+      { name: "MEGA PACK 200+ OVERLAYS", url: "https://thinkmakepush.com/" },
+      { name: "Overlay Sample Pack", url: "https://www.fulltimefilmmaker.com/overlaysamplesignup" },
+    ],
+  },
+  {
+    title: "Belajar via Game",
+    items: [
+      { name: "Coddy", url: "https://coddy.tech/" },
+      { name: "CodeCombat", url: "https://codecombat.com/" },
+      { name: "Create & Learn", url: "https://www.create-learn.us/" },
+      { name: "Blockly Games", url: "https://blockly.games/" },
+      { name: "CheckiO", url: "https://checkio.org/" },
+      { name: "SQL Murder Mystery", url: "https://mystery.knightlab.com/" },
+      { name: "SQL Police Department", url: "https://sqlpd.com/" },
+      { name: "SQL Island", url: "https://sql-island.informatik.uni-kl.de/" },
+    ],
+  },
+  {
+    title: "Latihan & Tantangan Frontend",
+    items: [
+      { name: "Codewell", url: "https://www.codewell.cc/" },
+      { name: "Frontend Practice", url: "https://www.frontendpractice.com/" },
+      { name: "devChallenges.io", url: "https://devchallenges.io/" },
+      { name: "CSSBattle", url: "https://cssbattle.dev/" },
+      { name: "JavaScript 30", url: "https://javascript30.com/" },
+      { name: "CodePen Challenges", url: "https://codepen.io/challenges" },
+      { name: "Codewars", url: "https://www.codewars.com/" },
+      { name: "Frontend Mentor", url: "https://www.frontendmentor.io/" },
+      { name: "Code to go", url: "https://codetogo.io/" },
+    ],
+  },
+  {
+    title: "UI Libraries (React)",
+    items: [
+      { name: "Fluent UI React", url: "https://react.fluentui.dev/?path=/docs/concepts-introduction--page" },
+      { name: "PrimeReact", url: "https://primereact.org/" },
+      { name: "Ant Design", url: "https://ant.design/" },
+      { name: "shadcn/ui", url: "https://ui.shadcn.com/" },
+      { name: "Radix UI", url: "https://www.radix-ui.com/" },
+      { name: "Mantine UI", url: "https://ui.mantine.dev/" },
+      { name: "Flowbite", url: "https://flowbite.com/docs/getting-started/introduction/" },
+      { name: "maryUI", url: "https://mary-ui.com/" },
+      { name: "daisyUI", url: "https://daisyui.com/" },
+      { name: "daisyUI React (Storybook)", url: "https://react.daisyui.com/" },
+      { name: "Control", url: "https://control.rocks/" },
+    ],
+  },
+  {
+    title: "CSS Tools & Animations",
+    items: [
+      { name: "GSAP", url: "https://gsap.com/" },
+      { name: "anime.js", url: "https://animejs.com/" },
+      { name: "Velocity.js", url: "http://velocityjs.org/" },
+      { name: "AOS", url: "https://michalsnik.github.io/aos/" },
+      { name: "Animista", url: "https://animista.net/play/basic/flip/flip-diagonal-1-tr" },
+      { name: "Hamburgers", url: "https://jonsuh.com/hamburgers/" },
+      { name: "Neumorphism Generator", url: "https://neumorphism.io/#e0e0e0" },
+      { name: "cssbuttons.app", url: "https://cssbuttons.app/" },
+      { name: "CSS Gradient", url: "https://cssgradient.io/" },
+      { name: "Easing Gradients", url: "https://larsenwork.com/easing-gradients/" },
+      { name: "WebGradients", url: "https://webgradients.com/" },
+    ],
+  },
+  {
+    title: "Design Resources & Komponen",
+    items: [
+      { name: "Design Resources", url: "https://designresourc.es/" },
+      { name: "Uiverse", url: "https://uiverse.io/" },
+      { name: "Toolfolio", url: "http://toolfolio.io/" },
+      { name: "CodeWithRandom", url: "https://www.codewithrandom.com/" },
+      { name: "HTML5 UP", url: "https://html5up.net/" },
+      { name: "Open Peeps", url: "https://www.openpeeps.com/" },
+      { name: "404 Illustrations", url: "https://error404.fun/" },
+      { name: "illlustrations", url: "https://illlustrations.co/" },
+      { name: "DrawKit", url: "https://www.drawkit.com/" },
+      { name: "Open Doodles", url: "https://opendoodles.com/" },
+      { name: "unDraw", url: "https://undraw.co/" },
+      { name: "Free Premium Mockups", url: "https://mockups-design.com/" },
+      { name: "Mocxygen", url: "https://www.mocxygen.com/" },
+      { name: "Unblast", url: "https://unblast.com/" },
+    ],
+  },
+  {
+    title: "Ikon & Manajer Icon",
+    items: [
+      { name: "SVG Repo", url: "https://www.svgrepo.com/" },
+      { name: "Font Awesome", url: "https://fontawesome.com/" },
+      { name: "Iconify", url: "https://iconify.design/" },
+      { name: "Streamline", url: "https://home.streamlinehq.com/" },
+      { name: "Feather Icons", url: "https://feathericons.com/" },
+      { name: "Ant Design Icons", url: "https://ant.design/components/icon" },
+      { name: "Entypo", url: "https://www.entypo.com/" },
+      { name: "Ionicons", url: "https://ionic.io/ionicons" },
+      { name: "Material Symbols", url: "https://fonts.google.com/icons" },
+      { name: "Material Design Icons", url: "https://pictogrammers.com/library/mdi/" },
+      { name: "Heroicons", url: "https://heroicons.dev/" },
+      { name: "css.gg", url: "https://css.gg/" },
+      { name: "Iconset (manager)", url: "https://iconset.io/" },
+      { name: "Remix Icon", url: "https://remixicon.com/" },
+      { name: "Iconoir", url: "https://iconoir.com/" },
+      { name: "Boxicons", url: "https://boxicons.com/" },
+      { name: "Evericons", url: "http://www.evericons.com/" },
+      { name: "Notion Icons", url: "https://notionicons.so/" },
+    ],
+  },
+  {
+    title: "Figma Files & Plugin",
+    items: [
+      { name: "Grid layout Responsive", url: "https://www.figma.com/community/file/1321349761731640379/grid-layout-responsive" },
+      { name: "Lightning-fast cursor tracking", url: "https://www.figma.com/community/file/1314335159485738721" },
+      { name: "coolicons – Free Iconset", url: "https://www.figma.com/community/file/800815864899415771/coolicons-free-iconset" },
+      { name: "Blend (plugin)", url: "https://www.figma.com/community/plugin/735442706723922553/blend" },
+      { name: "Downsize (plugin)", url: "https://www.figma.com/community/plugin/869495400795251845/downsize" },
+      { name: "Logo Creator (plugin)", url: "https://www.figma.com/community/plugin/768094929040207895/logo-creator-logo-maker" },
+      { name: "Easometric (plugin)", url: "https://www.figma.com/community/plugin/750743440401413268/easometric" },
+      { name: "Clay Mockups 3D (plugin)", url: "https://www.figma.com/community/plugin/819335598581469537/clay-mockups-3d" },
+      { name: "Grainy Gradient (plugin)", url: "https://www.figma.com/community/plugin/1176149589166146593/grainy-gradient" },
+      { name: "Figma GPT (plugin)", url: "https://www.figma.com/community/plugin/1213050091855586023/figma-gpt" },
+      { name: "Relume Ipsum (plugin)", url: "https://www.figma.com/community/plugin/1208279655592025559/relume-ipsum" },
+      { name: "Material Design Icons (file)", url: "https://www.figma.com/community/file/878585965681562011/material-design-icons" },
+      { name: "Tokens Studio (plugin)", url: "https://www.figma.com/community/plugin/843461159747178978/tokens-studio-for-figma-figma-tokens" },
+      { name: "Supa Palette (plugin)", url: "https://www.figma.com/community/plugin/1103648664059257410/supa-palette" },
+      { name: "Styler (plugin)", url: "https://www.figma.com/community/plugin/820660579767995949/styler" },
+      { name: "Simple Sort (plugin)", url: "https://www.figma.com/community/plugin/931578032226522167/simple-sort" },
+      { name: "Typestyles (plugin)", url: "https://www.figma.com/community/plugin/803311677045533625/typestyles" },
+    ],
+  },
+  {
+    title: "Generator & Utilitas Desain",
+    items: [
+      { name: "Shape Divider", url: "https://www.shapedivider.app/" },
+      { name: "Get Waves", url: "https://getwaves.io/" },
+      { name: "Blobmaker", url: "https://www.blobmaker.app/" },
+      { name: "Lorem Ipsum", url: "https://loremipsum.io/" },
+      { name: "Landing Page FYI", url: "https://landingpage.fyi/" },
+      { name: "Carbon", url: "https://carbon.now.sh/" },
+      { name: "HTML Cheat Sheet", url: "https://htmlcheatsheet.com/" },
+    ],
+  },
+  {
+    title: "AI & Produktivitas",
+    items: [
+      { name: "Z.ai Chat", url: "https://chat.z.ai/" },
+      { name: "Rows AI", url: "https://rows.com/ai" },
+      { name: "Julius AI", url: "https://julius.ai/" },
+      { name: "Otter.ai", url: "https://otter.ai/" },
+      { name: "Perplexity", url: "https://www.perplexity.ai/" },
+      { name: "Chapple", url: "https://chapple.ai/" },
+      { name: "Stockimg.ai", url: "https://stockimg.ai/" },
+      { name: "PicLumen", url: "https://www.piclumen.com/" },
+      { name: "Latte Social", url: "https://www.latte.social/" },
+      { name: "folk CRM", url: "https://www.folk.app/" },
+      { name: "Seona (SEO)", url: "https://seona.usestyle.ai/new" },
+      { name: "Gamma", url: "https://gamma.app/" },
+      { name: "Hugging Face Spaces", url: "https://huggingface.co/spaces" },
+    ],
+  },
+  {
+    title: "Dev Tools & Tunneling",
+    items: [
+      { name: "VS Code Port Forwarding", url: "https://code.visualstudio.com/docs/editor/port-forwarding" },
+      { name: "Cloudflare Tunnel", url: "https://www.cloudflare.com/en-gb/products/tunnel/" },
+      { name: "ngrok", url: "https://ngrok.com/" },
+      { name: "Responsively App", url: "https://responsively.app/" },
+      { name: "Spline (3D)", url: "https://spline.design/" },
+      { name: "Glitch", url: "https://glitch.com/" },
+      { name: "Squoosh", url: "https://squoosh.app/" },
+    ],
+  },
+  {
+    title: "Notion Widgets & Tools",
+    items: [
+      { name: "WidgetBox", url: "https://widgetbox.app/" },
+      { name: "Indify", url: "https://indify.co/" },
+      { name: "ChartBase", url: "https://notion2charts.com/" },
+      { name: "Kairo (tracker)", url: "https://getkairo.com/" },
+      { name: "Flocus (ambience)", url: "https://flocus.com/" },
+      { name: "Apption", url: "https://apption.co/" },
+      { name: "Chartbrick", url: "https://chartbrick.com/" },
+      { name: "Simple.ink (Notion website)", url: "https://www.simple.ink/" },
+      { name: "Gridfiti", url: "https://gridfiti.notion.site/" },
+    ],
+  },
+  {
+    title: "Kumpulan Repo & Daftar Kurasi",
+    items: [
+      { name: "The Art of Command Line", url: "https://github.com/jlevy/the-art-of-command-line" },
+      { name: "Public APIs", url: "https://github.com/public-apis/public-apis" },
+      { name: "App Ideas", url: "https://github.com/florinpop17/app-ideas" },
+      { name: "Developer Roadmap", url: "https://github.com/kamranahmedse/developer-roadmap" },
+      { name: "Free Programming Books", url: "https://github.com/EbookFoundation/free-programming-books" },
+      { name: "Awesome Python", url: "https://github.com/gribouille/awesome-python" },
+      { name: "Build Your Own X (repo)", url: "https://github.com/codecrafters-io/build-your-own-x" },
+      { name: "GitHub .gitignore", url: "https://github.com/github/gitignore" },
+      { name: "30 Seconds of Code (repo)", url: "https://github.com/Chalarangelo/30-seconds-of-code" },
+      { name: "Build Your Own X (site)", url: "https://build-your-own-x.vercel.app/" },
+      { name: "30 Seconds of Code (site)", url: "https://www.30secondsofcode.org/" },
+      { name: "JavaScript to go (site)", url: "https://codetogo.io/" },
+    ],
+  },
+  {
+    title: "Template & Aplikasi Open Source",
+    items: [
+      { name: "Material Dashboard", url: "https://github.com/creativetimofficial/material-dashboard" },
+      { name: "Mazer", url: "https://github.com/zuramai/mazer" },
+      { name: "Voler", url: "https://github.com/zuramai/voler" },
+      { name: "Sneat Bootstrap", url: "https://github.com/themeselection/sneat-bootstrap-html-laravel-admin-template-free" },
+      { name: "Modernize Bootstrap", url: "https://github.com/adminmart/Modernize-bootstrap-free" },
+      { name: "Materio Vuetify", url: "https://github.com/themeselection/materio-vuetify-vuejs-admin-template-free" },
+      { name: "Tabler", url: "https://github.com/tabler/tabler" },
+      { name: "Triangle POS", url: "https://github.com/FahimAnzamDip/triangle-pos" },
+      { name: "Crater (Invoice)", url: "https://github.com/crater-invoice/crater" },
+      { name: "ibio", url: "https://github.com/saeedvaziry/ibio" },
+      { name: "Flarum", url: "https://github.com/flarum/flarum" },
+      { name: "lav_sms", url: "https://github.com/4jean/lav_sms" },
+    ],
+  },
+  {
+    title: "Marketplace & Deals",
+    items: [
+      { name: "AppSumo", url: "https://appsumo.com/" },
+      { name: "Gumroad Discover", url: "https://discover.gumroad.com/" },
+      { name: "SiteDigital", url: "https://sitedigital.io/" },
+    ],
+  },
+];
+
+const pageTitle = `Link Pilihan • ${GLOBAL.username}`;
+const pageDesc = "Kumpulan link kurasi: latihan frontend, UI libraries, CSS tools, dan sumber daya desain.";
+
+const faviconSources = (url: string) => {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, "");
+    return [
+      `https://icons.duckduckgo.com/ip3/${host}.ico`,
+      `https://icons.duckduckgo.com/ip3/www.${host}.ico`,
+      `https://www.google.com/s2/favicons?sz=64&domain_url=https://${host}`,
+      `https://api.faviconkit.com/${host}/64`,
+      "/favicon.svg",
+    ];
+  } catch {
+    return ["/favicon.svg"];
+  }
+};
+---
+
+<Layout>
+  <Fragment slot="head">
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDesc} />
+    <link rel="canonical" href={`${GLOBAL.rootUrl}/links`} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDesc} />
+    <meta property="og:url" content={`${GLOBAL.rootUrl}/links`} />
+  </Fragment>
+
+  <Section class="my-12 text-center space-y-6">
+    <p class="text-[10px] uppercase tracking-[0.35em] zag-muted">Kumpulan Link</p>
+    <h1 class="font-display text-3xl sm:text-4xl">Link Pilihan</h1>
+    <p class="zag-muted max-w-2xl mx-auto">{pageDesc}</p>
+  </Section>
+
+  {categories.map((cat) => (
+    <Section class="my-10">
+      <h2 class="text-sm uppercase tracking-[0.35em] zag-muted mb-4">{cat.title}</h2>
+      <div class="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        {cat.items.map((item) => (
+          <a
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center gap-3 p-3 rounded-xl border border-black/10 dark:border-white/10 zag-bg hover:shadow-sm focus-visible:outline focus-visible:outline-2"
+          >
+            <img src={faviconSources(item.url)[0]} data-favicon data-sources={JSON.stringify(faviconSources(item.url))} alt="" width="20" height="20" class="w-5 h-5 rounded-sm" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
+            <div class="flex-1 min-w-0">
+              <p class="font-mono text-sm truncate">{item.name}</p>
+              {item.note && <p class="text-[11px] zag-muted truncate">{item.note}</p>}
+            </div>
+            <svg class="w-4 h-4 zag-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+        ))}
+      </div>
+    </Section>
+  ))}
+</Layout>
+
+<script is:inline>
+  // Progressive favicon loader with fallbacks
+  (() => {
+    if (typeof window === 'undefined') return;
+    document.querySelectorAll('img[data-favicon]')?.forEach((img) => {
+      const sources = (() => {
+        try { return JSON.parse(img.getAttribute('data-sources') || '[]'); } catch { return []; }
+      })();
+      let i = 0;
+      const tryNext = () => {
+        if (i >= sources.length) return;
+        // Avoid infinite error loop
+        (img as HTMLImageElement).onerror = () => { i += 1; tryNext(); };
+        (img as HTMLImageElement).src = sources[i];
+      };
+      // If first src failed before handler attached, re-trigger sequence
+      i = 0; tryNext();
+    });
+  })();
+  </script>

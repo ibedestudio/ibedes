@@ -1,0 +1,21 @@
+.aurora-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* Mode nempel ke browser (atas halaman) */
+.aurora-fixed {
+  position: fixed !important;
+  top: 0; left: 0; right: 0;
+  height: min(72vh, 820px);   /* area aurora di atas halaman */
+  z-index: 20;                /* di bawah header (header pakai z-index > 20) */
+  pointer-events: none;
+  /* Fade cantik di bawah supaya tidak terasa kotak */
+  -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
+}
+
+/* Kanvas tetap full area + blend yang manis di background gelap */
+.aurora-fixed canvas {
+  border-radius: 0;           /* tidak dibatasi radius hero, karena ini global */
+}

@@ -1,0 +1,150 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Section from "../../components/common/Section.astro";
+import ArticleSnippet from "../../components/ArticleSnippet.astro";
+import { getArticles } from "../../lib/list";
+import { GLOBAL } from "../../lib/variables";
+import { slugifyTag, getShortDescription } from "../../lib/utils";
+
+// Kumpulan tag yang dianggap terkait dengan tema programmer
+const relatedTagSlugs = new Set([
+  "programmer",
+  "pemrograman",
+  "coding",
+  "ngoding",
+  "developer",
+  "web",
+  "web-development",
+  "frontend",
+  "backend",
+  "javascript",
+  "typescript",
+  "python",
+  "golang",
+  "rust",
+]);
+
+const allArticles = await getArticles();
+const programmerArticles = allArticles.filter((a) => {
+  const slugs = (a.tags ?? []).map((t) => slugifyTag(t));
+  return slugs.some((s) => Array.from(relatedTagSlugs).some((k) => s.includes(k)));
+});
+
+// Ambil daftar tag yang benar2 muncul di artikel agar bisa ditautkan
+const discoveredTags = Array.from(
+  new Set(
+    programmerArticles
+      .flatMap((a) => a.tags ?? [])
+      .map((t) => ({ raw: t, slug: slugifyTag(t) }))
+      .filter((t) => t.slug && Array.from(relatedTagSlugs).some((k) => t.slug.includes(k)))
+      .map((t) => JSON.stringify(t)),
+  ),
+)
+  .map((s) => JSON.parse(s))
+  .slice(0, 8);
+
+const pageTitle = `Tema: Programmer • ${GLOBAL.username}`;
+const metaDescription = getShortDescription(
+  "Kumpulan artikel bertema programmer: belajar coding, mindset developer, dan langkah praktis memulai karier di dunia pemrograman.",
+  32,
+);
+---
+
+<Layout>
+  <Fragment slot="head">
+    <title>{pageTitle}</title>
+    <meta name="description" content={metaDescription} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:image" content={`${GLOBAL.rootUrl}/${GLOBAL.profileImage}`} />
+    <meta property="og:url" content={`${GLOBAL.rootUrl}/tema/programmer`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={metaDescription} />
+    <meta name="twitter:image" content={`${GLOBAL.rootUrl}/${GLOBAL.profileImage}`} />
+    <meta http-equiv="content-language" content="id" />
+    <meta name="language" content="Indonesia" />
+    <link rel="canonical" href={`${GLOBAL.rootUrl}/tema/programmer`} />
+  </Fragment>
+
+  <Section class="my-10">
+    <!-- Hero ala landing, gambar besar + overlay -->
+    <div class="relative rounded-3xl overflow-hidden border border-black/10 dark:border-white/10">
+      <img
+        src="/images/microsoft_dicoding.jpg"
+        alt="Ilustrasi belajar coding"
+        class="w-full h-64 sm:h-96 object-cover"
+        loading="eager"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
+      <div class="absolute inset-0 p-6 sm:p-10 flex flex-col justify-end gap-3">
+        <p class="text-[10px] uppercase tracking-[0.35em] text-white/80">Tema</p>
+        <h1 class="font-display text-4xl sm:text-6xl text-white">PROGRAMMER</h1>
+        <p class="max-w-2xl text-white/90">
+          Belajar, ngoding, dan tumbuh sebagai developer. Kumpulan tulisan bertag pemrograman—mindset, langkah awal, dan tips praktis.
+        </p>
+        <div class="flex flex-wrap gap-3 pt-2">
+          <a
+            href="/blog/mulai-dengan-why-sebelum-how"
+            class="px-4 py-2 text-sm rounded-full bg-white text-black border border-white/20 hover:bg-white/90"
+          >Mulai Belajar</a>
+          <a
+            href="/tags/belajar-coding"
+            class="px-4 py-2 text-sm rounded-full bg-black/30 text-white border border-white/20 backdrop-blur hover:bg-black/40"
+          >Lihat Tag Terkait</a>
+        </div>
+      </div>
+    </div>
+
+    {discoveredTags.length > 0 && (
+      <div class="flex flex-wrap gap-2 pt-4">
+        {discoveredTags.map((t) => (
+          <a
+            href={`/tags/${t.slug}`}
+            class="text-xs px-3 py-1 rounded-full border border-black/15 dark:border-white/20 zag-muted hover:bg-black/5 dark:hover:bg-white/5 transition"
+          >
+            #{t.raw}
+          </a>
+        ))}
+      </div>
+    )}
+
+    <!-- Highlight / nilai manfaat -->
+    <div class="grid gap-4 sm:grid-cols-3 mb-10">
+      <div class="rounded-xl p-4 border border-black/10 dark:border-white/10 bg-white/50 dark:bg-white/5">
+        <p class="font-semibold">Mulai Terarah</p>
+        <p class="text-sm zag-muted">Mindset dan langkah awal belajar coding tanpa bingung pilih bahasa.</p>
+      </div>
+      <div class="rounded-xl p-4 border border-black/10 dark:border-white/10 bg-white/50 dark:bg-white/5">
+        <p class="font-semibold">Latihan Praktis</p>
+        <p class="text-sm zag-muted">Fokus pada proyek kecil agar cepat paham konsep inti.</p>
+      </div>
+      <div class="rounded-xl p-4 border border-black/10 dark:border-white/10 bg-white/50 dark:bg-white/5">
+        <p class="font-semibold">Konsisten & Tumbuh</p>
+        <p class="text-sm zag-muted">Tetap jalan dengan ritme belajar yang realistis dan berkelanjutan.</p>
+      </div>
+    </div>
+
+    <!-- Daftar artikel -->
+    <div class="mb-4">
+      <h2 class="text-xl font-semibold mb-2">Artikel Terbaru</h2>
+      {programmerArticles.length === 0 && (
+        <p class="zag-muted">Belum ada tulisan bertema programmer untuk saat ini.</p>
+      )}
+    </div>
+
+    <ul id="artikel">
+      {programmerArticles.map((article) => (
+        <li>
+          <ArticleSnippet
+            title={article.title}
+            description={article.description}
+            duration={`${article.time} min`}
+            url={article.filename}
+            timestamp={article.timestamp}
+          />
+        </li>
+      ))}
+    </ul>
+  </Section>
+</Layout>

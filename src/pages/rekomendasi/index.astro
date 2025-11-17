@@ -16,12 +16,14 @@ const categoryStats = PRODUCTS.reduce<Record<string, number>>((acc, product) => 
   acc[product.category] = (acc[product.category] ?? 0) + 1;
   return acc;
 }, {});
-const uniqueCategories = Object.keys(categoryStats);
-
-const favoriteLabel = "Favorit";
-const categories = ["Semua", ...uniqueCategories, favoriteLabel];
+const productsByCategory = PRODUCTS.reduce<Record<string, typeof PRODUCTS>>( (acc, p) => {
+  (acc[p.category] = acc[p.category] || []).push(p);
+  return acc;
+}, {} as any);
 
 const kitProduct = PRODUCTS.find((product) => product.slug === "markaz-hunter-shopee-kit");
+const linktreePromo = PRODUCTS.find((p) => p.slug === "linktree-pro-3-bulan");
+const msEduPromo = PRODUCTS.find((p) => p.slug === "microsoft-365-education");
 
 const supportSteps = [
   {
@@ -119,36 +121,16 @@ const productListSchema = JSON.stringify(
     <script type="application/ld+json" set:html={productListSchema}></script>
   </Fragment>
 
-  <div class="max-w-5xl mx-auto mx-auto bg-slate-50 dark:bg-slate-900">
-    <div class="max-w-5xl mx-auto text-center space-y-6 py-16 sm:py-24 px-4">
-      <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/60 dark:bg-white/10 backdrop-blur-sm border border-white/80 dark:border-white/20 rounded-full shadow-sm">
-        <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-        </svg>
-        <span class="text-xs font-medium text-slate-700 dark:text-slate-300 tracking-wide">REKOMENDASI TERPERCAYA</span>
-      </div>
-      
-      <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white">
-        {hero.title}
-      </h1>
-      
-      <p class="text-sm sm:text-base lg:text-lg text-slate-600 dark:text-slate-400 max-w-4xl mx-auto leading-relaxed">
-        {hero.description}
-      </p>
-      
-      <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50/80 dark:bg-emerald-900/30 backdrop-blur-sm border border-emerald-200/60 dark:border-emerald-500/40 rounded-lg shadow-sm">
-        <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-        </svg>
-        <span class="text-xs font-medium text-emerald-800 dark:text-emerald-200">{hero.sub}</span>
-      </div>
-    </div>
-  </div>
+  <Section class="my-12 text-center space-y-6">
+    <p class="text-[10px] uppercase tracking-[0.35em] zag-muted">Rekomendasi</p>
+    <h1 class="font-display text-3xl sm:text-4xl">{hero.title}</h1>
+    <p class="zag-muted max-w-2xl mx-auto">{hero.description}</p>
+    <p class="text-xs zag-muted">{hero.sub}</p>
+  </Section>
 
   {kitProduct && (
-    <div class="max-w-5xl mx-auto bg-white/50 dark:bg-slate-800/30">
-      <div class="max-w-5xl mx-auto px-4 py-8 sm:py-12">
-        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 sm:p-8 shadow-sm">
+    <Section class="my-10">
+      <div class="zag-bg border border-black/10 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm">
           <div class="flex flex-col lg:flex-row items-start gap-6">
             <div class="flex-1 space-y-4 max-w-5xl mx-auto">
               <div class="flex flex-col sm:flex-row sm:items-center gap-3">
@@ -217,12 +199,51 @@ const productListSchema = JSON.stringify(
           </div>
         </div>
       </div>
-    </div>
+    </Section>
+  )}
+
+  {(linktreePromo || msEduPromo) && (
+    <Section class="my-10">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Promo Spesial</h2>
+          <span class="text-xs text-slate-500 dark:text-slate-400">Waktu terbatas, cek S&K</span>
+        </div>
+        <div class="grid gap-4 sm:gap-6 sm:grid-cols-2">
+          {linktreePromo && (
+            <a href={`#${linktreePromo.slug}`} class="block group rounded-2xl border border-black/10 dark:border-white/10 zag-bg p-5 hover:shadow-md transition-colors">
+              <div class="flex items-start gap-4">
+                <div class="shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-rose-500 to-pink-500"></div>
+                <div class="space-y-1">
+                  <p class="text-xs uppercase tracking-widest text-rose-500 font-semibold">Linktree</p>
+                  <h3 class="font-bold text-slate-900 dark:text-white">{linktreePromo.title}</h3>
+                  {linktreePromo.highlight && (
+                    <p class="text-sm text-slate-600 dark:text-slate-400">{linktreePromo.highlight}</p>
+                  )}
+                </div>
+              </div>
+            </a>
+          )}
+          {msEduPromo && (
+            <a href={`#${msEduPromo.slug}`} class="block group rounded-2xl border border-black/10 dark:border-white/10 zag-bg p-5 hover:shadow-md transition-colors">
+              <div class="flex items-start gap-4">
+                <div class="shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500"></div>
+                <div class="space-y-1">
+                  <p class="text-xs uppercase tracking-widest text-blue-600 font-semibold">Microsoft</p>
+                  <h3 class="font-bold text-slate-900 dark:text-white">{msEduPromo.title}</h3>
+                  {msEduPromo.highlight && (
+                    <p class="text-sm text-slate-600 dark:text-slate-400">{msEduPromo.highlight}</p>
+                  )}
+                </div>
+              </div>
+            </a>
+          )}
+        </div>
+    </Section>
   )}
 
   {tokopediaDrops.length > 0 && (
-    <div class="max-w-5xl mx-auto bg-slate-50/50 dark:bg-slate-800/20">
-      <div class="max-w-5xl mx-auto py-12 sm:py-16 space-y-8 px-4">
+    <Section class="my-10">
+      <div class="py-6 sm:py-8 space-y-8">
         <div class="text-center space-y-4">
           <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/60 dark:bg-white/10 backdrop-blur-sm border border-white/80 dark:border-white/20 rounded-full shadow-sm">
             <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
@@ -240,7 +261,7 @@ const productListSchema = JSON.stringify(
           </p>
         </div>
         
-        <div class="max-w-5xl mx-auto">
+        <div>
           <div class="grid gap-4 sm:gap-6 grid-cols-1">
             {tokopediaDrops.map((product) => (
               <a
@@ -278,60 +299,34 @@ const productListSchema = JSON.stringify(
           </div>
         </div>
       </div>
-    </div>
+    </Section>
   )}
 
-  <div id="produk-terkurasi" class="max-w-5xl mx-auto py-16 sm:py-20">
-    <div class="max-w-5xl mx-auto space-y-10 px-4">
+  <Section id="produk-terkurasi" class="my-16 space-y-10">
+    <div class="space-y-10">
       <div class="text-center space-y-4">
-        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white">
-          Semua Produk
-        </h2>
-        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-          Filter berdasarkan kategori untuk kemudahan browsing
-        </p>
+        <h2 class="font-display text-2xl sm:text-3xl">Semua Produk</h2>
+        <p class="zag-muted text-sm">Kurasi lengkap tanpa filter — simpel dan rapi.</p>
       </div>
-      
-      <div class="flex flex-wrap justify-center gap-2 sm:gap-3 filter-scroll" data-filter-group data-favorite-label={favoriteLabel}>
-        {categories.map((category, index) => (
-          <button
-            type="button"
-            class:list={[
-              "filter-chip px-3 py-2 sm:px-4 sm:py-2 rounded-lg font-medium text-xs sm:text-sm transition-colors",
-              index === 0 ? "bg-slate-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700",
-            ]}
-            data-filter-button
-            data-filter-value={category}
-            data-filter-favorite={category === favoriteLabel ? "true" : undefined}
-          >
-            <span>{category}</span>
-            <span
-              class="filter-chip__count ml-1 px-1.5 py-0.5 bg-black/10 dark:bg-white/20 rounded text-xs"
-              data-filter-count={category === favoriteLabel ? "favorite" : undefined}
-            >
-              {category === "Semua" ? PRODUCTS.length : categoryStats[category] ?? 0}
-            </span>
-          </button>
-        ))}
-      </div>
-      
-      <div class="space-y-6">
-        {PRODUCTS.map((product) => (
-          <div
-            data-product-wrapper
-            data-category={product.category.toLowerCase()}
-            data-product-slug={product.slug}
-          >
-            <ProductCard {...product} />
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
 
-  <div class="max-w-5xl mx-auto bg-slate-50/50 dark:bg-slate-800/20">
-    <div class="max-w-5xl mx-auto py-16 sm:py-20 px-4">
-      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-8 sm:p-10 shadow-sm">
+      {Object.entries(productsByCategory).map(([category, items]) => (
+        <section>
+          <h3 class="text-sm uppercase tracking-[0.35em] zag-muted mb-4 flex items-center gap-2">
+            <span>{category}</span>
+            <span class="px-1.5 py-0.5 text-[10px] rounded bg-black/10 dark:bg-white/20">{items.length}</span>
+          </h3>
+          <div class="space-y-6">
+            {items.map((product) => (
+              <ProductCard {...product} />
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </Section>
+
+  <Section class="my-16">
+    <div class="zag-bg border border-black/10 dark:border-white/10 rounded-2xl p-8 sm:p-10 shadow-sm">
         <div class="text-center space-y-6">
           <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/60 dark:bg-white/10 backdrop-blur-sm border border-white/80 dark:border-white/20 rounded-full shadow-sm">
             <svg class="w-4 h-4 text-pink-600 dark:text-pink-400" fill="currentColor" viewBox="0 0 24 24">
@@ -374,127 +369,6 @@ const productListSchema = JSON.stringify(
             </span>
           </div>
         </div>
-      </div>
     </div>
-  </div>
+  </Section>
 </Layout>
-
-<script is:inline>
-  (() => {
-    if (typeof window === "undefined") return;
-    const buttons = Array.from(document.querySelectorAll("[data-filter-button]"));
-    const wrappers = Array.from(document.querySelectorAll("[data-product-wrapper]"));
-    if (!buttons.length || !wrappers.length) return;
-
-    const favoriteLabel =
-      document.querySelector("[data-filter-group]")?.getAttribute("data-favorite-label") ?? "Favorit";
-    const filterStorageKey = "ibedes_rekomendasi_filter";
-    const favoritesStorageKey = "ibedes_product_favorites";
-    const favoriteCountNode = document.querySelector("[data-filter-count='favorite']");
-
-    const parseJSON = (value) => {
-      if (!value) return [];
-      try {
-        const parsed = JSON.parse(value);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch (error) {
-        return [];
-      }
-    };
-
-    const getFavorites = () => parseJSON(localStorage.getItem(favoritesStorageKey));
-
-    const normalizeFilterValue = (value = "") => {
-      const lower = value.trim().toLowerCase();
-      if (!lower) return null;
-      const match = buttons.find(
-        (button) => (button.getAttribute("data-filter-value") ?? "").toLowerCase() === lower,
-      );
-      return match?.getAttribute("data-filter-value") ?? null;
-    };
-
-    const syncActiveButton = (value) => {
-      buttons.forEach((button) => {
-        const isActive = button.getAttribute("data-filter-value") === value;
-        button.classList.toggle("is-active", isActive);
-      });
-    };
-
-    const updateFavoriteCount = () => {
-      if (!favoriteCountNode) return;
-      const count = getFavorites().length;
-      favoriteCountNode.textContent = count.toString();
-    };
-
-    let activeFilter = "Semua";
-
-    const applyFilter = (value, options = {}) => {
-      const resolved = normalizeFilterValue(value) ?? "Semua";
-      activeFilter = resolved;
-      syncActiveButton(resolved);
-
-      const normalized = resolved.toLowerCase();
-      const favorites = new Set(getFavorites());
-      wrappers.forEach((wrapper) => {
-        const category = (wrapper.getAttribute("data-category") ?? "").toLowerCase();
-        const slug = wrapper.getAttribute("data-product-slug") ?? "";
-        const isFavoriteFilter = normalized === favoriteLabel.toLowerCase();
-        const visible =
-          normalized === "semua" ||
-          (isFavoriteFilter ? favorites.has(slug) : category === normalized);
-        wrapper.style.display = visible ? "block" : "none";
-      });
-
-      if (options.updateState !== false) {
-        try {
-          localStorage.setItem(filterStorageKey, resolved);
-        } catch (error) {
-          console.warn("Gagal menyimpan filter", error);
-        }
-      }
-
-      if (options.updateHistory !== false) {
-        const params = new URLSearchParams(window.location.search);
-        if (normalized === "semua") {
-          params.delete("kategori");
-        } else {
-          params.set("kategori", normalized);
-        }
-        const query = params.toString();
-        const newUrl = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
-        window.history.replaceState({}, "", newUrl);
-      }
-    };
-
-    buttons.forEach((button) => {
-      button.addEventListener("click", () => {
-        applyFilter(button.getAttribute("data-filter-value") ?? "Semua");
-      });
-    });
-
-    const initialFilter =
-      normalizeFilterValue(new URLSearchParams(window.location.search).get("kategori") ?? "") ??
-      normalizeFilterValue(localStorage.getItem(filterStorageKey) ?? "") ??
-      "Semua";
-
-    applyFilter(initialFilter, { updateHistory: false, updateState: false });
-    updateFavoriteCount();
-
-    const handleFavoritesChange = () => {
-      updateFavoriteCount();
-      if (activeFilter.toLowerCase() === favoriteLabel.toLowerCase()) {
-        applyFilter(favoriteLabel, { updateHistory: false, updateState: false });
-      }
-    };
-
-    window.addEventListener("ibedes:favorites-changed", handleFavoritesChange);
-    window.addEventListener("storage", (event) => {
-      if (event.key === favoritesStorageKey) {
-        handleFavoritesChange();
-      }
-      if (event.key === filterStorageKey && event.newValue) {
-        applyFilter(event.newValue, { updateHistory: true, updateState: false });
-      }
-    });
-  })();
-</script>

@@ -22,6 +22,44 @@ export type AffiliateProduct = {
  */
 export const PRODUCTS: AffiliateProduct[] = [
   {
+    slug: "linktree-pro-3-bulan",
+    title: "Linktree Pro — Promo 3 Bulan",
+    category: "Software & Tools",
+    highlight: "Gunakan kode: creatoreconomynyc untuk promo 3 bulan (cek S&K).",
+    description:
+      "Optimalkan profil bio dengan Linktree. Cocok buat kreator dan UMKM untuk menggabungkan semua link penting di satu tempat. Promo khusus: masukkan kode kupon creatoreconomynyc saat checkout untuk menikmati 3 bulan Pro — promosi dapat berubah kapan saja, jadi mohon cek kembali S&K di situs.",
+    image:
+      "https://images.unsplash.com/photo-1529101091764-c3526daf38fe?auto=format&fit=crop&w=900&q=80",
+    imageAlt: "Ilustrasi ponsel dengan tautan bio",
+    tags: ["promo", "coupon", "linktree", "creator-tools"],
+    links: [
+      {
+        label: "Linktree",
+        url: "https://linktr.ee/",
+        note: "Masukkan kode: creatoreconomynyc saat checkout",
+      },
+    ],
+  },
+  {
+    slug: "microsoft-365-education",
+    title: "Microsoft 365 Education (Gratis untuk Pelajar/Guru)",
+    category: "Software & Tools",
+    highlight: "Gratis untuk pelajar/guru yang memenuhi syarat dengan email kampus/sekolah.",
+    description:
+      "Akses Word, Excel, PowerPoint, OneNote, dan Microsoft Teams untuk belajar dan kolaborasi. Cek kelayakan institusi kamu menggunakan email kampus/sekolah.",
+    image:
+      "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=900&q=80",
+    imageAlt: "Pelajar menggunakan laptop untuk belajar online",
+    tags: ["student", "gratis", "education", "office"],
+    links: [
+      {
+        label: "Microsoft 365 Education",
+        url: "https://www.microsoft.com/id-id/microsoft-365/college-student-pricing",
+        note: "Gunakan email institusi untuk verifikasi kelayakan."
+      }
+    ]
+  },
+  {
     slug: "markaz-hunter-shopee-kit",
     title: "Kit Shopee Markaz Hunter",
     category: "Shopee Picks",

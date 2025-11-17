@@ -11,7 +11,7 @@ import CommandPalette from "./CommandPalette.astro";
   <div
     class="zag-bg zag-transition sm:hidden relative z-50 py-4 px-4 flex items-center justify-between"
   >
-    <button class="p-2" aria-label="Toggle navigation menu" aria-expanded="false" data-nav-toggle>
+    <button class="p-2" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="32"
@@ -43,11 +43,19 @@ import CommandPalette from "./CommandPalette.astro";
       </button>
     </div>
   </div>
+  <!-- Backdrop for mobile menu -->
+  <div
+    class="fixed inset-0 bg-black/30 dark:bg-white/10 z-30 sm:hidden hidden"
+    data-nav-backdrop
+    aria-hidden="true"
+  ></div>
+
   <nav
     class="zag-bg zag-border-b zag-transition fixed sm:relative inset-x-0 top-16 sm:top-0 h-auto sm:px-4 py-3 sm:py-4 max-w-4xl mx-auto sm:border-none z-40 hidden sm:flex"
     id="main-nav"
     role="navigation"
     aria-label="Main navigation"
+    aria-hidden="true"
   >
     <div class="flex items-center justify-between w-full gap-3 px-4 sm:px-0">
       <div class="nav-scroll flex items-center gap-2 overflow-x-auto py-1 pr-2" data-nav-list>
@@ -115,51 +123,71 @@ import CommandPalette from "./CommandPalette.astro";
 </header>
 
 <script>
-const navToggle = document.querySelector("[data-nav-toggle]");
-const nav = document.querySelector("header nav");
+// Elements
+const navToggle = document.querySelector('[data-nav-toggle]');
+const nav = document.getElementById('main-nav');
+const backdrop = document.querySelector('[data-nav-backdrop]');
 let isNavOpen = false;
 
+const setAria = (open) => {
+  if (navToggle) navToggle.setAttribute('aria-expanded', String(open));
+  if (nav) nav.setAttribute('aria-hidden', String(!open));
+  if (backdrop) backdrop.setAttribute('aria-hidden', String(!open));
+};
 
-const updateNavState = () => {
+const applyClasses = (open) => {
   if (!nav) return;
-  const isMobile = window.matchMedia("(max-width: 640px)").matches;
+  const isMobile = window.matchMedia('(max-width: 640px)').matches;
   if (isMobile) {
-    const navElement = nav as HTMLElement;
-    if (isNavOpen) {
-      navElement.classList.remove("hidden");
-      navElement.classList.add("flex");
-    } else {
-      navElement.classList.add("hidden");
-      navElement.classList.remove("flex");
+    nav.classList.toggle('hidden', !open);
+    nav.classList.toggle('flex', open);
+    if (backdrop) {
+      backdrop.classList.toggle('hidden', !open);
     }
+    document.documentElement.style.overflow = open ? 'hidden' : '';
   } else {
-    const navElement = nav as HTMLElement;
-    navElement.classList.remove("hidden");
-    navElement.classList.add("flex");
+    // On >= sm keep nav visible and reset state
+    nav.classList.remove('hidden');
+    nav.classList.add('flex');
+    if (backdrop) backdrop.classList.add('hidden');
+    document.documentElement.style.overflow = '';
     isNavOpen = false;
-    const toggleButton = document.querySelector("[data-nav-toggle]") as HTMLElement;
-    if (toggleButton) {
-      toggleButton.setAttribute("aria-expanded", "false");
-    }
+    setAria(false);
   }
+};
+
+const updateNavState = () => applyClasses(isNavOpen);
+
+const closeNav = () => {
+  isNavOpen = false;
+  setAria(false);
+  applyClasses(false);
 };
 
 const toggleNav = () => {
   isNavOpen = !isNavOpen;
-  const toggleButton = document.querySelector("[data-nav-toggle]") as HTMLElement;
-  if (toggleButton) {
-    toggleButton.setAttribute("aria-expanded", isNavOpen.toString());
-  }
-  updateNavState();
+  setAria(isNavOpen);
+  applyClasses(isNavOpen);
 };
 
 // Event listeners
-navToggle?.addEventListener("click", toggleNav);
+navToggle && navToggle.addEventListener('click', toggleNav);
+backdrop && backdrop.addEventListener('click', closeNav);
 
-// Keyboard shortcuts for search are handled inside CommandPalette
+// Close on `Esc`
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && isNavOpen) closeNav();
+});
 
-// Initialize
-window.addEventListener("resize", updateNavState);
+// Close after clicking a menu link (mobile)
+const navList = document.querySelector('[data-nav-list]');
+navList && navList.addEventListener('click', (e) => {
+  const t = e.target;
+  if (t && t.closest('a')) closeNav();
+});
+
+// Initialize and respond to viewport changes
+window.addEventListener('resize', updateNavState);
 updateNavState();
 
 // Hide scrollbars for nav-scroll container
@@ -167,9 +195,9 @@ const style = document.createElement('style');
 style.textContent = `.nav-scroll{scrollbar-width:none}.nav-scroll::-webkit-scrollbar{display:none}`;
 document.head.appendChild(style);
 
-// Check for service worker updates
+// Check for service worker readiness (no-op)
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.ready.then(registration => {
+  navigator.serviceWorker.ready.then((registration) => {
     console.log('Service Worker ready:', registration);
   });
 }

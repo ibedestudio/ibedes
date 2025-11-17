@@ -44,17 +44,30 @@ import CommandPalette from "./CommandPalette.astro";
     </div>
   </div>
   <nav
-    class="zag-bg zag-border-b zag-transition fixed sm:relative inset-x-0 top-16 sm:top-0 h-auto sm:px-4 flex flex-col gap-5 py-4 text-lg sm:text-xl sm:flex-row sm:items-center sm:justify-between sm:gap-4 max-w-4xl mx-auto sm:pt-4 sm:border-none z-40 hidden sm:flex"
+    class="zag-bg zag-border-b zag-transition fixed sm:relative inset-x-0 top-16 sm:top-0 h-auto sm:px-4 py-3 sm:py-4 max-w-4xl mx-auto sm:border-none z-40 hidden sm:flex"
     id="main-nav"
+    role="navigation"
+    aria-label="Main navigation"
   >
-    <div
-      class="flex flex-col font-mono font-medium gap-3 sm:flex-row sm:gap-5 px-4 sm:px-0 sm:flex-nowrap sm:items-center sm:text-left sm:flex-1"
-    >
-    {Object.entries(GLOBAL.menu).map((i) => (
-      <Anchor url={i[1]}>{i[0]}</Anchor>
-    ))}
-    </div>
-    <div class="flex gap-3 justify-between px-4 sm:px-0 items-center sm:justify-end sm:flex-shrink-0">
+    <div class="flex items-center justify-between w-full gap-3 px-4 sm:px-0">
+      <div class="nav-scroll flex items-center gap-2 overflow-x-auto py-1 pr-2" data-nav-list>
+        {Object.entries(GLOBAL.menu).map(([label, href]) => {
+          const isHome = href === "/";
+          const isActive = isHome ? Astro.url.pathname === "/" : (Astro.url.pathname === href || Astro.url.pathname.startsWith(href + "/"));
+          return (
+            <a
+              href={href}
+              class:list={[
+                "px-3 py-1 rounded-full border text-[11px] uppercase tracking-[0.25em] whitespace-nowrap",
+                "border-black/20 dark:border-white/30", 
+                isActive ? "bg-black text-white dark:bg-white dark:text-black" : "bg-transparent zag-muted hover:text-current"
+              ]}
+              aria-current={isActive ? "page" : undefined}
+            >{label}</a>
+          );
+        })}
+      </div>
+      <div class="flex gap-3 items-center sm:flex-shrink-0">
       {GLOBAL.githubProfile && (<Anchor url={GLOBAL.githubProfile} aria-label="Zaggonaut GitHub Repository">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -148,6 +161,11 @@ navToggle?.addEventListener("click", toggleNav);
 // Initialize
 window.addEventListener("resize", updateNavState);
 updateNavState();
+
+// Hide scrollbars for nav-scroll container
+const style = document.createElement('style');
+style.textContent = `.nav-scroll{scrollbar-width:none}.nav-scroll::-webkit-scrollbar{display:none}`;
+document.head.appendChild(style);
 
 // Check for service worker updates
 if ('serviceWorker' in navigator) {

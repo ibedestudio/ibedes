@@ -12,13 +12,23 @@ const year = date.getFullYear();
     <div
       class="zag-border-b zag-transition pb-4 flex flex-col sm:flex-row sm:flex-nowrap gap-8 sm:items-center"
     >
-      <ul class="flex flex-col gap-2">
-        {Object.entries(GLOBAL.menu).map((i) => (
-          <li>
-            <Anchor url={i[1]}>{i[0]}</Anchor>
-          </li>
-        ))}
-      </ul>
+      <div class="flex flex-wrap gap-2 items-center">
+        {Object.entries(GLOBAL.menu).map(([label, href]) => {
+          const isHome = href === "/";
+          const isActive = isHome ? Astro.url.pathname === "/" : (Astro.url.pathname === href || Astro.url.pathname.startsWith(href + "/"));
+          return (
+            <a
+              href={href}
+              class:list={[
+                "px-3 py-1 rounded-full border text-[10px] uppercase tracking-[0.3em]",
+                "border-black/20 dark:border-white/30",
+                isActive ? "bg-black text-white dark:bg-white dark:text-black" : "bg-transparent zag-muted hover:text-current"
+              ]}
+              aria-current={isActive ? "page" : undefined}
+            >{label}</a>
+          );
+        })}
+      </div>
       <div class="flex flex-start items-start gap-4 w-full">
         <svg
           xmlns="http://www.w3.org/2000/svg"

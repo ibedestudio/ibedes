@@ -307,9 +307,26 @@ const faviconSources = (url: string) => {
         try { return JSON.parse(img.getAttribute('data-sources') || '[]'); } catch { return []; }
       })();
       let i = 0;
+      const makeLetterFallback = () => {
+        try {
+          const a = (img.closest('a') as HTMLAnchorElement);
+          const host = new URL(a?.href || '').hostname.replace(/^www\./, '');
+          const letter = (host[0] || '?').toUpperCase();
+          let hash = 0; for (let j = 0; j < host.length; j++) hash = (hash * 31 + host.charCodeAt(j)) | 0;
+          const hue = Math.abs(hash) % 360;
+          const color = `hsl(${hue},70%,45%)`;
+          const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'>
+            <rect width='100%' height='100%' rx='8' fill='${color}'/>
+            <text x='50%' y='58%' text-anchor='middle' font-family='IBM Plex Mono, Arial' font-size='36' fill='white'>${letter}</text>
+          </svg>`;
+          (img as HTMLImageElement).onerror = null;
+          (img as HTMLImageElement).src = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+        } catch (_) {
+          (img as HTMLImageElement).src = '/favicon.svg';
+        }
+      };
       const tryNext = () => {
-        if (i >= sources.length) return;
-        // Avoid infinite error loop
+        if (i >= sources.length) { makeLetterFallback(); return; }
         (img as HTMLImageElement).onerror = () => { i += 1; tryNext(); };
         (img as HTMLImageElement).src = sources[i];
       };

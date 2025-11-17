@@ -36,6 +36,7 @@ export const GLOBAL = {
   // Menu items
   menu: {
     home: "/",
+    links: "/links",
     services: "/services",
     swag: "/swag",
     rekomendasi: "/rekomendasi",

@@ -1115,3 +1115,9 @@ kbd {
   font-size: 0.6rem;
   opacity: 0.7;
 }
+
+@media (max-width: 640px) {
+  .mobile-nav-column {
+    flex-direction: column;
+  }
+}

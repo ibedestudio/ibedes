@@ -12,14 +12,10 @@ const hero = {
   sub: "Belanja lewat link ini bantu ibedes tetap konsisten nulis konten berkualitas.",
 };
 
-const categoryStats = PRODUCTS.reduce<Record<string, number>>((acc, product) => {
+const allCategories = ["Semua", ...Object.keys(PRODUCTS.reduce<Record<string, number>>((acc, product) => {
   acc[product.category] = (acc[product.category] ?? 0) + 1;
   return acc;
-}, {});
-const productsByCategory = PRODUCTS.reduce<Record<string, typeof PRODUCTS>>( (acc, p) => {
-  (acc[p.category] = acc[p.category] || []).push(p);
-  return acc;
-}, {} as any);
+}, {}))];
 
 const kitProduct = PRODUCTS.find((product) => product.slug === "markaz-hunter-shopee-kit");
 const linktreePromo = PRODUCTS.find((p) => p.slug === "linktree-pro-3-bulan");
@@ -303,24 +299,30 @@ const productListSchema = JSON.stringify(
   )}
 
   <Section id="produk-terkurasi" class="my-16 space-y-10">
-    <div class="space-y-10">
-      <div class="text-center space-y-4">
-        <h2 class="font-display text-2xl sm:text-3xl">Semua Produk</h2>
-        <p class="zag-muted text-sm">Kurasi lengkap tanpa filter — simpel dan rapi.</p>
-      </div>
+    <div class="text-center space-y-4">
+      <h2 class="font-display text-2xl sm:text-3xl">Semua Produk</h2>
+      <p class="zag-muted text-sm">Kurasi lengkap tanpa filter — simpel dan rapi.</p>
+    </div>
 
-      {Object.entries(productsByCategory).map(([category, items]) => (
-        <section>
-          <h3 class="text-sm uppercase tracking-[0.35em] zag-muted mb-4 flex items-center gap-2">
-            <span>{category}</span>
-            <span class="px-1.5 py-0.5 text-[10px] rounded bg-black/10 dark:bg-white/20">{items.length}</span>
-          </h3>
-          <div class="space-y-6">
-            {items.map((product) => (
-              <ProductCard {...product} />
-            ))}
-          </div>
-        </section>
+    <div class="flex flex-wrap items-center justify-center gap-2" data-category-filters>
+      {allCategories.map((category, index) => (
+        <button
+          type="button"
+          class:list={[
+            "px-4 py-2 text-sm font-semibold rounded-full border transition-colors",
+            { 'is-active': index === 0 }
+          ]}
+          data-category-button={category.toLowerCase()}
+          aria-pressed={index === 0 ? "true" : "false"}
+        >
+          {category}
+        </button>
+      ))}
+    </div>
+
+    <div class="space-y-8" data-products-container>
+      {PRODUCTS.map((product) => (
+        <ProductCard {...product} />
       ))}
     </div>
   </Section>
@@ -372,3 +374,34 @@ const productListSchema = JSON.stringify(
     </div>
   </Section>
 </Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const filterContainer = document.querySelector('[data-category-filters]');
+    const productContainer = document.querySelector('[data-products-container]');
+    if (!filterContainer || !productContainer) return;
+
+    const allProducts = Array.from(productContainer.querySelectorAll('[data-product-card]'));
+
+    filterContainer.addEventListener('click', (event) => {
+      const target = event.target.closest('[data-category-button]');
+      if (!target) return;
+
+      const category = target.dataset.categoryButton;
+
+      // Update button states
+      filterContainer.querySelectorAll('[data-category-button]').forEach(button => {
+        const isPressed = button === target;
+        button.setAttribute('aria-pressed', String(isPressed));
+        button.classList.toggle('is-active', isPressed);
+      });
+
+      // Filter products
+      allProducts.forEach(productCard => {
+        const productCategory = productCard.getAttribute('data-category');
+        const shouldShow = category === 'semua' || productCategory === category;
+        productCard.classList.toggle('is-hidden', !shouldShow);
+      });
+    });
+  });
+</script>

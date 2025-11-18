@@ -10,6 +10,8 @@ export type AffiliateProduct = {
   description: string;
   category: string;
   highlight?: string;
+  priceRange?: string;
+  endorsement?: string;
   tags?: string[];
   image?: string;
   imageAlt?: string;
@@ -26,6 +28,8 @@ export const PRODUCTS: AffiliateProduct[] = [
     title: "Linktree Pro — Promo 3 Bulan",
     category: "Software & Tools",
     highlight: "Gunakan kode: creatoreconomynyc untuk promo 3 bulan (cek S&K).",
+    priceRange: "Gratis (Promo)",
+    endorsement: "Wajib punya buat yang serius ngonten. Fitur analitiknya ngebantu banget buat ngerti audiens.",
     description:
       "Optimalkan profil bio dengan Linktree. Cocok buat kreator dan UMKM untuk menggabungkan semua link penting di satu tempat. Promo khusus: masukkan kode kupon creatoreconomynyc saat checkout untuk menikmati 3 bulan Pro — promosi dapat berubah kapan saja, jadi mohon cek kembali S&K di situs.",
     image:
@@ -45,6 +49,8 @@ export const PRODUCTS: AffiliateProduct[] = [
     title: "Microsoft 365 Education (Gratis untuk Pelajar/Guru)",
     category: "Software & Tools",
     highlight: "Gratis untuk pelajar/guru yang memenuhi syarat dengan email kampus/sekolah.",
+    priceRange: "Gratis",
+    endorsement: "Kalau kamu pelajar atau guru, ini no-brainer. Dapetin semua aplikasi Office secara legal dan gratis.",
     description:
       "Akses Word, Excel, PowerPoint, OneNote, dan Microsoft Teams untuk belajar dan kolaborasi. Cek kelayakan institusi kamu menggunakan email kampus/sekolah.",
     image:

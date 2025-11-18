@@ -7,6 +7,7 @@ import CommandPalette from "./CommandPalette.astro";
 
 <header
   class="zag-bg zag-border-b zag-transition sticky top-0 w-full z-10"
+  data-header
 >
   <div
     class="zag-bg zag-transition sm:hidden relative z-50 py-4 px-4 flex items-center justify-between"
@@ -130,6 +131,7 @@ import CommandPalette from "./CommandPalette.astro";
 const navToggle = document.querySelector('[data-nav-toggle]');
 const nav = document.getElementById('main-nav');
 const backdrop = document.querySelector('[data-nav-backdrop]');
+const headerEl = document.querySelector('[data-header]');
 let isNavOpen = false;
 
 const setAria = (open) => {
@@ -161,6 +163,12 @@ const applyClasses = (open) => {
 
 const updateNavState = () => applyClasses(isNavOpen);
 
+const updateHeaderState = () => {
+  if (!headerEl) return;
+  const isScrolled = window.scrollY > 8;
+  headerEl.setAttribute('data-scrolled', String(isScrolled));
+};
+
 const closeNav = () => {
   isNavOpen = false;
   setAria(false);
@@ -191,11 +199,19 @@ navList && navList.addEventListener('click', (e) => {
 
 // Initialize and respond to viewport changes
 window.addEventListener('resize', updateNavState);
+window.addEventListener('scroll', updateHeaderState, { passive: true });
 updateNavState();
+updateHeaderState();
 
 // Hide scrollbars for nav-scroll container
 const style = document.createElement('style');
-style.textContent = `.nav-scroll{scrollbar-width:none}.nav-scroll::-webkit-scrollbar{display:none}`;
+style.textContent = `
+  .nav-scroll{scrollbar-width:none}
+  .nav-scroll::-webkit-scrollbar{display:none}
+  [data-header]{transition:box-shadow .3s ease,background-color .3s ease,backdrop-filter .3s ease;-webkit-backdrop-filter:none}
+  [data-header][data-scrolled="true"]{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 12px 35px rgba(15,23,42,.15)}
+  html.dark [data-header][data-scrolled="true"]{box-shadow:0 15px 45px rgba(0,0,0,.45)}
+`;
 document.head.appendChild(style);
 
 // Check for service worker readiness (no-op)

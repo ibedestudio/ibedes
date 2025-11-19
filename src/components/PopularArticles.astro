@@ -4,7 +4,7 @@ interface Article {
   description: string;
   time: number;
   filename: string;
-  timestamp?: number;
+  timestamp?: string | number;
 }
 
 interface Props {
@@ -12,8 +12,15 @@ interface Props {
 }
 
 const { articles } = Astro.props as Props;
+const toTimestamp = (value?: number | string) => {
+  if (typeof value === "number") return value;
+  if (!value) return 0;
+  const parsed = Date.parse(value);
+  return Number.isNaN(parsed) ? 0 : parsed;
+};
+
 const fallbackArticles = [...articles]
-  .sort((a, b) => (b.timestamp ?? 0) - (a.timestamp ?? 0))
+  .sort((a, b) => toTimestamp(b.timestamp) - toTimestamp(a.timestamp))
   .slice(0, 3);
 const articlesJSON = JSON.stringify(articles)
   .replace(/</g, "\\u003C")

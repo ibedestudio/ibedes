@@ -98,7 +98,7 @@ const serializedCommands = JSON.stringify(commandItems).replace(/</g, "\\u003c")
     let activeIndex = -1;
 
     const renderResults = (filteredItems) => {
-      results.innerHTML = "";
+      results.replaceChildren();
       if (!filteredItems.length) {
         const empty = document.createElement("div");
         empty.className = "command-empty";
@@ -112,14 +112,33 @@ const serializedCommands = JSON.stringify(commandItems).replace(/</g, "\\u003c")
         el.className = "command-item";
         el.dataset.index = index.toString();
         el.dataset.active = index === activeIndex ? "true" : "false";
-        el.innerHTML = `
-          <div class="command-item__meta">
-            <span>${item.type}</span>
-            ${item.meta ? `<span>${item.meta}</span>` : ""}
-          </div>
-          <div class="text-base font-semibold">${item.title}</div>
-          ${item.description ? `<p class="text-sm opacity-70">${item.description}</p>` : ""}
-        `;
+
+        const meta = document.createElement("div");
+        meta.className = "command-item__meta";
+
+        const typeSpan = document.createElement("span");
+        typeSpan.textContent = item.type;
+        meta.appendChild(typeSpan);
+
+        if (item.meta) {
+          const metaSpan = document.createElement("span");
+          metaSpan.textContent = item.meta;
+          meta.appendChild(metaSpan);
+        }
+        el.appendChild(meta);
+
+        const title = document.createElement("div");
+        title.className = "text-base font-semibold";
+        title.textContent = item.title;
+        el.appendChild(title);
+
+        if (item.description) {
+          const desc = document.createElement("p");
+          desc.className = "text-sm opacity-70";
+          desc.textContent = item.description;
+          el.appendChild(desc);
+        }
+
         el.addEventListener("click", () => {
           window.location.href = item.url;
         });

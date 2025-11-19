@@ -126,72 +126,74 @@ const productListSchema = JSON.stringify(
 
   {kitProduct && (
     <Section class="my-10">
-      <div class="zag-bg border border-black/10 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-sm">
-          <div class="flex flex-col lg:flex-row items-start gap-6">
-            <div class="flex-1 space-y-4 max-w-5xl mx-auto">
-              <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-                <span class="px-3 py-1 bg-slate-600 text-white text-xs font-medium rounded-full w-fit">
-                  Kit Terbaru
-                </span>
-                <span class="text-sm text-slate-500 dark:text-slate-400">{kitProduct.title}</span>
-              </div>
-              
-              <p class="text-sm sm:text-base text-slate-700 dark:text-slate-300 italic">
-                {kitProduct.highlight}
-              </p>
-              
-              <div class="space-y-3">
-                {kitProduct.links.slice(0, 3).map((link) => (
-                  <a
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="flex items-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg hover:border-slate-300 dark:hover:border-slate-500 transition-colors"
-                  >
-                    <div class="flex items-center gap-2">
-                      {link.label.toLowerCase().includes('shopee') && (
-                        <img
-                          src="/shopee-logo.svg"
-                          alt="Shopee"
-                          class="w-5 h-5 object-contain"
-                          loading="lazy"
-                        />
-                      )}
-                      {link.label.toLowerCase().includes('tokopedia') && (
-                        <img
-                          src="/tokopedia-logo.svg"
-                          alt="Tokopedia"
-                          class="w-5 h-5 object-contain"
-                          loading="lazy"
-                        />
-                      )}
-                      {link.label.toLowerCase().includes('tiktok') && (
-                        <img
-                          src="/tiktok-logo.svg"
-                          alt="TikTok"
-                          class="w-5 h-5 object-contain"
-                          loading="lazy"
-                        />
-                      )}
-                      <span class="font-medium text-sm">{link.label}</span>
-                    </div>
-                    <svg class="w-4 h-4 text-slate-400 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                    </svg>
-                  </a>
-                ))}
-              </div>
-              
-              <a
-                href={`#${kitProduct.slug}`}
-                class="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 font-medium transition-colors text-sm"
-              >
-                <span>Lihat detail kit lengkap</span>
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-              </a>
+      <div
+        class="zag-bg border rounded-2xl p-6 sm:p-8 shadow-sm zag-text"
+        style="border-color: color-mix(in srgb, currentColor 12%, transparent)"
+      >
+        <div class="flex flex-col lg:flex-row items-start gap-6">
+          <div class="flex-1 space-y-4 max-w-5xl mx-auto">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+              <span class="px-3 py-1 text-xs font-display tracking-[0.35em] uppercase rounded-full -zag-bg -zag-text">
+                Kit Terbaru
+              </span>
+              <span class="text-sm zag-muted">{kitProduct.title}</span>
             </div>
+
+            <p class="text-sm sm:text-base zag-muted italic">
+              {kitProduct.highlight}
+            </p>
+
+            <div class="space-y-3">
+              {kitProduct.links.slice(0, 3).map((link) => (
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="cta-button cta-button--secondary w-full justify-between gap-3"
+                >
+                  <div class="flex items-center gap-2">
+                    {link.label.toLowerCase().includes('shopee') && (
+                      <img
+                        src="/shopee-logo.svg"
+                        alt="Shopee"
+                        class="w-5 h-5 object-contain"
+                        loading="lazy"
+                      />
+                    )}
+                    {link.label.toLowerCase().includes('tokopedia') && (
+                      <img
+                        src="/tokopedia-logo.svg"
+                        alt="Tokopedia"
+                        class="w-5 h-5 object-contain"
+                        loading="lazy"
+                      />
+                    )}
+                    {link.label.toLowerCase().includes('tiktok') && (
+                      <img
+                        src="/tiktok-logo.svg"
+                        alt="TikTok"
+                        class="w-5 h-5 object-contain"
+                        loading="lazy"
+                      />
+                    )}
+                    <span class="font-semibold text-sm tracking-[0.2em] uppercase">{link.label}</span>
+                  </div>
+                  <svg class="w-4 h-4 zag-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                  </svg>
+                </a>
+              ))}
+            </div>
+
+            <a
+              href={`#${kitProduct.slug}`}
+              class="inline-flex items-center gap-2 zag-muted font-medium text-sm zag-transition"
+            >
+              <span>Lihat detail kit lengkap</span>
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
           </div>
         </div>
       </div>
@@ -200,40 +202,54 @@ const productListSchema = JSON.stringify(
 
   {(linktreePromo || msEduPromo) && (
     <Section class="my-10">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">Promo Spesial</h2>
-          <span class="text-xs text-slate-500 dark:text-slate-400">Waktu terbatas, cek S&K</span>
-        </div>
-        <div class="grid gap-4 sm:gap-6 sm:grid-cols-2">
-          {linktreePromo && (
-            <a href={`#${linktreePromo.slug}`} class="block group rounded-2xl border border-black/10 dark:border-white/10 zag-bg p-5 hover:shadow-md transition-colors">
-              <div class="flex items-start gap-4">
-                <div class="shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-rose-500 to-pink-500"></div>
-                <div class="space-y-1">
-                  <p class="text-xs uppercase tracking-widest text-rose-500 font-semibold">Linktree</p>
-                  <h3 class="font-bold text-slate-900 dark:text-white">{linktreePromo.title}</h3>
-                  {linktreePromo.highlight && (
-                    <p class="text-sm text-slate-600 dark:text-slate-400">{linktreePromo.highlight}</p>
-                  )}
-                </div>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg sm:text-xl font-display">Promo Spesial</h2>
+        <span class="text-xs zag-muted">Waktu terbatas, cek S&amp;K</span>
+      </div>
+      <div class="grid gap-4 sm:gap-6 sm:grid-cols-2">
+        {linktreePromo && (
+          <a
+            href={`#${linktreePromo.slug}`}
+            class="block group rounded-2xl border zag-bg p-5 hover:shadow-md transition-colors"
+            style="border-color: color-mix(in srgb, var(--color-zag-dark) 12%, transparent)"
+          >
+            <div class="flex items-start gap-4">
+              <div
+                class="shrink-0 w-10 h-10 rounded-lg"
+                style="background: linear-gradient(135deg, var(--color-zag-accent-dark), var(--color-zag-accent-dark-muted))"
+              ></div>
+              <div class="space-y-1">
+                <p class="text-xs uppercase tracking-[0.35em] font-display" style="color: var(--color-zag-accent-dark)">
+                  Linktree
+                </p>
+                <h3 class="font-display text-lg">{linktreePromo.title}</h3>
+                {linktreePromo.highlight && <p class="text-sm zag-muted">{linktreePromo.highlight}</p>}
               </div>
-            </a>
-          )}
-          {msEduPromo && (
-            <a href={`#${msEduPromo.slug}`} class="block group rounded-2xl border border-black/10 dark:border-white/10 zag-bg p-5 hover:shadow-md transition-colors">
-              <div class="flex items-start gap-4">
-                <div class="shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600 to-cyan-500"></div>
-                <div class="space-y-1">
-                  <p class="text-xs uppercase tracking-widest text-blue-600 font-semibold">Microsoft</p>
-                  <h3 class="font-bold text-slate-900 dark:text-white">{msEduPromo.title}</h3>
-                  {msEduPromo.highlight && (
-                    <p class="text-sm text-slate-600 dark:text-slate-400">{msEduPromo.highlight}</p>
-                  )}
-                </div>
+            </div>
+          </a>
+        )}
+        {msEduPromo && (
+          <a
+            href={`#${msEduPromo.slug}`}
+            class="block group rounded-2xl border zag-bg p-5 hover:shadow-md transition-colors"
+            style="border-color: color-mix(in srgb, var(--color-zag-dark) 12%, transparent)"
+          >
+            <div class="flex items-start gap-4">
+              <div
+                class="shrink-0 w-10 h-10 rounded-lg"
+                style="background: linear-gradient(135deg, var(--color-zag-accent-light), var(--color-zag-accent-light-muted))"
+              ></div>
+              <div class="space-y-1">
+                <p class="text-xs uppercase tracking-[0.35em] font-display" style="color: var(--color-zag-accent-light)">
+                  Microsoft
+                </p>
+                <h3 class="font-display text-lg">{msEduPromo.title}</h3>
+                {msEduPromo.highlight && <p class="text-sm zag-muted">{msEduPromo.highlight}</p>}
               </div>
-            </a>
-          )}
-        </div>
+            </div>
+          </a>
+        )}
+      </div>
     </Section>
   )}
 
@@ -241,52 +257,62 @@ const productListSchema = JSON.stringify(
     <Section class="my-10">
       <div class="py-6 sm:py-8 space-y-8">
         <div class="text-center space-y-4">
-          <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/60 dark:bg-white/10 backdrop-blur-sm border border-white/80 dark:border-white/20 rounded-full shadow-sm">
-            <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
+          <div
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full border -zag-bg -zag-text shadow-sm"
+            style="border-color: color-mix(in srgb, currentColor 20%, transparent)"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" style="color: var(--color-zag-accent-dark)">
               <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
             </svg>
-            <span class="text-xs font-medium text-slate-700 dark:text-slate-300 tracking-wide">TOKOPEDIA DROP</span>
+            <span class="text-xs font-display tracking-[0.35em]">TOKOPEDIA DROP</span>
           </div>
-          
-          <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white">
+
+          <h2 class="text-xl sm:text-2xl lg:text-3xl font-display">
             Rilisan Terbaru
           </h2>
-          
-          <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+
+          <p class="text-sm sm:text-base zag-muted max-w-2xl mx-auto">
             Produk yang baru saja di-share di social media
           </p>
         </div>
-        
+
         <div>
           <div class="grid gap-4 sm:gap-6 grid-cols-1">
             {tokopediaDrops.map((product) => (
               <a
                 href={`#${product.slug}`}
-                class="block bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md transition-all duration-200"
+                class="block border rounded-xl p-6 hover:shadow-md transition-all duration-200 zag-bg"
+                style="border-color: color-mix(in srgb, var(--color-zag-dark) 12%, transparent)"
               >
                 <div class="flex items-start justify-between">
                   <div class="flex-1 space-y-3">
                     <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-                      <span class="px-2 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-200 text-xs font-medium rounded-full">
+                      <span
+                        class="px-2 py-1 text-xs font-display rounded-full"
+                        style="
+                          background: color-mix(in srgb, var(--color-zag-accent-light) 30%, transparent);
+                          color: var(--color-zag-accent-dark);
+                        "
+                      >
                         Tokopedia Drop
                       </span>
                       {product.tags?.slice(0, 2).map((tag) => (
-                        <span class="text-xs text-slate-500 dark:text-slate-400">#{tag}</span>
+                        <span class="text-xs zag-muted">#{tag}</span>
                       ))}
                     </div>
-                    
-                    <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">
+
+                    <h3 class="text-base sm:text-lg font-display">
                       {product.title}
                     </h3>
-                    
+
                     {product.highlight && (
-                      <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                      <p class="text-xs sm:text-sm zag-muted">
                         {product.highlight}
                       </p>
                     )}
                   </div>
-                  
-                  <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 shrink-0 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+                  <svg class="w-4 h-4 sm:w-5 sm:h-5 zag-muted shrink-0 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                   </svg>
                 </div>
@@ -304,12 +330,12 @@ const productListSchema = JSON.stringify(
       <p class="zag-muted text-sm">Kurasi lengkap tanpa filter — simpel dan rapi.</p>
     </div>
 
-    <div class="flex flex-wrap items-center justify-center gap-2" data-category-filters>
+    <div class="filter-scroll flex flex-wrap items-center justify-center gap-2" data-category-filters>
       {allCategories.map((category, index) => (
         <button
           type="button"
           class:list={[
-            "px-4 py-2 text-sm font-semibold rounded-full border transition-colors",
+            "filter-chip",
             { 'is-active': index === 0 }
           ]}
           data-category-button={category.toLowerCase()}
@@ -328,49 +354,65 @@ const productListSchema = JSON.stringify(
   </Section>
 
   <Section class="my-16">
-    <div class="zag-bg border border-black/10 dark:border-white/10 rounded-2xl p-8 sm:p-10 shadow-sm">
-        <div class="text-center space-y-6">
-          <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/60 dark:bg-white/10 backdrop-blur-sm border border-white/80 dark:border-white/20 rounded-full shadow-sm">
-            <svg class="w-4 h-4 text-pink-600 dark:text-pink-400" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41.99 4.22 2.51C11.09 4.99 12.76 4 14.5 4 17 4 19 6 19 8.5c0 3.78-3.4 6.86-8.55 11.54z"/>
-            </svg>
-            <span class="text-xs font-medium text-slate-700 dark:text-slate-300 tracking-wide">CARA KERJA AFFILIATE</span>
-          </div>
-          
-          <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white">
-            Dukung Konten Berkualitas
-          </h3>
-          
-          <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            Semua pembelian lewat link ini tercatat sebagai dukungan. Tidak ada biaya tambahan untukmu,
-            tapi membantu aku tetap konsisten bikin konten yang berguna.
-          </p>
-          
-          <div class="grid gap-4 sm:gap-6 md:grid-cols-3 mt-10">
-            {supportSteps.map((step, index) => (
-              <div class="bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl p-6 text-center space-y-4">
-                <div class="inline-flex items-center justify-center w-8 h-8 bg-slate-600 text-white rounded-lg font-semibold text-sm">
-                  {index + 1}
-                </div>
-                <h4 class="font-semibold text-slate-900 dark:text-white text-sm sm:text-base">
-                  {step.title}
-                </h4>
-                <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                  {step.copy}
-                </p>
-              </div>
-            ))}
-          </div>
-          
-          <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50/80 dark:bg-emerald-900/30 backdrop-blur-sm border border-emerald-200/60 dark:border-emerald-500/40 rounded-lg shadow-sm mt-6">
-            <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
-            <span class="text-xs font-medium text-emerald-800 dark:text-emerald-200">
-              Terima kasih sudah support!
-            </span>
-          </div>
+    <div
+      class="zag-bg border rounded-2xl p-8 sm:p-10 shadow-sm zag-text"
+      style="border-color: color-mix(in srgb, currentColor 12%, transparent)"
+    >
+      <div class="text-center space-y-6">
+        <div
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-full border -zag-bg -zag-text shadow-sm"
+          style="border-color: color-mix(in srgb, currentColor 20%, transparent)"
+        >
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" style="color: var(--color-zag-accent-dark)">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41.99 4.22 2.51C11.09 4.99 12.76 4 14.5 4 17 4 19 6 19 8.5c0 3.78-3.4 6.86-8.55 11.54z"/>
+          </svg>
+          <span class="text-xs font-display tracking-[0.35em]">CARA KERJA AFFILIATE</span>
         </div>
+
+        <h3 class="text-xl sm:text-2xl lg:text-3xl font-display">
+          Dukung Konten Berkualitas
+        </h3>
+
+        <p class="text-sm sm:text-base zag-muted max-w-2xl mx-auto leading-relaxed">
+          Semua pembelian lewat link ini tercatat sebagai dukungan. Tidak ada biaya tambahan untukmu,
+          tapi membantu aku tetap konsisten bikin konten yang berguna.
+        </p>
+
+        <div class="grid gap-4 sm:gap-6 md:grid-cols-3 mt-10">
+          {supportSteps.map((step, index) => (
+            <div
+              class="border rounded-xl p-6 text-center space-y-4 zag-bg"
+              style="border-color: color-mix(in srgb, currentColor 14%, transparent)"
+            >
+              <div class="inline-flex items-center justify-center w-8 h-8 rounded-lg font-semibold text-sm -zag-bg -zag-text">
+                {index + 1}
+              </div>
+              <h4 class="font-semibold text-sm sm:text-base zag-text">
+                {step.title}
+              </h4>
+              <p class="text-xs sm:text-sm zag-muted leading-relaxed">
+                {step.copy}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border shadow-sm mt-6"
+          style="
+            border-color: color-mix(in srgb, var(--color-zag-accent-light) 25%, transparent);
+            background: color-mix(in srgb, var(--color-zag-accent-light) 18%, transparent);
+            color: var(--color-zag-accent-dark);
+          "
+        >
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+          <span class="text-xs font-display tracking-[0.3em]">
+            Terima kasih sudah support!
+          </span>
+        </div>
+      </div>
     </div>
   </Section>
 </Layout>

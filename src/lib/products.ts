@@ -66,50 +66,6 @@ export const PRODUCTS: AffiliateProduct[] = [
     ]
   },
   {
-    slug: "markaz-hunter-shopee-kit",
-    title: "Kit Shopee Markaz Hunter",
-    category: "Shopee Picks",
-    highlight: "Link-link Shopee favorit komunitas — tinggal pilih yang paling sesuai promo.",
-    description:
-      "Satu tempat buat semua link Shopee terbaru yang sering kutanya penonton YouTube, IG, dan newsletter. Simpan halaman ini biar gampang cari kode dukungan tanpa DM satu-satu.",
-    image:
-      "https://images.unsplash.com/photo-1505740106531-4243f3831c78?auto=format&fit=crop&w=800&q=80",
-    imageAlt: "Headphone oranye di atas meja, menggambarkan suasana kurasi favorit",
-    tags: ["affiliate", "shopee", "community"],
-    links: [
-      {
-        label: "Shopee #1",
-        url: "https://s.shopee.co.id/9fD3a5ddu2",
-        note: "Link utama — paling sering kupakai di IG Story",
-      },
-      {
-        label: "Shopee #2",
-        url: "https://s.shopee.co.id/7AVibWqgPB",
-        note: "Cadangan kalau link utama lagi full traffic",
-      },
-      {
-        label: "Shopee #3",
-        url: "https://s.shopee.co.id/10v5GF4DU3",
-        note: "Kurasi alat belajar & workspace upgrade",
-      },
-      {
-        label: "Shopee #4",
-        url: "https://s.shopee.co.id/8V16C3jrWe",
-        note: "Self-care + hadiah kecil favorit",
-      },
-      {
-        label: "Shopee #5",
-        url: "https://s.shopee.co.id/7fRzCZUDx5",
-        note: "Stationery & journaling pick",
-      },
-      {
-        label: "Shopee #6",
-        url: "https://s.shopee.co.id/6VG1oPzsdG",
-        note: "Request khusus dari subscribers",
-      },
-    ],
-  },
-  {
     slug: "soundcore-r50i-nc",
     title: "Soundcore Anker R50i NC",
     category: "Audio & Wearables",

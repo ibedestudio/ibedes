@@ -2,6 +2,10 @@ const CACHE_NAME = 'ibedes-v2.0.0';
 const STATIC_CACHE = 'ibedes-static-v2';
 const DYNAMIC_CACHE = 'ibedes-dynamic-v2';
 const IMAGE_CACHE = 'ibedes-images-v2';
+const DB_NAME = 'ibedes-store';
+const DB_VERSION = 1;
+const ANALYTICS_STORE = 'analytics';
+const OFFLINE_ACTIONS_STORE = 'offline-actions';
 
 // URLs to cache for offline functionality
 const urlsToCache = [
@@ -246,11 +250,11 @@ function isApiRequest(request) {
 async function syncAnalytics() {
   try {
     console.log('[SW] Syncing analytics data...');
-    // Get stored analytics data and send to server if needed
-    const views = localStorage.getItem('ibedes_blog_views');
-    if (views) {
-      console.log('[SW] Analytics data ready for sync');
-      // Here you would typically send to your analytics endpoint
+    const analyticsEntries = await readAllFromStore(ANALYTICS_STORE);
+    if (analyticsEntries.length > 0) {
+      console.log('[SW] Analytics data ready for sync', analyticsEntries.length);
+      // TODO: send analyticsEntries to your analytics endpoint
+      await clearStore(ANALYTICS_STORE);
     }
   } catch (error) {
     console.log('[SW] Background sync failed:', error);
@@ -260,12 +264,11 @@ async function syncAnalytics() {
 async function processOfflineActions() {
   try {
     console.log('[SW] Processing offline actions...');
-    // Handle any offline actions that need to be processed when back online
-    const offlineActions = localStorage.getItem('offline_actions');
-    if (offlineActions) {
+    const offlineActions = await readAllFromStore(OFFLINE_ACTIONS_STORE);
+    if (offlineActions.length > 0) {
       console.log('[SW] Found offline actions to process');
-      // Process the actions
-      localStorage.removeItem('offline_actions');
+      // TODO: send offline actions to API or handle accordingly
+      await clearStore(OFFLINE_ACTIONS_STORE);
     }
   } catch (error) {
     console.log('[SW] Offline actions processing failed:', error);
@@ -275,12 +278,92 @@ async function processOfflineActions() {
 // Message handling for communication with main thread
 self.addEventListener('message', (event) => {
   console.log('[SW] Message received:', event.data);
-  
+
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-  
+
   if (event.data && event.data.type === 'GET_VERSION') {
-    event.ports[0].postMessage({ version: CACHE_NAME });
+    event.ports?.[0]?.postMessage({ version: CACHE_NAME });
+  }
+
+  if (event.data && event.data.type === 'STORE_ANALYTICS') {
+    const records = Array.isArray(event.data.payload)
+      ? event.data.payload
+      : [event.data.payload].filter(Boolean);
+    if (records.length > 0) {
+      event.waitUntil(storeRecords(ANALYTICS_STORE, records));
+    }
+  }
+
+  if (event.data && event.data.type === 'QUEUE_OFFLINE_ACTION') {
+    const payload = {
+      action: event.data.action,
+      data: event.data.payload,
+      timestamp: Date.now()
+    };
+    event.waitUntil(storeRecords(OFFLINE_ACTIONS_STORE, [payload]));
   }
 });
+
+// IndexedDB helpers
+function openDatabase() {
+  if (!self.indexedDB) {
+    return Promise.resolve(undefined);
+  }
+
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve(request.result);
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains(ANALYTICS_STORE)) {
+        db.createObjectStore(ANALYTICS_STORE, { autoIncrement: true });
+      }
+      if (!db.objectStoreNames.contains(OFFLINE_ACTIONS_STORE)) {
+        db.createObjectStore(OFFLINE_ACTIONS_STORE, { autoIncrement: true });
+      }
+    };
+  });
+}
+
+async function readAllFromStore(storeName) {
+  const db = await openDatabase();
+  if (!db) return [];
+
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, 'readonly');
+    const store = transaction.objectStore(storeName);
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result || []);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function storeRecords(storeName, records) {
+  const db = await openDatabase();
+  const sanitizedRecords = (records || []).filter((record) => record !== undefined && record !== null);
+  if (!db || sanitizedRecords.length === 0) return;
+
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, 'readwrite');
+    const store = transaction.objectStore(storeName);
+    sanitizedRecords.forEach((record) => store.add(record));
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+  });
+}
+
+async function clearStore(storeName) {
+  const db = await openDatabase();
+  if (!db) return;
+
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, 'readwrite');
+    const store = transaction.objectStore(storeName);
+    const request = store.clear();
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+}

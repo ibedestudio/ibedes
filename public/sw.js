@@ -17,22 +17,33 @@ const urlsToCache = [
   '/swag',
   '/manifest.json',
   '/favicon.svg',
-  '/ibedes.jpg',
-  // Add some common routes
-  '/blog/index',
-  '/services/index',
-  '/projects/index'
+  '/ibedes.jpg'
 ];
+
+async function precacheCoreAssets() {
+  const cache = await caches.open(STATIC_CACHE);
+  const results = await Promise.allSettled(
+    urlsToCache.map(async (url) => {
+      const request = new Request(url, { cache: 'reload' });
+      const response = await fetch(request);
+      if (!response.ok) {
+        throw new Error(`${url} responded with ${response.status}`);
+      }
+      await cache.put(request, response.clone());
+    })
+  );
+
+  const failures = results.filter((result) => result.status === 'rejected');
+  if (failures.length) {
+    console.warn(`[SW] Skipped ${failures.length} assets during precache`, failures);
+  }
+}
 
 // Install event - cache resources
 self.addEventListener('install', (event) => {
   console.log('[SW] Installing service worker...');
   event.waitUntil(
-    caches.open(STATIC_CACHE)
-      .then((cache) => {
-        console.log('[SW] Caching static resources');
-        return cache.addAll(urlsToCache);
-      })
+    precacheCoreAssets()
       .then(() => {
         console.log('[SW] Static resources cached successfully');
         // Force activation of new service worker

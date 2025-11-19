@@ -4,31 +4,34 @@ export const GLOBAL = {
   // Site metadata
   username: "ibedes",
   rootUrl: "https://ibedes.xyz",
-  shortDescription: "Retro-Inspired Theme &<br /> Built for Astro",
-  longDescription: "Zaggonaut is a retro-inspired theme for Astro, built using TypeScript, TailwindCSS, and Astro.",
+  shortDescription: "Studio digital Bandung yang membangun pengalaman web humanis",
+  longDescription:
+    "ibedes adalah studio digital berbasis di Bandung yang fokus meracik website cepat, mudah dipahami, dan siap dipakai bisnis.",
   
   // Social media links
   githubProfile: "https://github.com/ibedestudio",
   threadsProfile: "https://www.threads.com/@bellamujiaa",
   
   // Common text names used throughout the site
-  articlesName: "Articles",
-  projectsName: "Projects",
-  viewAll: "View All",
+  articlesName: "Tulisan",
+  projectsName: "Projek",
+  viewAll: "Lihat semua",
   
   // Common descriptions used throughout the site
-  noArticles: "No featured articles yet.",
-  noProjects: "No featured projects yet.",
+  noArticles: "Belum ada tulisan unggulan.",
+  noProjects: "Belum ada projek unggulan.",
 
   // Blog metadata
-  blogTitle: "My Thoughts & Takes",
-  blogShortDescription: "Practical wisdom, unfiltered thoughts, and hot takes.",
-  blogLongDescription: "Web development, tech trends, and the occasional programming mishap.",
+  blogTitle: "Catatan & Wawasan",
+  blogShortDescription: "Catatan produk, eksperimen growth, dan cerita studio.",
+  blogLongDescription:
+    "Tulisan berbahasa Indonesia tentang proses membangun layanan digital, eksperimen pemasaran, serta hal-hal praktis di balik layar.",
 
   // Project metadata
-  projectTitle: "Projects and Code",
-  projectShortDescription: "A list of my web development projects and developer tools.",
-  projectLongDescription: "All of my projects, including both frontend and full-stack applications.",
+  projectTitle: "Projek & Studi Kasus",
+  projectShortDescription: "Kumpulan solusi digital yang membantu brand dan pelaku usaha tampil relevan.",
+  projectLongDescription:
+    "Dokumentasi projek ibedes: dari website marketing, micro-site kampanye, sampai eksperimen internal yang dipakai tim.",
 
   // Profile image
   profileImage: "ibedes.jpg",
@@ -46,9 +49,10 @@ export const GLOBAL = {
   },
 
   contactEmail: "ibedestudio@gmail.com",
-  contactPhone: "0823-1777-7008",
+  contactPhone: "0823-1777-7006",
   contactWhatsApp: "https://wa.link/b1hzai",
   contactLocation: "Bandung, Indonesia",
+  contactLinkedIn: "https://www.linkedin.com/in/bella-mujia",
 
   // Newsletter / subscribe card copy
   newsletter: {

@@ -8,6 +8,8 @@ featured: true
 timestamp: "2025-11-07"
 filename: "mulai-dengan-why-sebelum-how"
 url: "/blog/mulai-dengan-why-sebelum-how"
+affiliateCategories:
+  - "Software & Tools"
 ---
 
 ## Mulai dengan Why Sebelum How

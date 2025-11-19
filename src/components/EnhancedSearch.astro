@@ -14,11 +14,11 @@ const searchItems = await getSearchItems();
 // Extract all available tags
 const allTags = [...new Set(searchItems.flatMap(item => item.tags || []))].sort();
 
-// For client-side, we'll fetch fresh data from API
-const searchItemsJSON = JSON.stringify([]);
+// For client-side, we'll fetch fresh data from API but hydrate with SSR data first
+const searchItemsJSON = JSON.stringify(searchItems);
 ---
 
-<div class={`fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-16 ${isOpen ? '' : 'hidden'}`} data-enhanced-search>
+<div class={`fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-16 ${isOpen ? '' : 'hidden'}`} data-enhanced-search aria-hidden={!isOpen}>
     <div class="command-panel w-full max-w-4xl max-h-[90vh] overflow-hidden">
       <!-- Search Header -->
       <div class="flex items-center justify-between mb-4">
@@ -105,6 +105,7 @@ const searchItemsJSON = JSON.stringify([]);
         <div class="space-y-2" id="search-results-list">
           <!-- Results will be loaded dynamically -->
         </div>
+        <div id="search-results-status" class="text-center text-sm text-gray-500 dark:text-gray-400 py-3 hidden"></div>
       </div>
 
       <!-- Search Shortcuts -->
@@ -130,20 +131,32 @@ const searchItemsJSON = JSON.stringify([]);
      sortBy: 'relevance'
    };
    let isInitialized = false;
+   let isLoading = false;
+   let hasError = false;
 
    // Fetch search items from API
    async function loadSearchItems() {
+     setStatus('Memuat data pencarian…', 'loading');
+     isLoading = true;
+     hasError = false;
      try {
        const response = await fetch('/api/search.json');
        if (response.ok) {
          searchItems = await response.json();
          filterAndSortResults();
+         clearStatus();
        } else {
          console.error('Failed to load search items');
+         setStatus('Gagal memuat data pencarian', 'error');
+         hasError = true;
        }
      } catch (error) {
        console.error('Error loading search items:', error);
+       setStatus('Terjadi kesalahan saat memuat hasil', 'error');
+       hasError = true;
      }
+
+     isLoading = false;
    }
 
   // Enhanced search functionality
@@ -257,6 +270,12 @@ const searchItemsJSON = JSON.stringify([]);
     if (!container) return;
 
     container.replaceChildren();
+    if (isLoading) {
+      return;
+    }
+    if (hasError) {
+      return;
+    }
     if (results.length === 0) {
       const empty = document.createElement('div');
       empty.className = 'command-empty';
@@ -336,9 +355,26 @@ const searchItemsJSON = JSON.stringify([]);
     });
   }
 
+  const overlay = document.querySelector('[data-enhanced-search]');
+  const statusEl = document.getElementById('search-results-status');
+
+  function setStatus(message, type = 'info') {
+    if (!statusEl) return;
+    statusEl.textContent = message;
+    statusEl.classList.remove('hidden');
+    statusEl.dataset.type = type;
+  }
+
+  function clearStatus() {
+    if (!statusEl) return;
+    statusEl.textContent = '';
+    statusEl.classList.add('hidden');
+    delete statusEl.dataset.type;
+  }
+
   // Keyboard navigation
   document.addEventListener('keydown', function(e) {
-    const searchContainer = document.querySelector('[data-enhanced-search]');
+    const searchContainer = overlay;
     if (!searchContainer || searchContainer.classList.contains('hidden')) return;
     
     const results = document.querySelectorAll('#search-results-list .command-item');
@@ -373,7 +409,59 @@ const searchItemsJSON = JSON.stringify([]);
         break;
       case 'Escape':
         searchContainer.classList.add('hidden');
+        searchContainer.setAttribute('aria-hidden', 'true');
         break;
+    }
+  });
+
+  const openOverlay = () => {
+    if (!overlay) return;
+    overlay.classList.remove('hidden');
+    overlay.setAttribute('aria-hidden', 'false');
+    initEnhancedSearch();
+    const input = document.getElementById('enhanced-search-input');
+    if (input) input.focus();
+  };
+
+  const closeOverlay = () => {
+    if (!overlay) return;
+    overlay.classList.add('hidden');
+    overlay.setAttribute('aria-hidden', 'true');
+  };
+
+  const toggleOverlay = () => {
+    if (!overlay) return;
+    const isHidden = overlay.classList.contains('hidden');
+    if (isHidden) {
+      openOverlay();
+    } else {
+      closeOverlay();
+    }
+  };
+
+  // Toggle buttons
+  const toggleButtons = Array.from(document.querySelectorAll('[data-enhanced-search-toggle]'));
+  toggleButtons.forEach((btn) => btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    toggleOverlay();
+  }));
+
+  // Close when clicking backdrop
+  overlay?.addEventListener('click', (event) => {
+    if (event.target === overlay) {
+      closeOverlay();
+    }
+  });
+
+  // Global keyboard shortcut
+  document.addEventListener('keydown', (event) => {
+    const metaKey = event.metaKey || event.ctrlKey;
+    if (metaKey && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      openOverlay();
+    }
+    if (event.key === 'Escape' && overlay && !overlay.classList.contains('hidden')) {
+      closeOverlay();
     }
   });
 
@@ -381,6 +469,17 @@ const searchItemsJSON = JSON.stringify([]);
   function initEnhancedSearch() {
     if (isInitialized) return;
     isInitialized = true;
+
+    // Hydrate with initial SSR data before fetching fresh data
+    try {
+      const initialItems = JSON.parse(searchItemsJSON);
+      if (Array.isArray(initialItems) && initialItems.length > 0) {
+        searchItems = initialItems;
+        filterAndSortResults();
+      }
+    } catch (error) {
+      console.error('Failed to hydrate search items', error);
+    }
 
     // Add input event listener for search
     const input = document.getElementById('enhanced-search-input');
@@ -413,7 +512,6 @@ const searchItemsJSON = JSON.stringify([]);
   }
 
   // Also initialize when the overlay becomes visible (in case HTML was injected late)
-  const overlay = document.querySelector('[data-enhanced-search]');
   if (overlay) {
     const observer = new MutationObserver(() => {
       const isHidden = overlay.classList.contains('hidden');

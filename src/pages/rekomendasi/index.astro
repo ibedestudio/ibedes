@@ -17,7 +17,6 @@ const allCategories = ["Semua", ...Object.keys(PRODUCTS.reduce<Record<string, nu
   return acc;
 }, {}))];
 
-const kitProduct = PRODUCTS.find((product) => product.slug === "markaz-hunter-shopee-kit");
 const linktreePromo = PRODUCTS.find((p) => p.slug === "linktree-pro-3-bulan");
 const msEduPromo = PRODUCTS.find((p) => p.slug === "microsoft-365-education");
 
@@ -123,82 +122,6 @@ const productListSchema = JSON.stringify(
     <p class="zag-muted max-w-2xl mx-auto">{hero.description}</p>
     <p class="text-xs zag-muted">{hero.sub}</p>
   </Section>
-
-  {kitProduct && (
-    <Section class="my-10">
-      <div
-        class="zag-bg border rounded-2xl p-6 sm:p-8 shadow-sm zag-text"
-        style="border-color: color-mix(in srgb, currentColor 12%, transparent)"
-      >
-        <div class="flex flex-col lg:flex-row items-start gap-6">
-          <div class="flex-1 space-y-4 max-w-5xl mx-auto">
-            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-              <span class="px-3 py-1 text-xs font-display tracking-[0.35em] uppercase rounded-full -zag-bg -zag-text">
-                Kit Terbaru
-              </span>
-              <span class="text-sm zag-muted">{kitProduct.title}</span>
-            </div>
-
-            <p class="text-sm sm:text-base zag-muted italic">
-              {kitProduct.highlight}
-            </p>
-
-            <div class="space-y-3">
-              {kitProduct.links.slice(0, 3).map((link) => (
-                <a
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="cta-button cta-button--secondary w-full justify-between gap-3"
-                >
-                  <div class="flex items-center gap-2">
-                    {link.label.toLowerCase().includes('shopee') && (
-                      <img
-                        src="/shopee-logo.svg"
-                        alt="Shopee"
-                        class="w-5 h-5 object-contain"
-                        loading="lazy"
-                      />
-                    )}
-                    {link.label.toLowerCase().includes('tokopedia') && (
-                      <img
-                        src="/tokopedia-logo.svg"
-                        alt="Tokopedia"
-                        class="w-5 h-5 object-contain"
-                        loading="lazy"
-                      />
-                    )}
-                    {link.label.toLowerCase().includes('tiktok') && (
-                      <img
-                        src="/tiktok-logo.svg"
-                        alt="TikTok"
-                        class="w-5 h-5 object-contain"
-                        loading="lazy"
-                      />
-                    )}
-                    <span class="font-semibold text-sm tracking-[0.2em] uppercase">{link.label}</span>
-                  </div>
-                  <svg class="w-4 h-4 zag-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                  </svg>
-                </a>
-              ))}
-            </div>
-
-            <a
-              href={`#${kitProduct.slug}`}
-              class="inline-flex items-center gap-2 zag-muted font-medium text-sm zag-transition"
-            >
-              <span>Lihat detail kit lengkap</span>
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-    </Section>
-  )}
 
   {(linktreePromo || msEduPromo) && (
     <Section class="my-10">

@@ -161,7 +161,7 @@ const hasImage = Boolean(image);
         const stored = JSON.parse(localStorage.getItem(storageKey) ?? "[]");
         return Array.isArray(stored) ? stored : [];
       } catch (error) {
-        console.warn("G-agal membaca daftar favorit", error);
+        console.warn("Gagal membaca daftar favorit", error);
         return [];
       }
     };
@@ -181,6 +181,10 @@ const hasImage = Boolean(image);
         if (!slug) return;
         const isActive = favorites.has(slug);
         button.setAttribute("aria-pressed", String(isActive));
+        const label = button.querySelector("span");
+        if (label) {
+          label.textContent = isActive ? "Disimpan" : "Favorit";
+        }
       });
     };
 

@@ -419,13 +419,28 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
         li.dataset.commentId = comment.id;
         li.className =
           "flex flex-col gap-1 rounded-2xl border border-black/15 dark:border-white/20 bg-white/80 dark:bg-black/30 p-4";
-        li.innerHTML = `
-          <div class="flex items-center justify-between gap-4">
-            <p class="font-semibold">${comment.name}</p>
-            <span class="text-xs text-zag-dark/70 dark:text-zag-light/70">${formatDate(comment.createdAt)}</span>
-          </div>
-          <p class="text-sm leading-relaxed">${comment.message}</p>
-        `;
+
+        const header = document.createElement("div");
+        header.className = "flex items-center justify-between gap-4";
+
+        const nameEl = document.createElement("p");
+        nameEl.className = "font-semibold";
+        nameEl.textContent = sanitize(comment.name, "Anonim");
+
+        const dateEl = document.createElement("span");
+        dateEl.className = "text-xs text-zag-dark/70 dark:text-zag-light/70";
+        dateEl.textContent = formatDate(comment.createdAt);
+
+        header.appendChild(nameEl);
+        header.appendChild(dateEl);
+
+        const messageEl = document.createElement("p");
+        messageEl.className = "text-sm leading-relaxed";
+        messageEl.textContent = sanitize(comment.message);
+
+        li.appendChild(header);
+        li.appendChild(messageEl);
+
         return li;
       };
 

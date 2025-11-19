@@ -13,7 +13,7 @@ const notifications = isOpen ? getNotifications() : [];
 ---
 
 {isOpen && (
-  <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-20">
+  <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-20" data-notification-center>
     <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 w-full max-w-md max-h-[80vh] overflow-hidden shadow-2xl">
       <!-- Header -->
       <div class="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -146,30 +146,4 @@ const notifications = isOpen ? getNotifications() : [];
   </div>
 )}
 
-<script>
-  // Make notification functions globally available
-  window.markAsRead = (id) => {
-    const event = new CustomEvent('markAsRead', { detail: { id } });
-    window.dispatchEvent(event);
-  };
-  
-  window.markAllAsRead = () => {
-    const event = new CustomEvent('markAllAsRead');
-    window.dispatchEvent(event);
-  };
-  
-  window.deleteNotification = (id) => {
-    const event = new CustomEvent('deleteNotification', { detail: { id } });
-    window.dispatchEvent(event);
-  };
-  
-  window.clearAllNotifications = () => {
-    const event = new CustomEvent('clearAllNotifications');
-    window.dispatchEvent(event);
-  };
-  
-  window.testNotification = () => {
-    const event = new CustomEvent('testNotification');
-    window.dispatchEvent(event);
-  };
-</script>
+  <script type="module" src={Astro.resolve('../scripts/notificationCenter.client.ts')} />

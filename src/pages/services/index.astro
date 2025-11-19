@@ -89,6 +89,48 @@ const recommendationServices = SERVICES.map((service) => {
   };
 });
 
+const quickRecommendations = recommendationServices
+  .filter((service) => Boolean(service.highlightTier))
+  .slice(0, 2);
+
+const fallbackRecommendationHtml = quickRecommendations.length
+  ? `
+    <div class="space-y-3">
+      <p class="text-sm font-semibold">Rekomendasi cepat</p>
+      <p class="text-sm text-zag-dark/80 dark:text-zag-light/80">
+        Belum sempat memilih opsi? Berikut layanan yang paling sering kami sarankan.
+      </p>
+      <ul class="space-y-3 text-sm">
+        ${quickRecommendations
+          .map(
+            (service) => `
+              <li>
+                <p class="font-semibold">${service.title}</p>
+                <p class="text-xs text-zag-dark/70 dark:text-zag-light/70">${service.summary}</p>
+                <a href="${service.url}" class="underline underline-offset-4 text-emerald-600 dark:text-emerald-300">
+                  Pelajari layanan
+                </a>
+              </li>
+            `,
+          )
+          .join("")}
+      </ul>
+      <p class="text-xs text-zag-dark/70 dark:text-zag-light/70">
+        Interaksi formulir membutuhkan JavaScript, tapi kamu tetap bisa mulai dari rekomendasi ini.
+      </p>
+    </div>
+  `
+  : `
+    <p class="text-sm">Pilih minimal satu opsi untuk memunculkan rekomendasi.</p>
+    <p class="text-xs text-zag-dark/70 dark:text-zag-light/70">
+      Tips: kombinasi tujuan + budget akan memberi hasil yang lebih akurat.
+    </p>
+  `;
+
+const fallbackRecommendationHtmlForScript = JSON.stringify(fallbackRecommendationHtml)
+  .replace(/</g, "\\u003C")
+  .replace(/'/g, "\\u0027");
+
 ---
 
 <Layout>
@@ -233,14 +275,8 @@ const recommendationServices = SERVICES.map((service) => {
           <div
             class="rounded-2xl border border-dashed border-black/20 dark:border-white/25 p-4 space-y-3 bg-white/60 dark:bg-zinc-900/60"
             data-recommendation-output
-          >
-            <p class="text-sm">
-              Pilih minimal satu opsi untuk memunculkan rekomendasi.
-            </p>
-            <p class="text-xs text-zag-dark/70 dark:text-zag-light/70">
-              Tips: kombinasi tujuan + budget akan memberi hasil yang lebih akurat.
-            </p>
-          </div>
+            set:html={fallbackRecommendationHtml}
+          ></div>
         </div>
       </div>
     </div>
@@ -278,13 +314,10 @@ const recommendationServices = SERVICES.map((service) => {
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#39;");
 
+        const fallbackHtml = JSON.parse('{fallbackRecommendationHtmlForScript}');
+
         const defaultView = () => {
-          output.innerHTML = `
-            <p class="text-sm">Pilih minimal satu opsi untuk memunculkan rekomendasi.</p>
-            <p class="text-xs text-zag-dark/70 dark:text-zag-light/70">
-              Tips: kombinasi tujuan + budget akan memberi hasil yang lebih akurat.
-            </p>
-          `;
+          output.innerHTML = fallbackHtml;
         };
 
         const getState = () => {

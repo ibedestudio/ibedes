@@ -10,25 +10,58 @@ const canonicalUrl = `${GLOBAL.rootUrl}/tentang`;
 ---
 
 <AboutLayout title={title} description={description} canonicalUrl={canonicalUrl}>
-  <div style="width: 100%; height: 600px; position: relative;">
-    <Dither
-      client:load
-      waveColor={[0.5, 0.5, 0.5]}
-      disableAnimation={false}
-      enableMouseInteraction={true}
-      mouseRadius={0.3}
-      colorNum={4}
-      waveAmplitude={0.3}
-      waveFrequency={3}
-      waveSpeed={0.05}
-    />
-  </div>
+  <section
+    class="relative isolate overflow-hidden rounded-[2.5rem] border border-black/10 dark:border-white/10 bg-[radial-gradient(circle_at_top,_#050505,_#020202)] text-white"
+  >
+    <div class="absolute inset-0 opacity-80 pointer-events-none">
+      <Dither
+        client:load
+        waveColor={[0.5, 0.5, 0.5]}
+        disableAnimation={false}
+        enableMouseInteraction={true}
+        mouseRadius={0.3}
+        colorNum={4}
+        waveAmplitude={0.3}
+        waveFrequency={3}
+        waveSpeed={0.05}
+      />
+    </div>
+    <div
+      class="relative z-10 grid items-center gap-8 px-8 py-12 md:grid-cols-[auto,1fr] text-center md:text-left"
+    >
+      <img
+        src={GLOBAL.profileImage}
+        alt={`Potret ${GLOBAL.username}`}
+        loading="lazy"
+        class="mx-auto rounded-full w-40 h-40 sm:w-48 sm:h-48 object-cover border-4 border-white/70 shadow-[0_25px_60px_rgba(0,0,0,0.45)]"
+      />
+      <div class="space-y-4">
+        <p class="text-xs uppercase tracking-[0.4em] text-white/60">Tentang Saya</p>
+        <h2 class="text-3xl sm:text-4xl font-display font-semibold">{GLOBAL.username}</h2>
+        <p class="text-base sm:text-lg text-white/80">
+          Menggabungkan pendekatan retro-modern dengan eksplorasi teknologi web
+          terbaru. Foto ini sama dengan yang ada di beranda supaya identitas
+          visualnya konsisten di setiap halaman.
+        </p>
+        <p class="text-sm text-white/70">
+          Efek halftone reaktif tetap dibiarkan hidup di latar agar halaman ini
+          terasa dinamis sekaligus personal.
+        </p>
+      </div>
+    </div>
+  </section>
 
   <Prose>
     <p>
-      Halo! Ini adalah halaman tentang yang sedang dalam pengembangan.
-      Efek di atas dirender dengan React Three Fiber dan dihidupkan di sisi
-      klien melalui <code>client:load</code>.
+      Aku merancang setiap eksperimen, tulisan, dan proyek di ibedes.xyz dengan
+      semangat berbagi perjalanan belajar. Dari desain antarmuka bernuansa
+      arcade hingga eksperimen React Three Fiber seperti background halftone di
+      atas, semuanya adalah medium untuk bereksperimen secara terbuka.
+    </p>
+    <p>
+      Fokus utamaku adalah menghadirkan pengalaman yang rapi, cepat, dan
+      mudah dicerna. Jika kamu ingin berkolaborasi atau sekadar bertukar ide,
+      jangan ragu untuk menghubungi kontak yang tersedia di samping.
     </p>
   </Prose>
 </AboutLayout>

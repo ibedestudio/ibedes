@@ -49,9 +49,10 @@ export const GLOBAL = {
   },
 
   contactEmail: "ibedestudio@gmail.com",
-  contactPhone: "0823-1777-7008",
+  contactPhone: "0823-1777-7006",
   contactWhatsApp: "https://wa.link/b1hzai",
   contactLocation: "Bandung, Indonesia",
+  contactLinkedIn: "https://www.linkedin.com/in/bella-mujia",
 
   // Newsletter / subscribe card copy
   newsletter: {

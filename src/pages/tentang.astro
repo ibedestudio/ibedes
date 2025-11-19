@@ -2,66 +2,124 @@
 import AboutLayout from "../layouts/AboutLayout.astro";
 import Prose from "../components/Prose.astro";
 import { GLOBAL } from "../lib/variables";
-import Dither from "../components/reactbits/Dither";
 
 const title = `Tentang • ${GLOBAL.username}`;
 const description = GLOBAL.longDescription;
 const canonicalUrl = `${GLOBAL.rootUrl}/tentang`;
+const hero = {
+  title: "ibedes.xyz",
+  subtitle:
+    "Ruang kerja untuk desain, tulisan, dan pengembangan web yang dijaga agar tetap rapi dan fungsional.",
+  image: `/${GLOBAL.profileImage}`,
+};
+
+const phoneLink = GLOBAL.contactPhone.replace(/[^+\d]/g, "");
+const contactDetails = [
+  {
+    label: "Email",
+    value: GLOBAL.contactEmail,
+    href: `mailto:${GLOBAL.contactEmail}`,
+  },
+  {
+    label: "Telepon",
+    value: GLOBAL.contactPhone,
+    href: `tel:${phoneLink}`,
+  },
+  {
+    label: "Lokasi",
+    value: GLOBAL.contactLocation,
+  },
+  {
+    label: "LinkedIn",
+    value: GLOBAL.contactLinkedIn,
+    href: GLOBAL.contactLinkedIn,
+    isExternal: true,
+  },
+];
 ---
 
-<AboutLayout title={title} description={description} canonicalUrl={canonicalUrl}>
-  <section
-    class="relative isolate overflow-hidden rounded-[2.5rem] border border-black/10 dark:border-white/10 bg-[radial-gradient(circle_at_top,_#050505,_#020202)] text-white"
-  >
-    <div class="absolute inset-0 opacity-80 pointer-events-none">
-      <Dither
-        client:load
-        waveColor={[0.5, 0.5, 0.5]}
-        disableAnimation={false}
-        enableMouseInteraction={true}
-        mouseRadius={0.3}
-        colorNum={4}
-        waveAmplitude={0.3}
-        waveFrequency={3}
-        waveSpeed={0.05}
-      />
-    </div>
-    <div
-      class="relative z-10 grid items-center gap-8 px-8 py-12 md:grid-cols-[auto,1fr] text-center md:text-left"
-    >
+<AboutLayout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  hero={hero}
+>
+  <div class="rounded-[2.5rem] border border-black/10 dark:border-white/10 p-8">
+    <div class="grid items-center gap-8 md:grid-cols-[auto,1fr]">
       <img
-        src={GLOBAL.profileImage}
+        src={`/${GLOBAL.profileImage}`}
         alt={`Potret ${GLOBAL.username}`}
         loading="lazy"
-        class="mx-auto rounded-full w-40 h-40 sm:w-48 sm:h-48 object-cover border-4 border-white/70 shadow-[0_25px_60px_rgba(0,0,0,0.45)]"
+        class="rounded-full w-36 h-36 sm:w-44 sm:h-44 object-cover grayscale"
       />
       <div class="space-y-4">
-        <p class="text-xs uppercase tracking-[0.4em] text-white/60">Tentang Saya</p>
-        <h2 class="text-3xl sm:text-4xl font-display font-semibold">{GLOBAL.username}</h2>
-        <p class="text-base sm:text-lg text-white/80">
-          Menggabungkan pendekatan retro-modern dengan eksplorasi teknologi web
-          terbaru. Foto ini sama dengan yang ada di beranda supaya identitas
-          visualnya konsisten di setiap halaman.
+        <p class="text-xs uppercase tracking-[0.35em] text-zag-muted">Profil</p>
+        <h2 class="text-3xl sm:text-4xl font-display font-semibold">Ruang kerja ibedes</h2>
+        <p class="text-base text-zag-muted">
+          Fokus pada desain, tulisan, dan pengembangan web yang terasa rapi,
+          fungsional, serta konsisten antar halaman.
         </p>
-        <p class="text-sm text-white/70">
-          Efek halftone reaktif tetap dibiarkan hidup di latar agar halaman ini
-          terasa dinamis sekaligus personal.
-        </p>
+        <div class="flex flex-wrap gap-2 text-xs uppercase tracking-[0.3em] text-zag-muted">
+          <span class="px-3 py-1 rounded-full border border-black/10 dark:border-white/10">
+            Desain
+          </span>
+          <span class="px-3 py-1 rounded-full border border-black/10 dark:border-white/10">
+            Tulisan
+          </span>
+          <span class="px-3 py-1 rounded-full border border-black/10 dark:border-white/10">
+            Web
+          </span>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
 
   <Prose>
     <p>
-      Aku merancang setiap eksperimen, tulisan, dan proyek di ibedes.xyz dengan
-      semangat berbagi perjalanan belajar. Dari desain antarmuka bernuansa
-      arcade hingga eksperimen React Three Fiber seperti background halftone di
-      atas, semuanya adalah medium untuk bereksperimen secara terbuka.
+      ibedes.xyz adalah ruang kerja yang berfokus pada desain, tulisan, dan
+      pengembangan web. Setiap bagian di dalamnya dibuat dengan pendekatan yang
+      rapi, fungsional, dan konsisten agar mudah diakses oleh siapa pun.
     </p>
     <p>
-      Fokus utamaku adalah menghadirkan pengalaman yang rapi, cepat, dan
-      mudah dicerna. Jika kamu ingin berkolaborasi atau sekadar bertukar ide,
-      jangan ragu untuk menghubungi kontak yang tersedia di samping.
+      Situs ini menjadi tempat untuk mendokumentasikan proses, membuat
+      eksperimen kecil, dan membangun proyek digital yang bisa berkembang
+      seiring waktu. Identitas visualnya dipertahankan agar tetap sederhana,
+      ringan, dan nyaman digunakan.
+    </p>
+    <p>
+      Untuk kebutuhan profesional atau diskusi kerja sama, kamu dapat
+      menghubungi kontak berikut.
     </p>
   </Prose>
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    {contactDetails.map((detail) => (
+      <div class="rounded-2xl border border-black/10 dark:border-white/10 p-5">
+        <p class="text-xs uppercase tracking-[0.35em] text-zag-muted">{detail.label}</p>
+        {detail.href ? (
+          <a
+            href={detail.href}
+            target={detail.isExternal ? "_blank" : undefined}
+            rel={detail.isExternal ? "noreferrer" : undefined}
+            class="mt-2 inline-flex text-lg font-semibold hover:text-zag-primary transition-colors break-all"
+          >
+            {detail.value}
+          </a>
+        ) : (
+          <p class="mt-2 text-lg font-semibold">{detail.value}</p>
+        )}
+      </div>
+    ))}
+  </div>
+
+  <Fragment slot="sidebar">
+    <div class="rounded-xl border border-black/10 dark:border-white/20 p-5 space-y-3">
+      <p class="font-semibold">Prinsip kerja</p>
+      <ul class="space-y-2 text-sm text-zag-muted">
+        <li>• Rapi dalam struktur konten dan hierarki visual.</li>
+        <li>• Fungsional agar mudah dipakai di perangkat apa pun.</li>
+        <li>• Konsisten supaya identitas ibedes mudah dikenali.</li>
+      </ul>
+    </div>
+  </Fragment>
 </AboutLayout>

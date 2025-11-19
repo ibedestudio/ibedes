@@ -12,22 +12,43 @@ const normalized = products.slice(0, 4);
 ---
 
 <div class="flex justify-between items-center w-full mt-12">
-  <h3 class="font-display text-lg sm:text-xl leading-loose">Rekomendasi</h3>
-  <Anchor url="/rekomendasi" class="text-base">Lihat semua</Anchor>
+  <h3 class="font-display text-lg sm:text-xl leading-loose zag-text">Rekomendasi</h3>
+  <Anchor
+    url="/rekomendasi"
+    class="font-display zag-text text-xs sm:text-sm uppercase tracking-[0.2em]"
+  >
+    Lihat semua
+  </Anchor>
 </div>
-<div class="flex flex-col gap-6 my-8">
+<ul class="affiliate-slider my-8" role="list">
   {
     normalized.map((product) => (
-      <div class="zag-text zag-transition flex flex-col gap-3 pb-2">
-        <Anchor href={`/rekomendasi#${product.slug}`} class="text-xl">
-          {product.title}
-        </Anchor>
-        {product.highlight && <p class="text-base">{product.highlight}</p>}
-        <div class="zag-muted zag-transition flex justify-between items-center text-sm">
-          <p class="uppercase tracking-wider">{product.category}</p>
-          <p>{product.links.length} tautan</p>
-        </div>
-      </div>
+      <li class="affiliate-slider__item" role="listitem">
+        <article class="zag-text zag-transition flex flex-col gap-4 pb-3 h-full">
+          <Anchor
+            href={`/rekomendasi#${product.slug}`}
+            class="font-display text-xl leading-snug zag-text"
+          >
+            {product.title}
+          </Anchor>
+          {product.highlight && (
+            <p class="zag-muted text-base leading-relaxed">{product.highlight}</p>
+          )}
+          <div class="flex flex-wrap items-center gap-3 text-xs sm:text-sm">
+            <span class="affiliate-badge">{product.category}</span>
+            {product.tags && product.tags.length > 0 && (
+              <ul class="affiliate-tags" role="list">
+                {product.tags.slice(0, 3).map((tag) => (
+                  <li class="affiliate-badge affiliate-badge--muted" role="listitem">
+                    #{tag}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <p class="zag-muted ml-auto">{product.links.length} tautan</p>
+          </div>
+        </article>
+      </li>
     ))
   }
-</div>
+</ul>

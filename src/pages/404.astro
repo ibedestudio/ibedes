@@ -5,15 +5,28 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout>
   <Section class="mt-16">
-    <h1 class="text-3xl sm:text-4xl font-display pb-8">
-      Well, this is awkward
+    <h1 class="text-3xl sm:text-4xl font-display pb-4">
+      Halaman tidak ditemukan
     </h1>
-    <h2 class="text-xl sm:text-2xl pb-8">404 - Page not found</h2>
-    <p>
-      It seems that this page does not exist. If you want to return to safety, <a
-        class="underline underline-offset-4 font-medium"
-        href="/">click here to go home</a
-      >.
+    <p class="text-xl sm:text-2xl pb-8">
+      Tautan yang kamu buka tidak tersedia atau sudah dipindahkan.
     </p>
+    <p class="pb-6">
+      Jangan khawatir, kamu bisa kembali ke halaman-halaman berikut untuk melanjutkan eksplorasi:
+    </p>
+    <ul class="flex flex-wrap gap-4 text-base">
+      <li>
+        <a class="underline underline-offset-4 font-medium" href="/">Beranda</a>
+      </li>
+      <li>
+        <a class="underline underline-offset-4 font-medium" href="/blog">Tulisan</a>
+      </li>
+      <li>
+        <a class="underline underline-offset-4 font-medium" href="/services">Layanan</a>
+      </li>
+      <li>
+        <a class="underline underline-offset-4 font-medium" href="/projects">Projek</a>
+      </li>
+    </ul>
   </Section>
 </Layout>

@@ -256,48 +256,84 @@ const searchItemsJSON = JSON.stringify([]);
     const container = document.getElementById('search-results-list');
     if (!container) return;
 
+    container.replaceChildren();
     if (results.length === 0) {
-      container.innerHTML = `
-        <div class="command-empty">
-          <p>Tidak ada hasil ditemukan</p>
-        </div>
-      `;
+      const empty = document.createElement('div');
+      empty.className = 'command-empty';
+      const emptyText = document.createElement('p');
+      emptyText.textContent = 'Tidak ada hasil ditemukan';
+      empty.appendChild(emptyText);
+      container.appendChild(empty);
       return;
     }
 
-    container.innerHTML = results.map(item => `
-      <div class="command-item" data-type="${item.type}">
-        <div class="flex items-start justify-between">
-          <div class="flex-1">
-            <div class="command-item__title font-medium zag-text mb-1">
-              ${item.title}
-            </div>
-            <div class="command-item__meta text-xs zag-muted mb-2">
-              <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">
-                ${item.type === 'article' ? '📝 Artikel' : 
-                 item.type === 'service' ? '🛠️ Layanan' : '🚀 Proyek'}
-              </span>
-              <span class="ml-2">${item.description}</span>
-            </div>
-            ${item.tags && item.tags.length > 0 ? `
-              <div class="flex flex-wrap gap-1">
-                ${item.tags.slice(0, 3).map(tag => `
-                  <span class="px-2 py-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 text-xs rounded">
-                    ${tag}
-                  </span>
-                `).join('')}
-              </div>
-            ` : ''}
-          </div>
-          <button
-            onclick="navigateToResult('${item.url}')"
-            class="px-3 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors ml-4"
-          >
-            Buka
-          </button>
-        </div>
-      </div>
-    `).join('');
+    results.forEach(item => {
+      const commandItem = document.createElement('div');
+      commandItem.className = 'command-item';
+      commandItem.dataset.type = item.type;
+
+      const layout = document.createElement('div');
+      layout.className = 'flex items-start justify-between';
+      commandItem.appendChild(layout);
+
+      const textColumn = document.createElement('div');
+      textColumn.className = 'flex-1';
+      layout.appendChild(textColumn);
+
+      const title = document.createElement('div');
+      title.className = 'command-item__title font-medium zag-text mb-1';
+      title.textContent = item.title || '';
+      textColumn.appendChild(title);
+
+      const meta = document.createElement('div');
+      meta.className = 'command-item__meta text-xs zag-muted mb-2';
+      const badge = document.createElement('span');
+      badge.className = 'px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs';
+      const typeLabel =
+        item.type === 'article'
+          ? '📝 Artikel'
+          : item.type === 'service'
+            ? '🛠️ Layanan'
+            : '🚀 Proyek';
+      badge.textContent = typeLabel;
+      meta.appendChild(badge);
+
+      if (item.description) {
+        const description = document.createElement('span');
+        description.className = 'ml-2';
+        description.textContent = item.description;
+        meta.appendChild(description);
+      }
+      textColumn.appendChild(meta);
+
+      if (Array.isArray(item.tags) && item.tags.length > 0) {
+        const tagsWrapper = document.createElement('div');
+        tagsWrapper.className = 'flex flex-wrap gap-1';
+        item.tags.slice(0, 3).forEach(tag => {
+          const tagEl = document.createElement('span');
+          tagEl.className = 'px-2 py-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 text-xs rounded';
+          tagEl.textContent = tag;
+          tagsWrapper.appendChild(tagEl);
+        });
+        textColumn.appendChild(tagsWrapper);
+      }
+
+      const actionButton = document.createElement('button');
+      actionButton.type = 'button';
+      actionButton.className = 'px-3 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors ml-4';
+      actionButton.textContent = 'Buka';
+      actionButton.addEventListener('click', event => {
+        event.stopPropagation();
+        navigateToResult(item.url);
+      });
+      layout.appendChild(actionButton);
+
+      commandItem.addEventListener('click', () => {
+        navigateToResult(item.url);
+      });
+
+      container.appendChild(commandItem);
+    });
   }
 
   // Keyboard navigation

@@ -52,11 +52,11 @@ import CommandPalette from "./CommandPalette.astro";
   ></div>
 
   <nav
-    class="zag-bg zag-border-b zag-transition fixed sm:relative inset-x-0 top-16 sm:top-0 h-[calc(100vh-4rem)] sm:h-auto overflow-y-auto sm:overflow-visible sm:px-4 pt-12 pb-6 sm:py-4 max-w-4xl mx-auto sm:border-none z-40 hidden flex sm:flex mobile-nav-column"
+    class="zag-bg zag-border-b zag-transition fixed sm:relative inset-x-0 top-16 sm:top-0 h-[calc(100vh-4rem)] sm:h-auto overflow-y-auto sm:overflow-visible sm:px-4 pt-12 pb-6 sm:py-4 max-w-4xl mx-auto sm:border-none z-40 flex sm:flex mobile-nav-column"
     id="main-nav"
     role="navigation"
     aria-label="Main navigation"
-    aria-hidden="true"
+    aria-hidden="false"
   >
     <div class="flex flex-col sm:flex-row w-full gap-6 sm:gap-3 px-4 sm:px-0">
       <div
@@ -200,6 +200,7 @@ navList && navList.addEventListener('click', (e) => {
 // Initialize and respond to viewport changes
 window.addEventListener('resize', updateNavState);
 window.addEventListener('scroll', updateHeaderState, { passive: true });
+setAria(isNavOpen);
 updateNavState();
 updateHeaderState();
 

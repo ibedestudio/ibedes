@@ -16,6 +16,7 @@ import ArticleEngagement from "../components/ArticleEngagement.astro";
 import RelatedArticles from "../components/RelatedArticles.astro";
 import { getArticles } from "../lib/list";
 import Breadcrumbs from "../components/common/Breadcrumbs.astro";
+import AffiliateRecommendations from "../components/AffiliateRecommendations.astro";
 
 type Props = MarkdownLayoutProps<ArticleFrontmatter>;
 
@@ -60,6 +61,11 @@ const fallback =
     ? scoredArticles.filter(({ overlap }) => overlap === 0)
     : [];
 const relatedArticles = [...prioritized.slice(0, 3), ...fallback].slice(0, 3).map(({ article }) => article);
+const affiliateCategories = Array.isArray((frontmatter as any).affiliateCategories)
+  ? (frontmatter as any).affiliateCategories
+  : typeof (frontmatter as any).affiliateCategory === "string"
+    ? [(frontmatter as any).affiliateCategory]
+    : [];
 const resolveImageUrl = (value?: string) => {
   if (!value) return undefined;
   return value.startsWith("http") ? value : `${GLOBAL.rootUrl}/${value.replace(/^\/+/, "")}`;
@@ -170,6 +176,9 @@ const articleSchema = JSON.stringify(
           <Prose>
             <slot />
           </Prose>
+          {affiliateCategories.length > 0 && (
+            <AffiliateRecommendations categories={affiliateCategories} />
+          )}
         </div>
 
         <div class="my-12">

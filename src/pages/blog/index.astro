@@ -5,12 +5,10 @@ import ArticleSnippet from "../../components/ArticleSnippet.astro";
 import Section from "../../components/common/Section.astro";
 import { getArticles } from "../../lib/list";
 import SubscribeCard from "../../components/SubscribeCard.astro";
+import PopularArticles from "../../components/PopularArticles.astro";
 
 const articles = await getArticles();
 
-// Get dynamic popular posts based on analytics (max 3)
-const { getPopularArticles } = await import("../../lib/simple-analytics");
-const popularArticles = getPopularArticles(articles);
 ---
 
 <Layout>
@@ -43,42 +41,7 @@ const popularArticles = getPopularArticles(articles);
       <h1 class="font-display text-3xl sm:text-4xl leading-loose">{GLOBAL.articlesName}</h1>
     </div>
 
-    {popularArticles.length > 0 && (
-      <div class="mb-12">
-        <div class="flex items-center gap-2 mb-6">
-          <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
-          <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Postingan Paling Populer</h2>
-        </div>
-        <div class="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {popularArticles.map((article) => (
-            <a
-              href={article.filename}
-              class="block bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-4 hover:border-amber-300 dark:hover:border-amber-600 transition-colors group"
-            >
-              <div class="space-y-2">
-                <div class="flex items-center gap-2">
-                  <span class="px-2 py-1 bg-amber-100 dark:bg-amber-800/30 text-amber-800 dark:text-amber-200 text-xs font-medium rounded-full">
-                    Populer
-                  </span>
-                  <span class="text-xs text-amber-700 dark:text-amber-300">{article.time} min</span>
-                  {article.views > 0 && (
-                    <span class="text-xs text-amber-600 dark:text-amber-400">• {article.views} views</span>
-                  )}
-                </div>
-                <h3 class="font-semibold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
-                  {article.title}
-                </h3>
-                <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
-                  {article.description}
-                </p>
-              </div>
-            </a>
-          ))}
-        </div>
-      </div>
-    )}
+    <PopularArticles articles={articles} />
 
     <div class="mb-8">
       <h2 class="text-xl font-semibold text-slate-900 dark:text-white mb-4">Semua Postingan</h2>

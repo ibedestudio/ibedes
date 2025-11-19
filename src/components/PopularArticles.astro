@@ -1,0 +1,118 @@
+---
+interface Article {
+  title: string;
+  description: string;
+  time: number;
+  filename: string;
+  timestamp?: number;
+}
+
+interface Props {
+  articles: Article[];
+}
+
+const { articles } = Astro.props as Props;
+const fallbackArticles = [...articles]
+  .sort((a, b) => (b.timestamp ?? 0) - (a.timestamp ?? 0))
+  .slice(0, 3);
+const articlesJSON = JSON.stringify(articles)
+  .replace(/</g, "\\u003C")
+  .replace(/'/g, "\\u0027");
+---
+
+{fallbackArticles.length > 0 && (
+  <div class="mb-12 space-y-3" data-popular-root>
+    <div class="flex items-center gap-2">
+      <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+      </svg>
+      <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Postingan Paling Populer</h2>
+    </div>
+    <div class="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3" data-popular-list>
+      {fallbackArticles.map((article) => (
+        <a
+          href={article.filename}
+          class="block bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-4 hover:border-amber-300 dark:hover:border-amber-600 transition-colors group"
+        >
+          <div class="space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-1 bg-amber-100 dark:bg-amber-800/30 text-amber-800 dark:text-amber-200 text-xs font-medium rounded-full">
+                Terbaru
+              </span>
+              <span class="text-xs text-amber-700 dark:text-amber-300">{article.time} min</span>
+            </div>
+            <h3 class="font-semibold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
+              {article.title}
+            </h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
+              {article.description}
+            </p>
+          </div>
+        </a>
+      ))}
+    </div>
+    <p class="text-xs text-amber-700 dark:text-amber-300" data-popular-hint>
+      Urutan default berdasarkan artikel terbaru. Statistik view akan dimuat jika tersedia.
+    </p>
+  </div>
+)}
+
+<script is:inline type="module">
+  import { getPopularArticles } from "../lib/simple-analytics.ts";
+
+  const root = document.querySelector('[data-popular-root]');
+  if (!root) {
+    return;
+  }
+
+  const list = root.querySelector('[data-popular-list]');
+  if (!list) {
+    return;
+  }
+
+  const articles = JSON.parse('{articlesJSON}');
+
+  try {
+    const popularArticles = getPopularArticles(articles);
+    const hasViews = popularArticles.some((article) => Number(article.views) > 0);
+    if (!popularArticles.length || !hasViews) {
+      return;
+    }
+
+    const escapeHtml = (value) =>
+      String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
+    const createCard = (article) => `
+      <a href="${escapeHtml(article.filename)}" class="block bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-4 hover:border-amber-300 dark:hover:border-amber-600 transition-colors group">
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-1 bg-amber-100 dark:bg-amber-800/30 text-amber-800 dark:text-amber-200 text-xs font-medium rounded-full">
+              Populer
+            </span>
+            <span class="text-xs text-amber-700 dark:text-amber-300">${escapeHtml(article.time)} min</span>
+            <span class="text-xs text-amber-600 dark:text-amber-400">• ${escapeHtml(article.views)}</span>
+          </div>
+          <h3 class="font-semibold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors line-clamp-2">
+            ${escapeHtml(article.title)}
+          </h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
+            ${escapeHtml(article.description)}
+          </p>
+        </div>
+      </a>
+    `;
+
+    list.innerHTML = popularArticles.map(createCard).join('');
+    const hint = root.querySelector('[data-popular-hint]');
+    if (hint) {
+      hint.textContent = 'Urutan berdasarkan halaman yang paling sering kamu baca (data tersimpan di browsermu).';
+    }
+  } catch (error) {
+    console.warn('Gagal memuat data popular posts', error);
+  }
+</script>

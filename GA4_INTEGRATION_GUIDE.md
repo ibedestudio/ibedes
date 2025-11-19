@@ -41,13 +41,13 @@ Your analytics dashboard has been successfully synchronized with Google Analytic
 3. Copy your Property ID (format: `123456789`)
 
 #### Step 2: Update Environment Configuration
-Edit `.env` file:
+Edit your `.env` (or preferred secret manager) configuration:
 ```env
 # Replace with your actual GA4 Property ID
 GA4_PROPERTY_ID=properties/123456789
 
-# Optional: Service account for API access
-GA4_SERVICE_ACCOUNT_KEY=./ga4-service-account-key.json
+# Base64-encoded service account JSON. Keep it ONLY in env/secret storage.
+GA4_SERVICE_ACCOUNT_KEY_JSON="$(cat /path/to/service-account.json | base64 -w0)"
 ```
 
 #### Step 3: Service Account Setup (Optional but Recommended)
@@ -55,9 +55,9 @@ GA4_SERVICE_ACCOUNT_KEY=./ga4-service-account-key.json
 2. Create a new project or select existing one
 3. Enable Google Analytics Data API
 4. Create a Service Account
-5. Download the JSON key file
-6. Add service account email to your GA4 property with "Viewer" permissions
-7. Place the JSON file in your project root
+5. Download the JSON key file and store it in a secure location outside the repo (e.g., password manager, `.config/`)
+6. Add the service account email to your GA4 property with "Viewer" permissions
+7. Export the key contents as an environment variable/secret (see `GA4_SERVICE_ACCOUNT_KEY_JSON` above) so the runtime can access it without ever committing the file
 
 ### 3. **Without Service Account (Alternative):**
 You can still use the existing tracking ID `G-TQ2GF3GCCX` for basic page view tracking, but the dashboard will continue showing mock data until proper API access is configured.
@@ -144,7 +144,7 @@ open http://localhost:4323/analytics
 
 ### **Files Modified:**
 - `src/pages/analytics/index.astro` - Updated dashboard template
-- `.env` - Added GA4 configuration variables
+- `.env` / deployment secrets - Added GA4 configuration variables
 
 ## Next Steps
 

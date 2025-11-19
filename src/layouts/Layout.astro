@@ -1,6 +1,8 @@
 ---
+import EnhancedSearch from "../components/EnhancedSearch.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
+import NotificationCenter from "../components/NotificationCenter.astro";
 import PWAInstaller from "../components/PWAInstaller.astro";
 import { GLOBAL } from "../lib/variables";
 import "../styles/global.css";
@@ -64,7 +66,8 @@ import "../styles/global.css";
     </main>
     <Footer />
 
-    <!-- PWA Installer: only on homepage -->
-    {Astro.url.pathname === '/' && <PWAInstaller />}
+    <EnhancedSearch isOpen={false} />
+    <NotificationCenter isOpen={false} />
+    <PWAInstaller client:load enableInstallUI={Astro.url.pathname === '/'} />
   </body>
 </html>

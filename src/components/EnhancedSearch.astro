@@ -18,7 +18,7 @@ const allTags = [...new Set(searchItems.flatMap(item => item.tags || []))].sort(
 const searchItemsJSON = JSON.stringify([]);
 ---
 
-<div class={`fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-16 ${isOpen ? '' : 'hidden'}`} data-enhanced-search>
+<div class={`fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-16 ${isOpen ? '' : 'hidden'}`} data-enhanced-search aria-hidden={!isOpen}>
     <div class="command-panel w-full max-w-4xl max-h-[90vh] overflow-hidden">
       <!-- Search Header -->
       <div class="flex items-center justify-between mb-4">
@@ -336,9 +336,11 @@ const searchItemsJSON = JSON.stringify([]);
     });
   }
 
+  const overlay = document.querySelector('[data-enhanced-search]');
+
   // Keyboard navigation
   document.addEventListener('keydown', function(e) {
-    const searchContainer = document.querySelector('[data-enhanced-search]');
+    const searchContainer = overlay;
     if (!searchContainer || searchContainer.classList.contains('hidden')) return;
     
     const results = document.querySelectorAll('#search-results-list .command-item');
@@ -373,7 +375,59 @@ const searchItemsJSON = JSON.stringify([]);
         break;
       case 'Escape':
         searchContainer.classList.add('hidden');
+        searchContainer.setAttribute('aria-hidden', 'true');
         break;
+    }
+  });
+
+  const openOverlay = () => {
+    if (!overlay) return;
+    overlay.classList.remove('hidden');
+    overlay.setAttribute('aria-hidden', 'false');
+    initEnhancedSearch();
+    const input = document.getElementById('enhanced-search-input');
+    if (input) input.focus();
+  };
+
+  const closeOverlay = () => {
+    if (!overlay) return;
+    overlay.classList.add('hidden');
+    overlay.setAttribute('aria-hidden', 'true');
+  };
+
+  const toggleOverlay = () => {
+    if (!overlay) return;
+    const isHidden = overlay.classList.contains('hidden');
+    if (isHidden) {
+      openOverlay();
+    } else {
+      closeOverlay();
+    }
+  };
+
+  // Toggle buttons
+  const toggleButtons = Array.from(document.querySelectorAll('[data-enhanced-search-toggle]'));
+  toggleButtons.forEach((btn) => btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    toggleOverlay();
+  }));
+
+  // Close when clicking backdrop
+  overlay?.addEventListener('click', (event) => {
+    if (event.target === overlay) {
+      closeOverlay();
+    }
+  });
+
+  // Global keyboard shortcut
+  document.addEventListener('keydown', (event) => {
+    const metaKey = event.metaKey || event.ctrlKey;
+    if (metaKey && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      openOverlay();
+    }
+    if (event.key === 'Escape' && overlay && !overlay.classList.contains('hidden')) {
+      closeOverlay();
     }
   });
 
@@ -413,7 +467,6 @@ const searchItemsJSON = JSON.stringify([]);
   }
 
   // Also initialize when the overlay becomes visible (in case HTML was injected late)
-  const overlay = document.querySelector('[data-enhanced-search]');
   if (overlay) {
     const observer = new MutationObserver(() => {
       const isHidden = overlay.classList.contains('hidden');

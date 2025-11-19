@@ -19,7 +19,7 @@ const normalized = products.slice(0, 4);
   {
     normalized.map((product) => (
       <div class="zag-text zag-transition flex flex-col gap-3 pb-2">
-        <Anchor href={`/rekomendasi#${product.slug}`} class="text-xl">
+        <Anchor url={`/rekomendasi#${product.slug}`} class="text-xl">
           {product.title}
         </Anchor>
         {product.highlight && <p class="text-base">{product.highlight}</p>}

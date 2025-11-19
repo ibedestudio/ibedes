@@ -28,7 +28,7 @@ import CommandPalette from "./CommandPalette.astro";
         type="button"
         class="p-2 rounded-full border border-black/20 dark:border-white/30 sm:hidden"
         aria-label="Buka pencarian global"
-        data-command-toggle
+        data-enhanced-search-toggle
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -98,7 +98,7 @@ import CommandPalette from "./CommandPalette.astro";
       <button
         type="button"
         class="hidden sm:inline-flex items-center gap-2 border border-black/20 dark:border-white/30 rounded-full px-4 py-2 text-[10px] uppercase tracking-[0.35em]"
-        data-command-toggle
+        data-enhanced-search-toggle
         aria-label="Buka pencarian cerdas (Ctrl+K)"
       >
         <svg
@@ -117,7 +117,32 @@ import CommandPalette from "./CommandPalette.astro";
           <kbd>Ctrl</kbd>+<kbd>K</kbd>
         </span>
       </button>
-      
+
+      <button
+        type="button"
+        class="relative inline-flex items-center justify-center w-10 h-10 rounded-full border border-black/20 dark:border-white/30"
+        aria-label="Buka pusat notifikasi"
+        data-notification-toggle
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          class="w-5 h-5 zag-fill zag-transition"
+          aria-hidden="true"
+        >
+          <path
+            d="M12 2a7 7 0 00-7 7v3.586l-1.707 1.707A1 1 0 004 16h16a1 1 0 00.707-1.707L19 12.586V9a7 7 0 00-7-7zm0 20a3 3 0 002.995-2.824L15 19h-6a3 3 0 002.824 2.995L12 22z"
+            fill="currentColor"
+          />
+        </svg>
+        <span
+          class="absolute -top-1 -right-1 px-1.5 py-0.5 text-[10px] rounded-full bg-red-500 text-white hidden"
+          data-notification-indicator
+        >
+          <span data-notification-count>0</span>
+        </span>
+      </button>
+
       <ThemeToggle />
     </div>
   </nav>

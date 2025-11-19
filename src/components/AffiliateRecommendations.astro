@@ -118,13 +118,18 @@ const blockId = `affiliate-inline-${Math.random().toString(36).slice(2, 9)}`;
         if (!block) return;
         const articleBody = document.querySelector('[data-article-body]');
         if (!articleBody) return;
-        const paragraphs = Array.from(articleBody.querySelectorAll('p'));
-        const targetIndex = Math.max(1, Math.ceil(paragraphs.length / 2) - 1);
-        const target = paragraphs[targetIndex] ?? paragraphs[paragraphs.length - 1];
+        const paragraphs = Array.from(articleBody.querySelectorAll('p')).filter(
+          (p) => !p.closest('[data-affiliate-inline]'),
+        );
+        const fallbackAnchors = Array.from(
+          articleBody.querySelectorAll('h2, h3, h4, h5, h6, ul, ol, hr'),
+        ).filter((node) => !node.closest('[data-affiliate-inline]'));
+        const anchors = paragraphs.length ? paragraphs : fallbackAnchors;
+        if (!anchors.length) return;
+        const targetIndex = Math.max(1, Math.ceil(anchors.length / 2) - 1);
+        const target = anchors[targetIndex] ?? anchors[anchors.length - 1];
         if (target?.parentNode) {
           target.parentNode.insertBefore(block, target.nextSibling);
-        } else {
-          articleBody.appendChild(block);
         }
       })();
     `}

@@ -58,31 +58,16 @@ const pageSchema = JSON.stringify({
   </Fragment>
 
   <Section class="my-10">
-    <div class="relative rounded-3xl overflow-hidden border border-black/10 dark:border-white/10">
-      {hero?.image && (
-        <img
-          src={hero.image}
-          alt={hero.title ?? "About hero"}
-          class="w-full h-64 sm:h-96 object-cover"
-          loading="eager"
-        />
-      )}
-      <div class:list={[
-        "absolute inset-0",
-        hero?.image ? "bg-gradient-to-t from-black/60 via-black/30 to-transparent" : ""
-      ]}></div>
-      <div class="absolute inset-0 p-6 sm:p-10 flex flex-col justify-end gap-3">
-        <p class="text-[10px] uppercase tracking-[0.35em] text-white/80">Tentang</p>
-        <h1 class:list={[
-          "font-display text-4xl sm:text-6xl",
-          hero?.image ? "text-white" : ""
-        ]}>
+    <div class="relative rounded-3xl border border-black/10 dark:border-white/10 p-6 sm:p-10 overflow-hidden">
+      <div class="absolute inset-0 bg-zinc-50 dark:bg-zinc-900 [mask-image:radial-gradient(white,transparent)]">
+        <div class="absolute inset-0 bg-[radial-gradient(theme(colors.black/.1)_1px,transparent_1px)] dark:bg-[radial-gradient(theme(colors.white/.05)_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
+      </div>
+      <div class="relative z-10 flex flex-col justify-end gap-3 min-h-[200px] sm:min-h-[300px]">
+        <p class="text-[10px] uppercase tracking-[0.35em] zag-muted">Tentang</p>
+        <h1 class="font-display text-4xl sm:text-6xl zag-text">
           {hero?.title ?? GLOBAL.username}
         </h1>
-        <p class:list={[
-          "max-w-2xl",
-          hero?.image ? "text-white/90" : "zag-muted"
-        ]}>
+        <p class="max-w-2xl zag-muted">
           {hero?.subtitle ?? description}
         </p>
       </div>

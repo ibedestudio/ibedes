@@ -10,7 +10,6 @@ const hero = {
   title: "ibedes.xyz",
   subtitle:
     "Ruang kerja untuk desain, tulisan, dan pengembangan web yang dijaga agar tetap rapi dan fungsional.",
-  image: `/${GLOBAL.profileImage}`,
 };
 
 const phoneLink = GLOBAL.contactPhone.replace(/[^+\d]/g, "");
@@ -44,22 +43,17 @@ const contactDetails = [
   canonicalUrl={canonicalUrl}
   hero={hero}
 >
-  <div class="rounded-[2.5rem] border border-black/10 dark:border-white/10 p-8">
-    <div class="grid items-center gap-8 md:grid-cols-[auto,1fr]">
+  <div class="grid md:grid-cols-[1fr,2fr] gap-10 items-start">
+    <div class="flex flex-col gap-4 text-center md:text-left items-center md:items-start">
       <img
         src={`/${GLOBAL.profileImage}`}
         alt={`Potret ${GLOBAL.username}`}
         loading="lazy"
-        class="rounded-full w-36 h-36 sm:w-44 sm:h-44 object-cover grayscale"
+        class="rounded-full w-44 h-44 object-cover grayscale"
       />
-      <div class="space-y-4">
-        <p class="text-xs uppercase tracking-[0.35em] text-zag-muted">Profil</p>
-        <h2 class="text-3xl sm:text-4xl font-display font-semibold">Ruang kerja ibedes</h2>
-        <p class="text-base text-zag-muted">
-          Fokus pada desain, tulisan, dan pengembangan web yang terasa rapi,
-          fungsional, serta konsisten antar halaman.
-        </p>
-        <div class="flex flex-wrap gap-2 text-xs uppercase tracking-[0.3em] text-zag-muted">
+       <h2 class="text-2xl font-display font-semibold">I Gede Dharma Putra</h2>
+       <p class="text-sm text-zag-muted">Web Developer & UI/UX Designer</p>
+        <div class="flex flex-wrap gap-2 text-xs uppercase tracking-[0.3em] text-zag-muted justify-center">
           <span class="px-3 py-1 rounded-full border border-black/10 dark:border-white/10">
             Desain
           </span>
@@ -70,27 +64,25 @@ const contactDetails = [
             Web
           </span>
         </div>
-      </div>
+    </div>
+    <div class="space-y-4">
+      <h3 class="text-3xl sm:text-4xl font-display font-semibold">Sedikit tentang saya</h3>
+      <Prose>
+        <p>
+          Perkenalkan, saya Gede. ibedes.xyz adalah ruang kerja digital saya yang berfokus pada desain, tulisan, dan pengembangan web. Saya percaya pada pendekatan yang rapi, fungsional, dan konsisten agar setiap karya mudah diakses dan dinikmati siapa pun.
+        </p>
+        <p>
+          Situs ini adalah tempat saya mendokumentasikan proses, bereksperimen, dan membangun proyek yang bisa terus berkembang. Identitas visualnya sengaja dipertahankan agar tetap sederhana, ringan, dan nyaman digunakan.
+        </p>
+        <p>
+          Di luar pekerjaan, saya senang menjelajahi teknologi baru dan mencari inspirasi dari berbagai disiplin ilmu untuk memperkaya perspektif dalam berkarya.
+        </p>
+         <p>
+          Untuk kebutuhan profesional atau diskusi kerja sama, silakan hubungi saya melalui detail kontak di bawah.
+        </p>
+      </Prose>
     </div>
   </div>
-
-  <Prose>
-    <p>
-      ibedes.xyz adalah ruang kerja yang berfokus pada desain, tulisan, dan
-      pengembangan web. Setiap bagian di dalamnya dibuat dengan pendekatan yang
-      rapi, fungsional, dan konsisten agar mudah diakses oleh siapa pun.
-    </p>
-    <p>
-      Situs ini menjadi tempat untuk mendokumentasikan proses, membuat
-      eksperimen kecil, dan membangun proyek digital yang bisa berkembang
-      seiring waktu. Identitas visualnya dipertahankan agar tetap sederhana,
-      ringan, dan nyaman digunakan.
-    </p>
-    <p>
-      Untuk kebutuhan profesional atau diskusi kerja sama, kamu dapat
-      menghubungi kontak berikut.
-    </p>
-  </Prose>
 
   <div class="grid gap-4 sm:grid-cols-2">
     {contactDetails.map((detail) => (

@@ -43,27 +43,29 @@ const contactDetails = [
   canonicalUrl={canonicalUrl}
   hero={hero}
 >
-  <div class="grid md:grid-cols-[1fr,2fr] gap-10 items-start">
-    <div class="flex flex-col gap-4 text-center md:text-left items-center md:items-start">
+  <div class="flex flex-col gap-10">
+    <div class="flex flex-col gap-4 items-center text-center">
       <img
         src={`/${GLOBAL.profileImage}`}
         alt={`Potret ${GLOBAL.username}`}
         loading="lazy"
         class="rounded-full w-44 h-44 object-cover grayscale"
       />
-       <h2 class="text-2xl font-display font-semibold">I Gede Dharma Putra</h2>
-       <p class="text-sm text-zag-muted">Web Developer & UI/UX Designer</p>
-        <div class="flex flex-wrap gap-2 text-xs uppercase tracking-[0.3em] text-zag-muted justify-center">
-          <span class="px-3 py-1 rounded-full border border-black/10 dark:border-white/10">
-            Desain
-          </span>
-          <span class="px-3 py-1 rounded-full border border-black/10 dark:border-white/10">
-            Tulisan
-          </span>
-          <span class="px-3 py-1 rounded-full border border-black/10 dark:border-white/10">
-            Web
-          </span>
-        </div>
+      <div>
+        <h2 class="text-2xl font-display font-semibold">I Gede Dharma Putra</h2>
+        <p class="text-sm text-zag-muted">Web Developer & UI/UX Designer</p>
+      </div>
+      <div class="flex flex-wrap gap-2 text-xs uppercase tracking-[0.3em] text-zag-muted justify-center">
+        <span class="px-3 py-1 rounded-full border border-black/10 dark:border-white/10">
+          Desain
+        </span>
+        <span class="px-3 py-1 rounded-full border border-black/10 dark:border-white/10">
+          Tulisan
+        </span>
+        <span class="px-3 py-1 rounded-full border border-black/10 dark:border-white/10">
+          Web
+        </span>
+      </div>
     </div>
     <div class="space-y-4">
       <h3 class="text-3xl sm:text-4xl font-display font-semibold">Sedikit tentang saya</h3>
@@ -104,14 +106,12 @@ const contactDetails = [
     ))}
   </div>
 
-  <Fragment slot="sidebar">
-    <div class="rounded-xl border border-black/10 dark:border-white/20 p-5 space-y-3">
-      <p class="font-semibold">Prinsip kerja</p>
-      <ul class="space-y-2 text-sm text-zag-muted">
-        <li>• Rapi dalam struktur konten dan hierarki visual.</li>
-        <li>• Fungsional agar mudah dipakai di perangkat apa pun.</li>
-        <li>• Konsisten supaya identitas ibedes mudah dikenali.</li>
-      </ul>
-    </div>
-  </Fragment>
+  <div>
+    <h3 class="text-3xl sm:text-4xl font-display font-semibold mb-4">Prinsip kerja</h3>
+    <ul class="space-y-2 text-sm text-zag-muted">
+      <li>• Rapi dalam struktur konten dan hierarki visual.</li>
+      <li>• Fungsional agar mudah dipakai di perangkat apa pun.</li>
+      <li>• Konsisten supaya identitas ibedes mudah dikenali.</li>
+    </ul>
+  </div>
 </AboutLayout>

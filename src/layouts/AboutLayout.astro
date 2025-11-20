@@ -75,23 +75,8 @@ const pageSchema = JSON.stringify({
   </Section>
 
   <Section class="py-10">
-    <div class="grid gap-6 md:grid-cols-[2fr,1fr]">
-      <div class="space-y-6">
-        <slot />
-      </div>
-      <aside class="space-y-4">
-        <slot name="sidebar">
-          <div class="rounded-xl p-4 border border-black/10 dark:border-white/20">
-            <p class="font-semibold mb-2">Kontak</p>
-            <p class="text-sm"><b>Email:</b> {GLOBAL.contactEmail}</p>
-            <p class="text-sm"><b>Telepon:</b> {GLOBAL.contactPhone}</p>
-            <p class="text-sm"><b>Lokasi:</b> {GLOBAL.contactLocation}</p>
-            <div class="pt-3 flex gap-3">
-              <a href={GLOBAL.contactWhatsApp} class="cta-button cta-button--primary">WhatsApp</a>
-            </div>
-          </div>
-        </slot>
-      </aside>
+    <div class="space-y-6">
+      <slot />
     </div>
   </Section>
 </Layout>

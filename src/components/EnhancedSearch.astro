@@ -22,10 +22,12 @@ const searchItemsJSON = JSON.stringify(searchItems);
     <div class="command-panel w-full max-w-4xl max-h-[90vh] overflow-hidden">
       <!-- Search Header -->
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-bold zag-text font-display">Pencarian Cerdas</h2>
+        <h2 id="enhanced-search-title" class="text-xl font-bold zag-text font-display">Pencarian Cerdas</h2>
         <button
-          onclick="this.closest('[data-enhanced-search]').classList.add('hidden')"
+          type="button"
+          data-enhanced-search-close
           class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+          aria-label="Tutup pencarian"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

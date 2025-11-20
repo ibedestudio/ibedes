@@ -1,4 +1,6 @@
 ---
+import { addNotification, clearAllNotifications, deleteNotification, getNotifications, markAllAsRead, markAsRead } from "../lib/notifications";
+
 interface Props {
   isOpen?: boolean;
 }
@@ -10,15 +12,12 @@ const { isOpen = false } = Astro.props;
   class={`fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-20 ${isOpen ? '' : 'hidden'}`}
   data-notification-center
   aria-hidden={!isOpen}
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="notification-center-title"
 >
   <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 w-full max-w-md max-h-[80vh] overflow-hidden shadow-2xl">
     <!-- Header -->
     <div class="p-6 border-b border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between">
-        <h2 id="notification-center-title" class="text-xl font-bold zag-text font-display">Notifikasi</h2>
+        <h2 class="text-xl font-bold zag-text font-display">Notifikasi</h2>
         <button
           type="button"
           data-notification-close
@@ -60,44 +59,6 @@ const { isOpen = false } = Astro.props;
       </div>
     </div>
 
-    <!-- Preferences -->
-    <div class="p-6 border-t border-gray-200 dark:border-gray-700 space-y-4" data-preferences-section>
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <p class="text-sm font-medium zag-text">Preferensi Notifikasi</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400">Pilih jenis notifikasi yang ingin diterima.</p>
-        </div>
-        <button
-          type="button"
-          data-push-toggle
-          class="px-3 py-1 text-xs bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded-full hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors"
-        >
-          Kelola Push
-        </button>
-      </div>
-
-      <div class="grid grid-cols-2 gap-3 text-sm" data-preferences-controls>
-        <label class="flex items-center gap-2">
-          <input type="checkbox" data-preference-toggle="newArticles" class="accent-emerald-500" />
-          Artikel Baru
-        </label>
-        <label class="flex items-center gap-2">
-          <input type="checkbox" data-preference-toggle="weeklyDigest" class="accent-emerald-500" />
-          Ringkasan Mingguan
-        </label>
-        <label class="flex items-center gap-2">
-          <input type="checkbox" data-preference-toggle="systemUpdates" class="accent-emerald-500" />
-          Pembaruan Sistem
-        </label>
-        <label class="flex items-center gap-2">
-          <input type="checkbox" data-preference-toggle="engagement" class="accent-emerald-500" />
-          Interaksi
-        </label>
-      </div>
-
-      <p class="text-xs text-gray-500 dark:text-gray-400" data-push-status>Memuat status push…</p>
-    </div>
-
     <!-- Footer Actions -->
     <div class="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hidden" data-notification-footer>
       <div class="flex gap-2">
@@ -121,7 +82,7 @@ const { isOpen = false } = Astro.props;
 </div>
 
 <script type="module">
-  import { addNotification, clearAllNotifications, deleteNotification, getNotifications, getPreferences, initNotifications, markAllAsRead, markAsRead, updatePreferences } from '../lib/notifications';
+  import { addNotification, clearAllNotifications, deleteNotification, getNotifications, markAllAsRead, markAsRead } from '../lib/notifications';
 
   const overlay = document.querySelector('[data-notification-center]');
   const container = overlay?.querySelector('[data-notification-container]');
@@ -133,12 +94,6 @@ const { isOpen = false } = Astro.props;
   const toggleButtons = Array.from(document.querySelectorAll('[data-notification-toggle]'));
   const indicator = document.querySelector('[data-notification-indicator]');
   const countBadge = document.querySelector('[data-notification-count]');
-  const preferenceToggles = Array.from(overlay?.querySelectorAll('[data-preference-toggle]') ?? []);
-  const pushToggle = overlay?.querySelector('[data-push-toggle]');
-  const pushStatus = overlay?.querySelector('[data-push-status]');
-
-  const focusableSelector = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
-  let lastTrigger = null;
 
   const buildEmptyState = () => {
     const wrapper = document.createElement('div');
@@ -157,30 +112,6 @@ const { isOpen = false } = Astro.props;
     const display = unreadCount > 9 ? '9+' : String(unreadCount);
     countBadge.textContent = display;
     indicator.classList.toggle('hidden', unreadCount === 0);
-  };
-
-  const syncPreferences = () => {
-    const preferences = getPreferences();
-    preferenceToggles.forEach((input) => {
-      const key = input?.dataset?.preferenceToggle;
-      if (!key) return;
-      // @ts-ignore
-      input.checked = Boolean(preferences[key]);
-    });
-
-    if (pushStatus) {
-      const permission = typeof Notification !== 'undefined' ? Notification.permission : 'default';
-      const labelMap = {
-        granted: 'Push aktif. Anda akan menerima notifikasi segera.',
-        denied: 'Izin push ditolak. Ubah di pengaturan browser.',
-        default: 'Izinkan push untuk pemberitahuan real-time.'
-      };
-      pushStatus.textContent = labelMap[permission] || labelMap.default;
-    }
-
-    if (pushToggle) {
-      pushToggle.textContent = getPreferences().pushEnabled ? 'Nonaktifkan Push' : 'Aktifkan Push';
-    }
   };
 
   const renderNotifications = () => {
@@ -286,64 +217,24 @@ const { isOpen = false } = Astro.props;
     }
   };
 
-  const focusFirstElement = () => {
-    const focusable = overlay?.querySelectorAll(focusableSelector);
-    if (focusable && focusable.length > 0) {
-      // @ts-ignore
-      focusable[0].focus();
-    }
-  };
-
-  const trapFocus = (event) => {
-    if (!overlay || overlay.classList.contains('hidden')) return;
-    if (event.key !== 'Tab') return;
-
-    const focusable = overlay.querySelectorAll(focusableSelector);
-    if (!focusable.length) return;
-
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-
-    // @ts-ignore
-    const isShift = event.shiftKey;
-    // @ts-ignore
-    const activeElement = document.activeElement;
-
-    if (!isShift && activeElement === last) {
-      event.preventDefault();
-      // @ts-ignore
-      first.focus();
-    } else if (isShift && activeElement === first) {
-      event.preventDefault();
-      // @ts-ignore
-      last.focus();
-    }
-  };
-
-  const openCenter = (trigger) => {
+  const openCenter = () => {
     if (!overlay) return;
-    lastTrigger = trigger instanceof HTMLElement ? trigger : document.activeElement;
     overlay.classList.remove('hidden');
     overlay.setAttribute('aria-hidden', 'false');
     renderNotifications();
-    syncPreferences();
-    setTimeout(focusFirstElement, 0);
   };
 
   const closeCenter = () => {
     if (!overlay) return;
     overlay.classList.add('hidden');
     overlay.setAttribute('aria-hidden', 'true');
-    if (lastTrigger && typeof lastTrigger.focus === 'function') {
-      lastTrigger.focus();
-    }
   };
 
   toggleButtons.forEach((button) => {
     button.addEventListener('click', (event) => {
       event.preventDefault();
       if (overlay?.classList.contains('hidden')) {
-        openCenter(event.currentTarget);
+        openCenter();
       } else {
         closeCenter();
       }
@@ -364,44 +255,9 @@ const { isOpen = false } = Astro.props;
   });
 
   document.addEventListener('keydown', (event) => {
-    if (!overlay || overlay.classList.contains('hidden')) return;
-    if (event.key === 'Escape') {
+    if (event.key === 'Escape' && overlay && !overlay.classList.contains('hidden')) {
       closeCenter();
     }
-    trapFocus(event);
-  });
-
-  preferenceToggles.forEach((input) => {
-    input.addEventListener('change', () => {
-      const key = input.dataset.preferenceToggle;
-      if (!key) return;
-      updatePreferences({ [key]: input.checked });
-      syncPreferences();
-    });
-  });
-
-  pushToggle?.addEventListener('click', async () => {
-    if (typeof Notification === 'undefined') return;
-
-    if (Notification.permission === 'default') {
-      const granted = await initNotifications();
-      if (!granted && pushStatus) {
-        pushStatus.textContent = 'Izin belum diberikan. Mohon izinkan notifikasi browser.';
-      }
-      syncPreferences();
-      return;
-    }
-
-    if (Notification.permission === 'denied') {
-      if (pushStatus) {
-        pushStatus.textContent = 'Izin push ditolak di browser.';
-      }
-      return;
-    }
-
-    const current = getPreferences();
-    updatePreferences({ pushEnabled: !current.pushEnabled });
-    syncPreferences();
   });
 
   testButton?.addEventListener('click', () => {
@@ -425,6 +281,6 @@ const { isOpen = false } = Astro.props;
   });
 
   window.addEventListener('notificationsUpdated', renderNotifications);
-  syncPreferences();
+
   renderNotifications();
 </script>

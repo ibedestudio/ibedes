@@ -356,21 +356,6 @@ const searchItemsJSON = JSON.stringify(searchItems);
   }
 
   const overlay = document.querySelector('[data-enhanced-search]');
-  const statusEl = document.getElementById('search-results-status');
-
-  function setStatus(message, type = 'info') {
-    if (!statusEl) return;
-    statusEl.textContent = message;
-    statusEl.classList.remove('hidden');
-    statusEl.dataset.type = type;
-  }
-
-  function clearStatus() {
-    if (!statusEl) return;
-    statusEl.textContent = '';
-    statusEl.classList.add('hidden');
-    delete statusEl.dataset.type;
-  }
 
   // Keyboard navigation
   document.addEventListener('keydown', function(e) {

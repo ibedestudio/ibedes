@@ -161,72 +161,74 @@ const searchItemsJSON = JSON.stringify(searchItems);
       return;
     }
 
-    results.forEach(item => {
-      const commandItem = document.createElement('div');
-      commandItem.className = 'command-item';
-      commandItem.dataset.type = item.type;
-
-      const layout = document.createElement('div');
-      layout.className = 'flex items-start justify-between';
-      commandItem.appendChild(layout);
-
-      const textColumn = document.createElement('div');
-      textColumn.className = 'flex-1';
-      layout.appendChild(textColumn);
-
-      const title = document.createElement('div');
-      title.className = 'command-item__title font-medium zag-text mb-1';
-      title.textContent = item.title || '';
-      textColumn.appendChild(title);
-
-      const meta = document.createElement('div');
-      meta.className = 'command-item__meta text-xs zag-muted mb-2';
-      const badge = document.createElement('span');
-      badge.className = 'px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs';
-      const typeLabel =
-        item.type === 'article'
-          ? '📝 Artikel'
-          : item.type === 'service'
-            ? '🛠️ Layanan'
-            : '🚀 Proyek';
-      badge.textContent = typeLabel;
-      meta.appendChild(badge);
-
-      if (item.description) {
-        const description = document.createElement('span');
-        description.className = 'ml-2';
-        description.textContent = item.description;
-        meta.appendChild(description);
+    // Group results by type
+    const groupedResults = results.reduce((acc, item) => {
+      const type = item.type || 'unknown';
+      if (!acc[type]) {
+        acc[type] = [];
       }
-      textColumn.appendChild(meta);
+      acc[type].push(item);
+      return acc;
+    }, {});
 
-      if (Array.isArray(item.tags) && item.tags.length > 0) {
-        const tagsWrapper = document.createElement('div');
-        tagsWrapper.className = 'flex flex-wrap gap-1';
-        item.tags.slice(0, 3).forEach(tag => {
-          const tagEl = document.createElement('span');
-          tagEl.className = 'px-2 py-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 text-xs rounded';
-          tagEl.textContent = tag;
-          tagsWrapper.appendChild(tagEl);
+    const categoryOrder = ['article', 'project', 'service'];
+    const categoryLabels = {
+      article: '📝 Artikel',
+      project: '🚀 Proyek',
+      service: '🛠️ Layanan'
+    };
+
+    categoryOrder.forEach(category => {
+      const items = groupedResults[category];
+      if (!items || items.length === 0) return;
+
+      // Create group header
+      const groupHeader = document.createElement('div');
+      groupHeader.className = 'px-2 py-1 mt-4 text-xs font-semibold tracking-wider uppercase text-gray-400 dark:text-gray-500';
+      groupHeader.textContent = categoryLabels[category];
+      container.appendChild(groupHeader);
+
+      items.forEach(item => {
+        const commandItem = document.createElement('div');
+        commandItem.className = 'command-item rounded-lg p-3 zag-transition hover:bg-zinc-100 dark:hover:bg-zinc-800';
+        commandItem.dataset.type = item.type;
+
+        const layout = document.createElement('div');
+        layout.className = 'flex items-start justify-between';
+        commandItem.appendChild(layout);
+
+        const textColumn = document.createElement('div');
+        textColumn.className = 'flex-1';
+        layout.appendChild(textColumn);
+
+        const title = document.createElement('div');
+        title.className = 'command-item__title font-medium zag-text mb-1';
+        title.textContent = item.title || '';
+        textColumn.appendChild(title);
+
+        if (item.description) {
+            const description = document.createElement('p');
+            description.className = 'text-xs zag-muted';
+            description.textContent = item.description;
+            textColumn.appendChild(description);
+        }
+
+        const actionButton = document.createElement('button');
+        actionButton.type = 'button';
+        actionButton.className = 'px-3 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors ml-4';
+        actionButton.textContent = 'Buka';
+        actionButton.addEventListener('click', event => {
+          event.stopPropagation();
+          navigateToResult(item.url);
         });
-        textColumn.appendChild(tagsWrapper);
-      }
+        layout.appendChild(actionButton);
 
-      const actionButton = document.createElement('button');
-      actionButton.type = 'button';
-      actionButton.className = 'px-3 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors ml-4';
-      actionButton.textContent = 'Buka';
-      actionButton.addEventListener('click', event => {
-        event.stopPropagation();
-        navigateToResult(item.url);
+        commandItem.addEventListener('click', () => {
+          navigateToResult(item.url);
+        });
+
+        container.appendChild(commandItem);
       });
-      layout.appendChild(actionButton);
-
-      commandItem.addEventListener('click', () => {
-        navigateToResult(item.url);
-      });
-
-      container.appendChild(commandItem);
     });
   }
 

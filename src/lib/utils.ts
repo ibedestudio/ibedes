@@ -21,36 +21,20 @@ type MarkdownData<T extends object> = {
 export const processContentInDir = async <T extends object, K>(
   contentType: "projects" | "blog",
   processFn: (data: MarkdownData<T>) => K,
-  dir: string = process.cwd(),
 ) => {
-  const files = await fs.readdir(dir + `/src/pages/${contentType}`);
-  const markdownFiles = files
-    .filter((file: string) => file.endsWith(".md"))
-    .map((file) => file.split(".")[0]);
-  const readMdFileContent = async (file: string) => {
-    if (contentType === "projects") {
-      const content = import.meta
-        .glob(`/src/pages/projects/*.md`)
-        [`/src/pages/projects/${file}.md`]();
-      const data = (await content) as {
-        frontmatter: T;
-        file: string;
-        url: string;
-      };
-      return processFn(data);
-    } else {
-      const content = import.meta
-        .glob(`/src/pages/blog/*.md`)
-        [`/src/pages/blog/${file}.md`]();
-      const data = (await content) as {
-        frontmatter: T;
-        file: string;
-        url: string;
-      };
-      return processFn(data);
-    }
-  };
-  return await Promise.all(markdownFiles.map(readMdFileContent));
+  let content;
+  if (contentType === "projects") {
+    content = import.meta.glob(`/src/pages/projects/*.md`);
+  } else {
+    content = import.meta.glob(`/src/pages/blog/*.md`);
+  }
+
+  const promises = Object.values(content).map(async (importer) => {
+    const data = (await importer()) as MarkdownData<T>;
+    return processFn(data);
+  });
+
+  return await Promise.all(promises);
 };
 
 /**

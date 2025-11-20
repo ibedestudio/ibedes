@@ -3,9 +3,10 @@ import Toast from "./Toast.astro";
 
 interface Props {
   class?: string;
+  enableInstallUI?: boolean;
 }
 
-const { class: className = "" } = Astro.props;
+const { class: className = "", enableInstallUI = true } = Astro.props;
 ---
 
 <div class={`pwa-installer ${className}`} data-pwa-installer>
@@ -17,7 +18,7 @@ const { class: className = "" } = Astro.props;
   /* Uses Toast.astro for layout and mobile responsiveness. No extra styles needed here. */
 </style>
 
-<script>
+<script define:vars={{ enableInstallUI }}>
   // PWA Installation and Update Manager (single Toast flow)
   class PWAInstaller {
     deferredPrompt: any = null;
@@ -35,7 +36,9 @@ const { class: className = "" } = Astro.props;
       this.setupInstallPrompt();
       this.setupUpdatePrompt();
       this.checkIfInstalled();
-      this.checkInstallFallback();
+      if (enableInstallUI) {
+        this.checkInstallFallback();
+      }
     }
 
     async registerServiceWorker() {
@@ -66,6 +69,7 @@ const { class: className = "" } = Astro.props;
     }
 
     setupInstallPrompt() {
+      if (!enableInstallUI) return;
       window.addEventListener('beforeinstallprompt', (e: any) => {
         e.preventDefault();
         this.deferredPrompt = e;
@@ -104,6 +108,7 @@ const { class: className = "" } = Astro.props;
     }
 
     showInstallToast() {
+      if (!enableInstallUI) return;
       if (this.isInstalled || this.hasSeenInstallToast()) return;
       this.showSingleToast({
         type: 'install',
@@ -130,6 +135,7 @@ const { class: className = "" } = Astro.props;
     }
 
     showManualInstallToast() {
+      if (!enableInstallUI) return;
       if (this.hasSeenInstallToast()) return;
       this.showSingleToast({
         type: 'info',

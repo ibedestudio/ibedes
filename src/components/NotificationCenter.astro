@@ -1,149 +1,435 @@
 ---
-// Notification Center Component for Astro
-import { getNotifications, markAsRead, markAllAsRead, deleteNotification, clearAllNotifications } from "../lib/notifications";
-
 interface Props {
-  isOpen: boolean;
+  isOpen?: boolean;
 }
 
-const { isOpen } = Astro.props;
-
-// Get notifications on component mount/load
-const notifications = isOpen ? getNotifications() : [];
+const { isOpen = false } = Astro.props;
 ---
 
-{isOpen && (
-  <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-20" data-notification-center>
-    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 w-full max-w-md max-h-[80vh] overflow-hidden shadow-2xl">
-      <!-- Header -->
-      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-        <div class="flex items-center justify-between">
-          <h2 class="text-xl font-bold zag-text font-display">Notifikasi</h2>
-          <button
-            onclick="this.closest('[data-notification-center]').style.display='none'"
-            class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        
-        <!-- Quick Actions -->
-        <div class="mt-4 flex gap-2">
-          <button
-            onclick="window.testNotification()"
-            class="px-3 py-1 text-xs bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-full hover:bg-emerald-200 dark:hover:bg-emerald-800 transition-colors"
-          >
-            Test Notifikasi
-          </button>
-          {notifications.length > 0 && (
-            <button
-              onclick="window.markAllAsRead()"
-              class="px-3 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
-            >
-              Tandai Semua
-            </button>
-          )}
-        </div>
+<div
+  class={`fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-20 ${isOpen ? '' : 'hidden'}`}
+  data-notification-center
+  aria-hidden={!isOpen}
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="notification-center-title"
+>
+  <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 w-full max-w-md max-h-[80vh] overflow-hidden shadow-2xl">
+    <!-- Header -->
+    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+      <div class="flex items-center justify-between">
+        <h2 id="notification-center-title" class="text-xl font-bold zag-text font-display">Notifikasi</h2>
+        <button
+          type="button"
+          data-notification-close
+          class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+          aria-label="Tutup panel notifikasi"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
 
-      <!-- Notifications List -->
-      <div class="overflow-y-auto max-h-96">
-        {notifications.length === 0 ? (
-          <div class="p-8 text-center text-gray-500 dark:text-gray-400">
-            <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 17h5l-5 5h5m-7-4V9a6 6 0 1112 0v4" />
-            </svg>
-            <p class="text-sm">Belum ada notifikasi</p>
-          </div>
-        ) : (
-          <div class="divide-y divide-gray-100 dark:divide-gray-800">
-            {notifications.map((notification) => (
-              <div
-                class={`p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${!notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
-              >
-                <div class="flex items-start gap-3">
-                  <div class="flex-shrink-0 mt-1">
-                    {notification.category === 'new_content' && (
-                      <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                    )}
-                    {notification.category === 'engagement' && (
-                      <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                    )}
-                    {notification.category === 'system' && (
-                      <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    )}
-                    {notification.category === 'update' && (
-                      <div class="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    )}
-                  </div>
-                  
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-start justify-between">
-                      <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                        {notification.title}
-                      </h3>
-                      <button
-                        onclick={`window.deleteNotification('${notification.id}')`}
-                        class="ml-2 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
-                      >
-                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </div>
-                    
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                      {notification.body}
-                    </p>
-                    
-                    <div class="flex items-center justify-between mt-2">
-                      <span class="text-xs text-gray-400">
-                        {new Date(notification.timestamp).toLocaleTimeString('id-ID', {
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </span>
-                      
-                      {!notification.read && (
-                        <button
-                          onclick={`window.markAsRead('${notification.id}')`}
-                          class="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
-                        >
-                          Tandai Dibaca
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+      <!-- Quick Actions -->
+      <div class="mt-4 flex gap-2">
+        <button
+          type="button"
+          data-notification-test
+          class="px-3 py-1 text-xs bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-full hover:bg-emerald-200 dark:hover:bg-emerald-800 transition-colors"
+        >
+          Test Notifikasi
+        </button>
+        <button
+          type="button"
+          data-notification-mark-all
+          class="px-3 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors hidden"
+        >
+          Tandai Semua
+        </button>
+      </div>
+    </div>
+
+    <!-- Notifications List -->
+    <div class="overflow-y-auto max-h-96" data-notification-container>
+      <div class="p-8 text-center text-gray-500 dark:text-gray-400" data-notification-empty>
+        <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 17h5l-5 5h5m-7-4V9a6 6 0 1112 0v4" />
+        </svg>
+        <p class="text-sm">Belum ada notifikasi</p>
+      </div>
+    </div>
+
+    <!-- Preferences -->
+    <div class="p-6 border-t border-gray-200 dark:border-gray-700 space-y-4" data-preferences-section>
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <p class="text-sm font-medium zag-text">Preferensi Notifikasi</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400">Pilih jenis notifikasi yang ingin diterima.</p>
+        </div>
+        <button
+          type="button"
+          data-push-toggle
+          class="px-3 py-1 text-xs bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded-full hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors"
+        >
+          Kelola Push
+        </button>
       </div>
 
-      <!-- Footer Actions -->
-      {notifications.length > 0 && (
-        <div class="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-          <div class="flex gap-2">
-            <button
-              onclick="window.clearAllNotifications()"
-              class="flex-1 px-3 py-2 text-xs bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
-            >
-              Hapus Semua
-            </button>
-            <button
-              onclick="this.closest('[data-notification-center]').style.display='none'"
-              class="flex-1 px-3 py-2 text-xs bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-            >
-              Tutup
-            </button>
-          </div>
-        </div>
-      )}
+      <div class="grid grid-cols-2 gap-3 text-sm" data-preferences-controls>
+        <label class="flex items-center gap-2">
+          <input type="checkbox" data-preference-toggle="newArticles" class="accent-emerald-500" />
+          Artikel Baru
+        </label>
+        <label class="flex items-center gap-2">
+          <input type="checkbox" data-preference-toggle="weeklyDigest" class="accent-emerald-500" />
+          Ringkasan Mingguan
+        </label>
+        <label class="flex items-center gap-2">
+          <input type="checkbox" data-preference-toggle="systemUpdates" class="accent-emerald-500" />
+          Pembaruan Sistem
+        </label>
+        <label class="flex items-center gap-2">
+          <input type="checkbox" data-preference-toggle="engagement" class="accent-emerald-500" />
+          Interaksi
+        </label>
+      </div>
+
+      <p class="text-xs text-gray-500 dark:text-gray-400" data-push-status>Memuat status push…</p>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hidden" data-notification-footer>
+      <div class="flex gap-2">
+        <button
+          type="button"
+          data-notification-clear
+          class="flex-1 px-3 py-2 text-xs bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
+        >
+          Hapus Semua
+        </button>
+        <button
+          type="button"
+          data-notification-close
+          class="flex-1 px-3 py-2 text-xs bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+        >
+          Tutup
+        </button>
+      </div>
     </div>
   </div>
-)}
+</div>
 
-  <script type="module" src={Astro.resolve('../scripts/notificationCenter.client.ts')} />
+<script type="module">
+  import { addNotification, clearAllNotifications, deleteNotification, getNotifications, getPreferences, initNotifications, markAllAsRead, markAsRead, updatePreferences } from '../lib/notifications';
+
+  const overlay = document.querySelector('[data-notification-center]');
+  const container = overlay?.querySelector('[data-notification-container]');
+  const footer = overlay?.querySelector('[data-notification-footer]');
+  const markAllButton = overlay?.querySelector('[data-notification-mark-all]');
+  const testButton = overlay?.querySelector('[data-notification-test]');
+  const clearButton = overlay?.querySelector('[data-notification-clear]');
+  const closeButtons = Array.from(overlay?.querySelectorAll('[data-notification-close]') ?? []);
+  const toggleButtons = Array.from(document.querySelectorAll('[data-notification-toggle]'));
+  const indicator = document.querySelector('[data-notification-indicator]');
+  const countBadge = document.querySelector('[data-notification-count]');
+  const preferenceToggles = Array.from(overlay?.querySelectorAll('[data-preference-toggle]') ?? []);
+  const pushToggle = overlay?.querySelector('[data-push-toggle]');
+  const pushStatus = overlay?.querySelector('[data-push-status]');
+
+  const focusableSelector = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+  let lastTrigger = null;
+
+  const buildEmptyState = () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'p-8 text-center text-gray-500 dark:text-gray-400';
+    wrapper.innerHTML = `
+      <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 17h5l-5 5h5m-7-4V9a6 6 0 1112 0v4" />
+      </svg>
+      <p class="text-sm">Belum ada notifikasi</p>
+    `;
+    return wrapper;
+  };
+
+  const updateBadge = (unreadCount) => {
+    if (!indicator || !countBadge) return;
+    const display = unreadCount > 9 ? '9+' : String(unreadCount);
+    countBadge.textContent = display;
+    indicator.classList.toggle('hidden', unreadCount === 0);
+  };
+
+  const syncPreferences = () => {
+    const preferences = getPreferences();
+    preferenceToggles.forEach((input) => {
+      const key = input?.dataset?.preferenceToggle;
+      if (!key) return;
+      // @ts-ignore
+      input.checked = Boolean(preferences[key]);
+    });
+
+    if (pushStatus) {
+      const permission = typeof Notification !== 'undefined' ? Notification.permission : 'default';
+      const labelMap = {
+        granted: 'Push aktif. Anda akan menerima notifikasi segera.',
+        denied: 'Izin push ditolak. Ubah di pengaturan browser.',
+        default: 'Izinkan push untuk pemberitahuan real-time.'
+      };
+      pushStatus.textContent = labelMap[permission] || labelMap.default;
+    }
+
+    if (pushToggle) {
+      pushToggle.textContent = getPreferences().pushEnabled ? 'Nonaktifkan Push' : 'Aktifkan Push';
+    }
+  };
+
+  const renderNotifications = () => {
+    if (!container) return;
+
+    const notifications = getNotifications();
+    const unreadCount = notifications.filter((n) => !n.read).length;
+    updateBadge(unreadCount);
+
+    container.replaceChildren();
+
+    if (!notifications.length) {
+      container.appendChild(buildEmptyState());
+      footer?.classList.add('hidden');
+      markAllButton?.classList.add('hidden');
+      return;
+    }
+
+    const list = document.createElement('div');
+    list.className = 'divide-y divide-gray-100 dark:divide-gray-800';
+
+    notifications.forEach((notification) => {
+      const item = document.createElement('div');
+      item.className = `p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${!notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`;
+
+      const row = document.createElement('div');
+      row.className = 'flex items-start gap-3';
+      item.appendChild(row);
+
+      const marker = document.createElement('div');
+      marker.className = 'flex-shrink-0 mt-1';
+      const dot = document.createElement('div');
+      dot.className = 'w-2 h-2 rounded-full';
+      const colorMap = {
+        new_content: 'bg-emerald-500',
+        engagement: 'bg-yellow-500',
+        system: 'bg-blue-500',
+        update: 'bg-purple-500'
+      };
+      dot.classList.add(colorMap[notification.category] ?? 'bg-gray-400');
+      marker.appendChild(dot);
+      row.appendChild(marker);
+
+      const content = document.createElement('div');
+      content.className = 'flex-1 min-w-0';
+      row.appendChild(content);
+
+      const titleBar = document.createElement('div');
+      titleBar.className = 'flex items-start justify-between';
+      content.appendChild(titleBar);
+
+      const title = document.createElement('h3');
+      title.className = 'text-sm font-medium text-gray-900 dark:text-gray-100 truncate';
+      title.textContent = notification.title;
+      titleBar.appendChild(title);
+
+      const deleteButton = document.createElement('button');
+      deleteButton.type = 'button';
+      deleteButton.className = 'ml-2 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors';
+      deleteButton.innerHTML = `<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>`;
+      deleteButton.addEventListener('click', () => {
+        deleteNotification(notification.id);
+        renderNotifications();
+      });
+      titleBar.appendChild(deleteButton);
+
+      const body = document.createElement('p');
+      body.className = 'text-sm text-gray-600 dark:text-gray-400 mt-1';
+      body.textContent = notification.body;
+      content.appendChild(body);
+
+      const metaRow = document.createElement('div');
+      metaRow.className = 'flex items-center justify-between mt-2';
+      content.appendChild(metaRow);
+
+      const time = document.createElement('span');
+      time.className = 'text-xs text-gray-400';
+      time.textContent = new Date(notification.timestamp).toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      metaRow.appendChild(time);
+
+      if (!notification.read) {
+        const markReadButton = document.createElement('button');
+        markReadButton.type = 'button';
+        markReadButton.className = 'text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300';
+        markReadButton.textContent = 'Tandai Dibaca';
+        markReadButton.addEventListener('click', () => {
+          markAsRead(notification.id);
+          renderNotifications();
+        });
+        metaRow.appendChild(markReadButton);
+      }
+
+      list.appendChild(item);
+    });
+
+    container.appendChild(list);
+    footer?.classList.remove('hidden');
+    if (markAllButton) {
+      markAllButton.classList.toggle('hidden', notifications.length === 0);
+    }
+  };
+
+  const focusFirstElement = () => {
+    const focusable = overlay?.querySelectorAll(focusableSelector);
+    if (focusable && focusable.length > 0) {
+      // @ts-ignore
+      focusable[0].focus();
+    }
+  };
+
+  const trapFocus = (event) => {
+    if (!overlay || overlay.classList.contains('hidden')) return;
+    if (event.key !== 'Tab') return;
+
+    const focusable = overlay.querySelectorAll(focusableSelector);
+    if (!focusable.length) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    // @ts-ignore
+    const isShift = event.shiftKey;
+    // @ts-ignore
+    const activeElement = document.activeElement;
+
+    if (!isShift && activeElement === last) {
+      event.preventDefault();
+      // @ts-ignore
+      first.focus();
+    } else if (isShift && activeElement === first) {
+      event.preventDefault();
+      // @ts-ignore
+      last.focus();
+    }
+  };
+
+  const openCenter = (trigger) => {
+    if (!overlay) return;
+    lastTrigger = trigger instanceof HTMLElement ? trigger : document.activeElement;
+    overlay.classList.remove('hidden');
+    overlay.setAttribute('aria-hidden', 'false');
+    renderNotifications();
+    syncPreferences();
+    setTimeout(focusFirstElement, 0);
+  };
+
+  const closeCenter = () => {
+    if (!overlay) return;
+    overlay.classList.add('hidden');
+    overlay.setAttribute('aria-hidden', 'true');
+    if (lastTrigger && typeof lastTrigger.focus === 'function') {
+      lastTrigger.focus();
+    }
+  };
+
+  toggleButtons.forEach((button) => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (overlay?.classList.contains('hidden')) {
+        openCenter(event.currentTarget);
+      } else {
+        closeCenter();
+      }
+    });
+  });
+
+  closeButtons.forEach((button) => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      closeCenter();
+    });
+  });
+
+  overlay?.addEventListener('click', (event) => {
+    if (event.target === overlay) {
+      closeCenter();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (!overlay || overlay.classList.contains('hidden')) return;
+    if (event.key === 'Escape') {
+      closeCenter();
+    }
+    trapFocus(event);
+  });
+
+  preferenceToggles.forEach((input) => {
+    input.addEventListener('change', () => {
+      const key = input.dataset.preferenceToggle;
+      if (!key) return;
+      updatePreferences({ [key]: input.checked });
+      syncPreferences();
+    });
+  });
+
+  pushToggle?.addEventListener('click', async () => {
+    if (typeof Notification === 'undefined') return;
+
+    if (Notification.permission === 'default') {
+      const granted = await initNotifications();
+      if (granted) {
+        updatePreferences({ pushEnabled: true });
+        if (pushStatus) {
+          pushStatus.textContent = 'Push aktif setelah izin diberikan. Anda akan menerima notifikasi.';
+        }
+      } else if (pushStatus) {
+        pushStatus.textContent = 'Izin belum diberikan. Mohon izinkan notifikasi browser.';
+      }
+      syncPreferences();
+      return;
+    }
+
+    if (Notification.permission === 'denied') {
+      if (pushStatus) {
+        pushStatus.textContent = 'Izin push ditolak di browser.';
+      }
+      return;
+    }
+
+    const current = getPreferences();
+    updatePreferences({ pushEnabled: !current.pushEnabled });
+    syncPreferences();
+  });
+
+  testButton?.addEventListener('click', () => {
+    addNotification({
+      title: 'Contoh Notifikasi',
+      body: 'Ini hanyalah pesan percobaan untuk mengetes alur notifikasi.',
+      category: 'system',
+      tag: 'test',
+      data: { source: 'notification-center' }
+    });
+  });
+
+  clearButton?.addEventListener('click', () => {
+    clearAllNotifications();
+    renderNotifications();
+  });
+
+  markAllButton?.addEventListener('click', () => {
+    markAllAsRead();
+    renderNotifications();
+  });
+
+  window.addEventListener('notificationsUpdated', renderNotifications);
+  syncPreferences();
+  renderNotifications();
+</script>

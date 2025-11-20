@@ -72,7 +72,7 @@ const serializedCommands = JSON.stringify(commandItems).replace(/</g, "\\u003c")
     />
     <div class="command-panel__results" data-command-results></div>
     <div class="command-shortcuts">
-      <kbd>Esc</kbd> untuk keluar • <kbd>Ctrl</kbd> + <kbd>K</kbd> untuk buka
+      <kbd>Esc</kbd> untuk keluar • <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> untuk buka
     </div>
   </div>
 </div>
@@ -84,7 +84,7 @@ const serializedCommands = JSON.stringify(commandItems).replace(/</g, "\\u003c")
     const overlay = document.querySelector("[data-command-overlay]");
     const input = document.querySelector("[data-command-input]");
     const results = document.querySelector("[data-command-results]");
-    const toggleButtons = Array.from(document.querySelectorAll("[data-command-toggle]"));
+    const toggleButtons = Array.from(document.querySelectorAll("[data-command-legacy-toggle]"));
     const dataEl = document.getElementById("command-data");
     if (!overlay || !input || !results || !dataEl) return;
 
@@ -218,7 +218,7 @@ const serializedCommands = JSON.stringify(commandItems).replace(/</g, "\\u003c")
 
     document.addEventListener("keydown", (event) => {
       const metaKey = event.metaKey || event.ctrlKey;
-      if (metaKey && event.key.toLowerCase() === "k") {
+      if (metaKey && event.shiftKey && event.key.toLowerCase() === "p") {
         event.preventDefault();
         if (overlay.dataset.visible === "true") {
           closePalette();

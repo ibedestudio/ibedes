@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Floating Reactions</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 2rem;
+            background: #f8fafc;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+
+        .test-button:hover {
+            background: #2563eb;
+        }
+
+        .floating-heart {
+            position: absolute;
+            pointer-events: none;
+            font-size: 1.5rem;
+            animation: heartFloat 900ms cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        }
+
+        @keyframes heartFloat {
+            0% {
+                transform: translateY(0) scale(0.8);
+                opacity: 0.9;
+            }
+
+            70% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100px) scale(1.2);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Test Floating Reactions</h1>
+        <p>Klik tombol di bawah untuk test floating reactions:</p>
+
+        <button class="test-button" onclick="spawnHeart()">❤️ Like</button>
+        <button class="test-button" onclick="spawnMultipleHearts()">❤️❤️❤️ Multiple Likes</button>
+
+        <div id="heart-container"
+            style="position: relative; height: 200px; margin-top: 2rem; border: 2px dashed #e5e7eb; border-radius: 0.5rem; padding: 1rem;">
+            <p style="color: #6b7280; text-align: center; margin-top: 4rem;">Area untuk floating hearts</p>
+        </div>
+
+        <div style="margin-top: 2rem; padding: 1rem; background: #f0f9ff; border-radius: 0.5rem;">
+            <h3>Status:</h3>
+            <div id="status">Ready to test</div>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+
+        function spawnHeart() {
+            const container = document.getElementById('heart-container');
+            const heart = document.createElement('span');
+            heart.textContent = '❤️';
+            heart.className = 'floating-heart';
+
+            // Random position within container
+            const rect = container.getBoundingClientRect();
+            const x = Math.random() * (rect.width - 30);
+            const y = rect.height - 60;
+
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+
+            container.appendChild(heart);
+
+            updateStatus('Heart spawned!');
+
+            heart.addEventListener('animationend', () => {
+                heart.remove();
+                updateStatus('Heart animation completed');
+            });
+        }
+
+        function spawnMultipleHearts() {
+            const count = Math.floor(Math.random() * 5) + 3;
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => spawnHeart(), i * 200);
+            }
+            updateStatus(`Spawned ${count} hearts!`);
+        }
+
+        // Auto-test on load
+        setTimeout(() => {
+            updateStatus('Page loaded, ready for testing');
+        }, 500);
+    </script>
+</body>
+
+</html>

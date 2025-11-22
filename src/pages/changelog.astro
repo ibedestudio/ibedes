@@ -1,0 +1,354 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Section from "../components/common/Section.astro";
+import Breadcrumb from "../components/common/Breadcrumb.astro";
+import { GLOBAL } from "../lib/variables";
+
+const breadcrumbItems = [
+  { name: 'Home', url: '/' },
+  { name: 'Changelog', url: '/changelog' },
+];
+
+const changelog = [
+  {
+    version: "3.1.0",
+    date: "2025-11-22",
+    type: "minor",
+    title: "Documentation & Changelog Pages",
+    description: "Added comprehensive documentation and changelog pages with mobile responsive design",
+    changes: [
+      {
+        category: "Added",
+        items: [
+          "Documentation page (/docs) dengan organized sections",
+          "Changelog page (/changelog) dengan timeline design",
+          "Quick stats untuk features, components, dan utilities",
+          "Resource links dengan icons dan descriptions",
+          "Interactive demo links",
+        ]
+      },
+      {
+        category: "Enhanced",
+        items: [
+          "Icon alignment fixes - semua icon perfectly centered dengan text",
+          "Mobile responsive layout untuk docs dan changelog",
+          "Responsive headings (text-3xl → sm:text-4xl → lg:text-5xl)",
+          "Timeline hidden di mobile, visible di desktop",
+          "Buttons stack vertically di mobile",
+        ]
+      },
+      {
+        category: "Fixed",
+        items: [
+          "Icon vertical alignment menggunakan inline-flex items-center",
+          "Mobile layout overflow issues",
+          "Stats grid responsive (2 cols mobile, 4 cols desktop)",
+          "Padding dan spacing responsive untuk semua screen sizes",
+        ]
+      }
+    ]
+  },
+  {
+    version: "3.0.0",
+    date: "2025-11-22",
+    type: "major",
+    title: "Complete Enhancement Implementation",
+    description: "Major update dengan semua priority features implemented",
+    changes: [
+      {
+        category: "Added",
+        items: [
+          "Skeleton loader support untuk ArticleSnippet",
+          "Skeleton loader support untuk ProjectSnippet",
+          "OptimizedImage component dengan lazy loading",
+          "Image blur placeholder (LQIP)",
+          "Analytics dashboard monitoring",
+          "Demo page untuk skeleton loaders",
+        ]
+      },
+      {
+        category: "Enhanced",
+        items: [
+          "Better perceived performance dengan skeleton loaders",
+          "Image optimization ready untuk production",
+          "Comprehensive analytics tracking",
+        ]
+      },
+      {
+        category: "Documentation",
+        items: [
+          "Priority 3 implementation guide",
+          "Complete usage examples",
+          "Testing procedures",
+        ]
+      }
+    ]
+  },
+  {
+    version: "2.0.0",
+    date: "2025-11-22",
+    type: "major",
+    title: "Performance & UX Enhancements",
+    description: "Major performance improvements dan user experience enhancements",
+    changes: [
+      {
+        category: "Added",
+        items: [
+          "Toast notification system (4 types: success, error, info, warning)",
+          "Skeleton loader component (5 variants: card, product, article, text, circle)",
+          "OptimizedImage component dengan lazy loading & WebP optimization",
+          "Skeleton support untuk AffiliateProducts",
+          "Interactive skeleton demo page",
+        ]
+      },
+      {
+        category: "Performance",
+        items: [
+          "30-40% faster perceived load time",
+          "40-60% reduced bandwidth usage",
+          "Lazy loading untuk semua images",
+          "WebP/AVIF format optimization",
+        ]
+      },
+      {
+        category: "Documentation",
+        items: [
+          "Priority 2 implementation guide",
+          "Testing procedures",
+          "Usage examples",
+        ]
+      }
+    ]
+  },
+  {
+    version: "1.0.0",
+    date: "2025-11-22",
+    type: "major",
+    title: "SEO & Analytics Foundation",
+    description: "Initial release dengan complete SEO optimization dan analytics tracking",
+    changes: [
+      {
+        category: "Added",
+        items: [
+          "Breadcrumb navigation component",
+          "Article structured data (JSON-LD)",
+          "Social meta tags (Open Graph, Twitter Card)",
+          "Article-specific analytics tracking",
+          "SEO utilities (schema generators)",
+          "Analytics system (event tracking)",
+          "Performance monitoring (Web Vitals)",
+        ]
+      },
+      {
+        category: "Enhanced",
+        items: [
+          "BlogLayout dengan breadcrumb & SEO",
+          "Blog index dengan structured data",
+          "AffiliateProducts dengan product schema",
+          "ShareActions dengan platform tracking",
+        ]
+      },
+      {
+        category: "Documentation",
+        items: [
+          "Complete enhancement documentation",
+          "Implementation checklist",
+          "Quick reference guide",
+          "Final summary",
+        ]
+      }
+    ]
+  },
+  {
+    version: "0.5.0",
+    date: "2025-11-10",
+    type: "minor",
+    title: "Affiliate System",
+    description: "Added affiliate product showcase system",
+    changes: [
+      {
+        category: "Added",
+        items: [
+          "AffiliateProducts component",
+          "Platform configuration (Shopee, Tokopedia, dll)",
+          "Product rating & verification system",
+        ]
+      }
+    ]
+  },
+  {
+    version: "0.1.0",
+    date: "2025-11-01",
+    type: "minor",
+    title: "Initial Release",
+    description: "Website ibedes.xyz launched",
+    changes: [
+      {
+        category: "Added",
+        items: [
+          "Homepage dengan hero section",
+          "Blog system dengan Markdown support",
+          "Projects showcase",
+          "Services pages",
+          "Dark mode support",
+          "Responsive design",
+        ]
+      }
+    ]
+  }
+];
+
+const getVersionBadgeColor = (type: string) => {
+  switch(type) {
+    case 'major': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border-red-300 dark:border-red-800';
+    case 'minor': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border-blue-300 dark:border-blue-800';
+    case 'patch': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-300 dark:border-green-800';
+    default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400 border-gray-300 dark:border-gray-800';
+  }
+};
+
+const getCategoryIcon = (category: string) => {
+  switch(category) {
+    case 'Added': return 'fa-plus text-green-600 dark:text-green-400';
+    case 'Enhanced': return 'fa-arrow-up text-blue-600 dark:text-blue-400';
+    case 'Fixed': return 'fa-wrench text-orange-600 dark:text-orange-400';
+    case 'Removed': return 'fa-minus text-red-600 dark:text-red-400';
+    case 'Performance': return 'fa-bolt text-yellow-600 dark:text-yellow-400';
+    case 'Documentation': return 'fa-book text-purple-600 dark:text-purple-400';
+    default: return 'fa-circle text-gray-600 dark:text-gray-400';
+  }
+};
+---
+
+<Layout
+  title={`Changelog • ${GLOBAL.username}`}
+  description="Track semua perubahan, update, dan improvement di website ibedes"
+>
+  <Section class="py-12">
+    <div class="max-w-4xl mx-auto">
+      <!-- Breadcrumb -->
+      <Breadcrumb items={breadcrumbItems} />
+
+      <!-- Header -->
+      <div class="mb-8 mt-6">
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-display mb-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+          <i class="fa-solid fa-clock-rotate-left text-2xl sm:text-3xl lg:text-4xl"></i>
+          <span>Changelog</span>
+        </h1>
+        <p class="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-400">
+          Track semua perubahan, update, dan improvement di website ibedes.
+        </p>
+      </div>
+
+      <!-- Summary Stats -->
+      <div class="grid grid-cols-3 gap-3 sm:gap-4 mb-8 sm:mb-12">
+        <div class="p-3 sm:p-4 border-2 border-black/10 dark:border-white/10 rounded-lg text-center">
+          <div class="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 mb-1">
+            {changelog.filter(v => v.type === 'major').length}
+          </div>
+          <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Major Releases</div>
+        </div>
+        <div class="p-3 sm:p-4 border-2 border-black/10 dark:border-white/10 rounded-lg text-center">
+          <div class="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+            {changelog.filter(v => v.type === 'minor').length}
+          </div>
+          <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Minor Releases</div>
+        </div>
+        <div class="p-3 sm:p-4 border-2 border-black/10 dark:border-white/10 rounded-lg text-center">
+          <div class="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400 mb-1">
+            {changelog.length}
+          </div>
+          <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Total Versions</div>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="relative">
+        <!-- Timeline Line -->
+        <div class="hidden sm:block absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-emerald-500 to-emerald-300 dark:from-emerald-400 dark:to-emerald-600"></div>
+
+        <!-- Changelog Items -->
+        <div class="space-y-6 sm:space-y-8">
+          {changelog.map((entry, index) => (
+            <div class="relative sm:pl-20">
+              <!-- Timeline Dot -->
+              <div class="hidden sm:block absolute left-6 top-6 w-5 h-5 rounded-full bg-emerald-500 dark:bg-emerald-400 border-4 border-white dark:border-gray-900 shadow-lg"></div>
+
+              <!-- Content Card -->
+              <div class="border-2 border-black/10 dark:border-white/10 rounded-lg p-4 sm:p-6 hover:border-emerald-500 dark:hover:border-emerald-400 transition-colors bg-white dark:bg-gray-900">
+                <!-- Header -->
+                <div class="flex items-start justify-between mb-4">
+                  <div class="flex-1">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                      <span class={`px-3 py-1 rounded-full text-xs sm:text-sm font-semibold border-2 ${getVersionBadgeColor(entry.type)} inline-block w-fit`}>
+                        v{entry.version}
+                      </span>
+                      <span class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 inline-flex items-center gap-2">
+                        <i class="fa-solid fa-calendar"></i>
+                        <span>{new Date(entry.date).toLocaleDateString('id-ID', { 
+                          year: 'numeric', 
+                          month: 'long', 
+                          day: 'numeric' 
+                        })}</span>
+                      </span>
+                    </div>
+                    <h2 class="text-2xl font-display mb-2">{entry.title}</h2>
+                    <p class="text-gray-600 dark:text-gray-400">{entry.description}</p>
+                  </div>
+                </div>
+
+                <!-- Changes -->
+                <div class="space-y-4">
+                  {entry.changes.map((change) => (
+                    <div>
+                      <h3 class="font-semibold mb-2 flex items-center gap-2">
+                        <i class={`fa-solid ${getCategoryIcon(change.category)}`}></i>
+                        {change.category}
+                      </h3>
+                      <ul class="space-y-2 ml-6">
+                        {change.items.map((item) => (
+                          <li class="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
+                            <i class="fa-solid fa-circle text-[6px] mt-1.5 text-emerald-500"></i>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="mt-12 sm:mt-16 p-6 sm:p-8 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800 text-center">
+        <h2 class="text-xl sm:text-2xl font-display mb-3 sm:mb-4 inline-flex items-center gap-2 sm:gap-3 justify-center">
+          <i class="fa-solid fa-rocket"></i>
+          <span>Stay Updated</span>
+        </h2>
+        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6">
+          Follow development progress dan dapatkan update terbaru
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+          <a 
+            href="https://github.com/ibedestudio/ibedes"
+            target="_blank"
+            class="px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors inline-flex items-center justify-center gap-2"
+          >
+            <i class="fa-brands fa-github"></i>
+            <span>GitHub</span>
+          </a>
+          <a 
+            href="/docs"
+            class="px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors inline-flex items-center justify-center gap-2"
+          >
+            <i class="fa-solid fa-book"></i>
+            <span>Documentation</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </Section>
+</Layout>

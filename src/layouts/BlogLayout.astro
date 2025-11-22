@@ -12,7 +12,7 @@ import Prose from "../components/Prose.astro";
 import Layout from "./Layout.astro";
 import SubscribeCard from "../components/SubscribeCard.astro";
 import ShareActions from "../components/ShareActions.astro";
-import ArticleEngagement from "../components/ArticleEngagement.astro";
+import FloatingReactions from "../components/FloatingReactions.astro";
 
 type Props = MarkdownLayoutProps<ArticleFrontmatter>;
 
@@ -77,13 +77,8 @@ const sourceUrl = generateSourceUrl(frontmatter.filename, "blog");
       <div class="my-12">
         <SubscribeCard />
       </div>
-
-      <div class="my-12">
-        <ArticleEngagement
-          slug={frontmatter.filename}
-          title={frontmatter.title}
-        />
-      </div>
     </div>
   </Section>
+
+  <FloatingReactions slug={frontmatter.filename} title={frontmatter.title} />
 </Layout>

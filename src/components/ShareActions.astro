@@ -4,10 +4,11 @@ import { GLOBAL } from "../lib/variables";
 export interface Props {
   title: string;
   url: string;
+  image?: string;
   class?: string;
 }
 
-const { title, url, class: className } = Astro.props;
+const { title, url, image, class: className } = Astro.props;
 
 const normalizeUrl = (rawUrl: string) => {
   if (!rawUrl) return GLOBAL.rootUrl;
@@ -63,45 +64,67 @@ const shareTargets = [
   data-share-section
   data-share-url={absoluteUrl}
   data-share-title={title}
+  data-share-image-url={image}
 >
-  <div class="flex flex-col gap-1">
-    <p class="font-display text-xs uppercase tracking-[0.25em] zag-muted">
-      <i class="fa-solid fa-share-nodes mr-2"></i>Bagikan
+  <div class="flex flex-col gap-1 mb-2">
+    <p
+      class="font-display text-xs uppercase tracking-[0.25em] zag-muted flex items-center gap-2"
+    >
+      <i class="fa-solid fa-share-nodes"></i>
+      <span>Bagikan</span>
     </p>
-    <p class="text-xl">Biar temanmu juga ikut baca tulisan ini.</p>
+    <p class="text-sm text-gray-600 dark:text-gray-400">
+      Biar temanmu juga ikut baca tulisan ini.
+    </p>
   </div>
 
-  <div class="flex flex-wrap gap-3">
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
     {
       shareTargets.map((target) => (
         <a
           href={target.href}
           target="_blank"
           rel="noopener noreferrer"
-          class="px-4 py-2 rounded-2xl border-2 border-black/50 dark:border-white/50 font-mono text-xs uppercase tracking-[0.2em] zag-transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 flex items-center gap-2"
+          class="px-3 py-2 rounded-xl border border-black/10 dark:border-white/10 hover:border-emerald-500 dark:hover:border-emerald-400 bg-white/50 dark:bg-zinc-800/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-gray-700 dark:text-gray-300 font-mono text-[10px] sm:text-xs uppercase tracking-wider transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2 group"
           aria-label={target.aria}
           data-share-platform={target.label.toLowerCase()}
         >
-          <i class={`${target.icon} text-lg`} />
-          <span class="hidden sm:inline">{target.label}</span>
+          <i
+            class={`${target.icon} text-base group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors`}
+          />
+          <span class="truncate">{target.label}</span>
         </a>
       ))
     }
     <button
       type="button"
       data-share-copy
-      class="px-4 py-2 rounded-2xl border-2 border-dashed border-black/50 dark:border-white/50 font-mono text-xs uppercase tracking-[0.2em] zag-transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 flex items-center gap-2"
+      class="px-3 py-2 rounded-xl border border-dashed border-black/30 dark:border-white/30 hover:border-emerald-500 dark:hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-gray-700 dark:text-gray-300 font-mono text-[10px] sm:text-xs uppercase tracking-wider transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2 group"
     >
-      <i class="fa-solid fa-link text-lg"></i>
-      <span class="hidden sm:inline">Salin Link</span>
+      <i
+        class="fa-solid fa-link text-base group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors"
+      ></i>
+      <span>Salin</span>
     </button>
     <button
       type="button"
       data-web-share
-      class="px-4 py-2 rounded-2xl border-2 border-black/70 dark:border-white/70 font-mono text-xs uppercase tracking-[0.2em] zag-transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 flex items-center gap-2"
+      class="px-3 py-2 rounded-xl border border-black/10 dark:border-white/10 hover:border-emerald-500 dark:hover:border-emerald-400 bg-white/50 dark:bg-zinc-800/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-gray-700 dark:text-gray-300 font-mono text-[10px] sm:text-xs uppercase tracking-wider transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2 group"
     >
-      <i class="fa-solid fa-share-nodes text-lg"></i>
-      <span class="hidden sm:inline">Share via…</span>
+      <i
+        class="fa-solid fa-share-nodes text-base group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors"
+      ></i>
+      <span>More</span>
+    </button>
+    <button
+      type="button"
+      data-share-image
+      class="px-3 py-2 rounded-xl border border-black/10 dark:border-white/10 hover:border-emerald-500 dark:hover:border-emerald-400 bg-white/50 dark:bg-zinc-800/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-gray-700 dark:text-gray-300 font-mono text-[10px] sm:text-xs uppercase tracking-wider transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2 group sm:col-span-2 md:col-span-1"
+    >
+      <i
+        class="fa-solid fa-image text-base group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors"
+      ></i>
+      <span>Image</span>
     </button>
   </div>
 
@@ -121,14 +144,17 @@ const shareTargets = [
       const copyBtn = section.querySelector("[data-share-copy]");
       const feedback = section.querySelector("[data-copy-feedback]");
       const shareBtn = section.querySelector("[data-web-share]");
+      const shareImageBtn = section.querySelector("[data-share-image]");
       const shareLinks = section.querySelectorAll("[data-share-platform]");
       const shareUrl =
         section.getAttribute("data-share-url") ?? window.location.href;
       const shareTitle =
         section.getAttribute("data-share-title") ?? document.title;
+      const shareImageUrl = section.getAttribute("data-share-image-url");
 
-      const showFeedback = () => {
+      const showFeedback = (message = "Link sudah tersalin!") => {
         if (!feedback) return;
+        feedback.textContent = message;
         feedback.setAttribute("data-visible", "true");
         feedback.style.opacity = "1";
         window.setTimeout(() => {
@@ -165,7 +191,7 @@ const shareTargets = [
       copyBtn?.addEventListener("click", async () => {
         try {
           await navigator.clipboard.writeText(shareUrl);
-          showFeedback();
+          showFeedback("Link sudah tersalin!");
           trackShare("copy_link");
         } catch (error) {
           console.error("Gagal menyalin tautan:", error);
@@ -189,6 +215,46 @@ const shareTargets = [
             }
           }
         });
+      }
+
+      // Share Image Logic
+      if (shareImageBtn && shareImageUrl) {
+        shareImageBtn.addEventListener("click", async () => {
+          try {
+            // Try to fetch the image to share it as a file
+            const response = await fetch(shareImageUrl);
+            const blob = await response.blob();
+            const file = new File([blob], "share-image.png", {
+              type: blob.type,
+            });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+              await navigator.share({
+                files: [file],
+                title: shareTitle,
+                text: shareTitle,
+                url: shareUrl,
+              });
+              trackShare("share_image_file");
+            } else {
+              // Fallback: Copy Image URL
+              await navigator.clipboard.writeText(shareImageUrl);
+              if (typeof window.showToast === "function") {
+                window.showToast("URL Gambar tersalin!", { type: "success" });
+              } else {
+                showFeedback("URL Gambar tersalin!");
+              }
+              trackShare("copy_image_url");
+            }
+          } catch (error) {
+            console.error("Failed to share image:", error);
+            // Fallback: Open in new tab
+            window.open(shareImageUrl, "_blank");
+            trackShare("open_image_tab");
+          }
+        });
+      } else if (shareImageBtn) {
+        shareImageBtn.remove();
       }
     })();
   </script>

@@ -1,0 +1,274 @@
+---
+// Text selection share tooltip for blog articles
+interface Props {
+    title: string;
+    url: string;
+}
+
+const { title, url } = Astro.props;
+---
+
+<div id="share-tooltip" class="share-tooltip" style="display: none;">
+    <button
+        id="share-twitter"
+        class="share-tooltip-btn"
+        aria-label="Share on Twitter"
+        title="Share on Twitter"
+    >
+        <i class="fa-brands fa-x-twitter"></i>
+    </button>
+    <button
+        id="share-facebook"
+        class="share-tooltip-btn"
+        aria-label="Share on Facebook"
+        title="Share on Facebook"
+    >
+        <i class="fa-brands fa-facebook"></i>
+    </button>
+    <button
+        id="share-linkedin"
+        class="share-tooltip-btn"
+        aria-label="Share on LinkedIn"
+        title="Share on LinkedIn"
+    >
+        <i class="fa-brands fa-linkedin"></i>
+    </button>
+    <button
+        id="share-whatsapp"
+        class="share-tooltip-btn"
+        aria-label="Share on WhatsApp"
+        title="Share on WhatsApp"
+    >
+        <i class="fa-brands fa-whatsapp"></i>
+    </button>
+    <div class="w-px h-4 bg-white/20 mx-1 self-center"></div>
+    <button
+        id="share-copy"
+        class="share-tooltip-btn"
+        aria-label="Copy quote"
+        title="Copy quote"
+    >
+        <i class="fa-solid fa-copy"></i>
+    </button>
+</div>
+
+<style>
+    .share-tooltip {
+        position: absolute;
+        z-index: 10000;
+        background-color: #18181b; /* zinc-900 */
+        border: 1px solid #27272a; /* zinc-800 */
+        box-shadow:
+            0 10px 15px -3px rgba(0, 0, 0, 0.1),
+            0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        padding: 0.25rem;
+        display: flex;
+        gap: 0.25rem;
+        border-radius: 9999px;
+        animation: fadeInUp 0.2s ease-out;
+    }
+
+    /* Dark mode override - keep it dark or ensure high contrast */
+    :where(.dark, .dark *) .share-tooltip {
+        background-color: #27272a; /* zinc-800 */
+        border-color: #3f3f46; /* zinc-700 */
+        box-shadow:
+            0 20px 25px -5px rgba(0, 0, 0, 0.1),
+            0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .share-tooltip-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        color: #e4e4e7; /* zinc-200 */
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .share-tooltip-btn:hover {
+        background-color: #3f3f46; /* zinc-700 */
+        color: #fff;
+        transform: translateY(-2px);
+    }
+
+    :where(.dark, .dark *) .share-tooltip-btn:hover {
+        background-color: #52525b; /* zinc-600 */
+    }
+
+    .share-tooltip-btn:active {
+        transform: scale(0.95);
+    }
+
+    /* Highlight selected text */
+    ::selection {
+        background-color: rgba(16, 185, 129, 0.3); /* emerald-500/30 */
+        color: inherit;
+    }
+
+    :where(.dark, .dark *) ::selection {
+        background-color: rgba(16, 185, 129, 0.4);
+        color: inherit;
+    }
+</style>
+
+<script define:vars={{ title, url }}>
+    function initializeTextShare() {
+        const tooltip = document.getElementById("share-tooltip");
+        const facebookBtn = document.getElementById("share-facebook");
+        const linkedinBtn = document.getElementById("share-linkedin");
+
+        if (
+            !tooltip ||
+            !twitterBtn ||
+            !copyBtn ||
+            !whatsappBtn ||
+            !facebookBtn ||
+            !linkedinBtn ||
+            !proseContent
+        )
+            return;
+
+        let selectedText = "";
+        let tooltipTimeout;
+
+        function showTooltip(x, y) {
+            tooltip.style.display = "flex";
+
+            // Position tooltip above selection
+            const tooltipRect = tooltip.getBoundingClientRect();
+            const left = Math.max(
+                10,
+                Math.min(
+                    x - tooltipRect.width / 2,
+                    window.innerWidth - tooltipRect.width - 10,
+                ),
+            );
+            const top = y - tooltipRect.height - 10;
+
+            tooltip.style.left = `${left}px`;
+            tooltip.style.top = `${top}px`;
+        }
+
+        function hideTooltip() {
+            tooltip.style.display = "none";
+        }
+
+        function handleSelection() {
+            clearTimeout(tooltipTimeout);
+
+            const selection = window.getSelection();
+            selectedText = selection?.toString().trim() || "";
+
+            if (selectedText.length > 5) {
+                tooltipTimeout = setTimeout(() => {
+                    const range = selection.getRangeAt(0);
+                    const rect = range.getBoundingClientRect();
+                    showTooltip(
+                        rect.left + rect.width / 2,
+                        rect.top + window.scrollY,
+                    );
+                }, 200);
+            } else {
+                hideTooltip();
+            }
+        }
+
+        function shareOnTwitter() {
+            const quote = `"${selectedText}"\n\n— ${title}`;
+            const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(quote)}&url=${encodeURIComponent(url)}`;
+            window.open(twitterUrl, "_blank", "width=550,height=420");
+            hideTooltip();
+        }
+
+        function shareOnFacebook() {
+            const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(selectedText)}`;
+            window.open(facebookUrl, "_blank", "width=550,height=420");
+            hideTooltip();
+        }
+
+        function shareOnLinkedin() {
+            // LinkedIn doesn't support pre-filling text easily anymore, but we can share URL
+            const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+            window.open(linkedinUrl, "_blank", "width=550,height=420");
+            hideTooltip();
+        }
+
+        async function copyQuote() {
+            const quote = `"${selectedText}"\n\n— ${title}\n${url}`;
+
+            try {
+                await navigator.clipboard.writeText(quote);
+
+                // Show feedback
+                const originalIcon = copyBtn.querySelector("i");
+                if (originalIcon) {
+                    originalIcon.className = "fa-solid fa-check";
+                    setTimeout(() => {
+                        originalIcon.className = "fa-solid fa-copy";
+                    }, 2000);
+                }
+            } catch (err) {
+                console.error("Failed to copy:", err);
+            }
+        }
+
+        function shareOnWhatsApp() {
+            const quote = `"${selectedText}"\n\n— ${title}\n${url}`;
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(quote)}`;
+            window.open(whatsappUrl, "_blank");
+            hideTooltip();
+        }
+
+        // Event listeners
+        proseContent.addEventListener("mouseup", handleSelection);
+        proseContent.addEventListener("touchend", handleSelection);
+
+        document.addEventListener("mousedown", (e) => {
+            if (!tooltip.contains(e.target)) {
+                clearTimeout(tooltipTimeout);
+            }
+        });
+
+        document.addEventListener("selectionchange", () => {
+            const selection = window.getSelection();
+            if (!selection || selection.toString().trim().length === 0) {
+                hideTooltip();
+            }
+        });
+
+        twitterBtn.addEventListener("click", shareOnTwitter);
+        facebookBtn.addEventListener("click", shareOnFacebook);
+        linkedinBtn.addEventListener("click", shareOnLinkedin);
+        copyBtn.addEventListener("click", copyQuote);
+        whatsappBtn.addEventListener("click", shareOnWhatsApp);
+
+        // Hide on scroll
+        window.addEventListener("scroll", hideTooltip, { passive: true });
+    }
+
+    // Initialize on page load
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initializeTextShare);
+    } else {
+        initializeTextShare();
+    }
+</script>

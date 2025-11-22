@@ -1,0 +1,119 @@
+---
+// Reading progress indicator for blog articles
+---
+
+<div id="reading-progress-container" class="reading-progress-container">
+    <div id="reading-progress-bar" class="reading-progress-bar"></div>
+</div>
+
+<style>
+    .reading-progress-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background-color: transparent;
+        z-index: 9999;
+        pointer-events: none;
+    }
+
+    .reading-progress-bar {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(
+            90deg,
+            var(--color-zag-accent-dark) 0%,
+            var(--color-zag-accent-light) 100%
+        );
+        transition: width 0.1s ease-out;
+        box-shadow: 0 0 10px var(--color-zag-accent-dark);
+    }
+
+    :where(.dark, .dark *) .reading-progress-bar {
+        background: linear-gradient(
+            90deg,
+            var(--color-zag-accent-light) 0%,
+            var(--color-zag-accent-light-muted) 100%
+        );
+        box-shadow: 0 0 10px var(--color-zag-accent-light);
+    }
+</style>
+
+<script>
+    function initializeReadingProgress() {
+        const progressBar = document.getElementById(
+            "reading-progress-bar",
+        ) as HTMLDivElement;
+
+        if (!progressBar) return;
+
+        function updateProgress() {
+            const article = document.getElementById("article-content");
+            const progressBar = document.getElementById("reading-progress-bar");
+
+            if (!progressBar) return;
+
+            let progress = 0;
+
+            if (article) {
+                const rect = article.getBoundingClientRect();
+                const scrollTop = window.scrollY;
+                const windowHeight = window.innerHeight;
+
+                // Calculate absolute positions
+                const articleTop = rect.top + scrollTop;
+                const articleHeight = article.offsetHeight;
+
+                if (articleHeight <= windowHeight) {
+                    // If article fits in viewport, we are done as soon as it is fully visible
+                    // But to be simple, if we are past the start, just show 100%
+                    // Or better: just keep it 100% if it's short.
+                    progress = 100;
+                } else {
+                    // Start counting when top of article hits top of viewport
+                    const start = articleTop;
+                    // End counting when bottom of article hits bottom of viewport
+                    const end = articleTop + articleHeight - windowHeight;
+
+                    const scrollRange = end - start;
+
+                    if (scrollRange <= 0) {
+                        progress = 100;
+                    } else {
+                        progress = ((scrollTop - start) / scrollRange) * 100;
+                    }
+                }
+            } else {
+                // Fallback to page scroll
+                const windowHeight = window.innerHeight;
+                const documentHeight =
+                    document.documentElement.scrollHeight - windowHeight;
+                const scrollTop = window.scrollY;
+                progress = (scrollTop / documentHeight) * 100;
+            }
+
+            const clampedProgress = Math.min(Math.max(progress, 0), 100);
+            progressBar.style.width = `${clampedProgress}%`;
+        }
+
+        // Update on scroll
+        window.addEventListener("scroll", updateProgress, { passive: true });
+
+        // Update on resize
+        window.addEventListener("resize", updateProgress, { passive: true });
+
+        // Initial update
+        updateProgress();
+    }
+
+    // Initialize on page load
+    if (document.readyState === "loading") {
+        document.addEventListener(
+            "DOMContentLoaded",
+            initializeReadingProgress,
+        );
+    } else {
+        initializeReadingProgress();
+    }
+</script>

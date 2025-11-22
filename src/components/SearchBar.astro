@@ -1,0 +1,202 @@
+---
+// Search bar component for filtering articles
+---
+
+<div class="search-container">
+    <div class="search-wrapper">
+        <i class="fa-solid fa-search search-icon"></i>
+        <input
+            type="text"
+            id="article-search"
+            class="search-input"
+            placeholder="Cari artikel..."
+            aria-label="Search articles"
+        />
+        <button
+            id="clear-search"
+            class="clear-button"
+            aria-label="Clear search"
+            style="display: none;"
+        >
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+    <div id="search-results-count" class="search-results-count"></div>
+</div>
+
+<style>
+    .search-container {
+        margin-bottom: 2rem;
+    }
+
+    .search-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        color: var(--color-zag-dark-muted);
+        pointer-events: none;
+        font-size: 1rem;
+    }
+
+    :where(.dark, .dark *) .search-icon {
+        color: var(--color-zag-light-muted);
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.875rem 3rem 0.875rem 3rem;
+        font-size: 1rem;
+        font-family: var(--font-serif);
+        border: 2px solid var(--color-zag-dark);
+        background-color: var(--color-zag-light);
+        color: var(--color-zag-dark);
+        border-radius: 0;
+        transition: all var(--zag-transition-duration)
+            var(--zag-transition-timing-function);
+        box-shadow: 4px 4px 0 var(--color-zag-dark);
+    }
+
+    :where(.dark, .dark *) .search-input {
+        border-color: var(--color-zag-light);
+        background-color: var(--color-zag-dark);
+        color: var(--color-zag-light);
+        box-shadow: 4px 4px 0 var(--color-zag-light);
+    }
+
+    .search-input:focus {
+        outline: none;
+        box-shadow: 6px 6px 0 var(--color-zag-dark);
+        transform: translate(-2px, -2px);
+    }
+
+    :where(.dark, .dark *) .search-input:focus {
+        box-shadow: 6px 6px 0 var(--color-zag-light);
+    }
+
+    .search-input::placeholder {
+        color: var(--color-zag-dark-muted);
+    }
+
+    :where(.dark, .dark *) .search-input::placeholder {
+        color: var(--color-zag-light-muted);
+    }
+
+    .clear-button {
+        position: absolute;
+        right: 1rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--color-zag-dark-muted);
+        font-size: 1.25rem;
+        padding: 0.25rem;
+        transition: color var(--zag-transition-duration)
+            var(--zag-transition-timing-function);
+    }
+
+    :where(.dark, .dark *) .clear-button {
+        color: var(--color-zag-light-muted);
+    }
+
+    .clear-button:hover {
+        color: var(--color-zag-accent-dark);
+    }
+
+    :where(.dark, .dark *) .clear-button:hover {
+        color: var(--color-zag-accent-light);
+    }
+
+    .search-results-count {
+        margin-top: 0.75rem;
+        font-size: 0.875rem;
+        color: var(--color-zag-dark-muted);
+        font-family: var(--font-mono);
+    }
+
+    :where(.dark, .dark *) .search-results-count {
+        color: var(--color-zag-light-muted);
+    }
+</style>
+
+<script>
+    function initializeSearch() {
+        const searchInput = document.getElementById(
+            "article-search",
+        ) as HTMLInputElement;
+        const clearButton = document.getElementById(
+            "clear-search",
+        ) as HTMLButtonElement;
+        const resultsCount = document.getElementById(
+            "search-results-count",
+        ) as HTMLDivElement;
+        const articles = document.querySelectorAll("ul li");
+
+        if (!searchInput || !clearButton || !resultsCount || !articles.length)
+            return;
+
+        let totalArticles = articles.length;
+
+        function performSearch() {
+            const query = searchInput.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            articles.forEach((article) => {
+                const title =
+                    article.querySelector("h2")?.textContent?.toLowerCase() ||
+                    "";
+                const description =
+                    article.querySelector("p")?.textContent?.toLowerCase() ||
+                    "";
+                const content = title + " " + description;
+
+                if (content.includes(query)) {
+                    (article as HTMLElement).style.display = "";
+                    visibleCount++;
+                } else {
+                    (article as HTMLElement).style.display = "none";
+                }
+            });
+
+            // Update results count
+            if (query) {
+                resultsCount.textContent = `Menampilkan ${visibleCount} dari ${totalArticles} artikel`;
+                clearButton.style.display = "block";
+            } else {
+                resultsCount.textContent = "";
+                clearButton.style.display = "none";
+            }
+        }
+
+        function clearSearch() {
+            searchInput.value = "";
+            performSearch();
+            searchInput.focus();
+        }
+
+        // Event listeners
+        searchInput.addEventListener("input", performSearch);
+        clearButton.addEventListener("click", clearSearch);
+
+        // Keyboard shortcut: Ctrl/Cmd + K to focus search
+        document.addEventListener("keydown", (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+    }
+
+    // Initialize on page load
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initializeSearch);
+    } else {
+        initializeSearch();
+    }
+</script>

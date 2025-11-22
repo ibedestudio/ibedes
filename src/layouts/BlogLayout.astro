@@ -15,6 +15,8 @@ import SubscribeCard from "../components/SubscribeCard.astro";
 import ShareActions from "../components/ShareActions.astro";
 import FloatingReactions from "../components/FloatingReactions.astro";
 import AffiliateProducts from "../components/AffiliateProducts.astro";
+import ReadingProgress from "../components/ReadingProgress.astro";
+import TextShareTooltip from "../components/TextShareTooltip.astro";
 import {
   getAffiliateByArticle,
   getAffiliateProductsByIds,
@@ -48,11 +50,12 @@ const articleSchema = generateArticleSchema(
   GLOBAL.rootUrl,
 );
 
-// Generate social meta tags
+// Generate social meta tags with dynamic OG image
+const ogImageUrl = `${GLOBAL.rootUrl}/og/${frontmatter.filename}.svg`;
 const socialMeta = generateSocialMeta(
   frontmatter.title,
   frontmatter.description,
-  `${GLOBAL.rootUrl}/${GLOBAL.profileImage}`,
+  ogImageUrl,
   `${GLOBAL.rootUrl}${frontmatter.url ?? sourceUrl}`,
   "article",
 );
@@ -108,7 +111,7 @@ const affiliateContext =
         </div>
       </div>
 
-      <Prose>
+      <Prose id="article-content">
         <slot />
       </Prose>
 
@@ -129,6 +132,7 @@ const affiliateContext =
         <ShareActions
           title={frontmatter.title}
           url={frontmatter.url ?? sourceUrl}
+          image={ogImageUrl}
         />
       </div>
 
@@ -138,6 +142,11 @@ const affiliateContext =
     </div>
   </Section>
 
+  <ReadingProgress />
+  <TextShareTooltip
+    title={frontmatter.title}
+    url={frontmatter.url ?? sourceUrl}
+  />
   <FloatingReactions slug={frontmatter.filename} title={frontmatter.title} />
 
   <!-- Structured Data -->

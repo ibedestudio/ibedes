@@ -35,7 +35,7 @@ const positionClasses = {
     <!-- Toasts will be dynamically inserted here -->
 </div>
 
-<style>
+<style is:global>
     .toast {
         pointer-events: auto;
         min-width: 280px;
@@ -60,7 +60,7 @@ const positionClasses = {
         color: rgb(5, 150, 105);
     }
 
-    .dark .toast-success {
+    :global(.dark) .toast-success {
         background-color: rgba(16, 185, 129, 0.15);
         color: rgb(52, 211, 153);
     }
@@ -71,7 +71,7 @@ const positionClasses = {
         color: rgb(220, 38, 38);
     }
 
-    .dark .toast-error {
+    :global(.dark) .toast-error {
         background-color: rgba(239, 68, 68, 0.15);
         color: rgb(252, 165, 165);
     }
@@ -82,7 +82,7 @@ const positionClasses = {
         color: rgb(37, 99, 235);
     }
 
-    .dark .toast-info {
+    :global(.dark) .toast-info {
         background-color: rgba(59, 130, 246, 0.15);
         color: rgb(147, 197, 253);
     }
@@ -93,7 +93,7 @@ const positionClasses = {
         color: rgb(217, 119, 6);
     }
 
-    .dark .toast-warning {
+    :global(.dark) .toast-warning {
         background-color: rgba(245, 158, 11, 0.15);
         color: rgb(252, 211, 77);
     }

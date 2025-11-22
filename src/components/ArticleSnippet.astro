@@ -1,6 +1,7 @@
 ---
 import { processArticleDate } from "../lib/utils";
 import Anchor from "./common/Anchor.astro";
+import SkeletonLoader from "./common/SkeletonLoader.astro";
 
 export type Props = {
   title: string;
@@ -8,22 +9,34 @@ export type Props = {
   url: string;
   duration?: string;
   timestamp?: string;
+  showSkeleton?: boolean;
 };
 
-const { title, description, url, duration, timestamp } = Astro.props;
+const {
+  title,
+  description,
+  url,
+  duration,
+  timestamp,
+  showSkeleton = false,
+} = Astro.props;
 ---
 
-<div class="zag-text zag-transition flex flex-col gap-3 pb-8">
-  <Anchor url={url} class="text-xl">
-    {title}
-  </Anchor>
-  <p class="">
-    {description}
-  </p>
-  <div
-    class="zag-muted zag-transition flex justify-between items-center"
-  >
-    {timestamp ? <p>{processArticleDate(timestamp)}</p> : null}
-    {duration ? <p>{duration}</p> : null}
-  </div>
-</div>
+{
+  showSkeleton ? (
+    <div class="pb-8">
+      <SkeletonLoader variant="article" count={1} />
+    </div>
+  ) : (
+    <div class="zag-text zag-transition flex flex-col gap-3 pb-8">
+      <Anchor url={url} class="text-xl">
+        {title}
+      </Anchor>
+      <p class="">{description}</p>
+      <div class="zag-muted zag-transition flex justify-between items-center">
+        {timestamp ? <p>{processArticleDate(timestamp)}</p> : null}
+        {duration ? <p>{duration}</p> : null}
+      </div>
+    </div>
+  )
+}

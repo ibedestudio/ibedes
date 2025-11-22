@@ -1,0 +1,148 @@
+// Affiliate management system for ibedes.xyz
+
+export interface AffiliateProduct {
+    id: string;
+    name: string;
+    description: string;
+    price?: string;
+    originalPrice?: string;
+    discount?: string;
+    image: string;
+    link: string;
+    platform: 'shopee' | 'tokopedia' | 'lazada' | 'blibli' | 'tiktok' | 'amazon' | 'other';
+    category: string;
+    tags: string[];
+    rating?: number;
+    verified?: boolean; // produk yang sudah dicek/direkomendasikan
+}
+
+export interface ArticleAffiliate {
+    articleSlug: string;
+    productIds: string[];
+    context?: string; // context untuk menampilkan produk (contoh: "Produk yang membantu perjalanan spiritual")
+}
+
+// Database affiliate produk
+export const affiliateProducts: AffiliateProduct[] = [
+    // Produk untuk artikel motivasi
+    {
+        id: 'jas-hujan-sp1',
+        name: 'Jas Hujan Setelan Pria Wanita Anti Rembes Tebal',
+        description: 'Jas hujan setelan pria wanita anti rembes tebal, cocok untuk perjalanan hujan.',
+        price: 'Rp 80.000',
+        originalPrice: '-', // Optional, untuk show discount
+        discount: '-', // Optional
+        image: 'https://down-tx-id.img.susercontent.com/id-11134207-7rbk1-majvemtwdal586.webp',
+        link: 'https://s.shopee.co.id/6fZetdnADp',
+        platform: 'shopee', // shopee, tokopedia, lazada, blibli, tiktok, amazon, other
+        category: 'Productivity', // Kategori produk
+        tags: ['tag1', 'tag2', 'relevant'], // Tags untuk matching
+        rating: 4.8, // Optional
+        verified: true // Set true kalau udah dicek/rekomendasi
+    },
+    {
+        id: 'jas-hujan-sp2',
+        name: 'Jas Hujan Setelan Pria Wanita Anti Rembes Tebal',
+        description: 'Jas hujan setelan pria wanita anti rembes tebal, cocok untuk perjalanan hujan.',
+        price: 'Rp 80.000',
+        originalPrice: '-', // Optional, untuk show discount
+        discount: '-', // Optional
+        image: 'https://down-tx-id.img.susercontent.com/id-11134207-81ztf-mf24l8x0wglp96.webp',
+        link: 'https://s.shopee.co.id/5VNhWKJC84',
+        platform: 'shopee', // shopee, tokopedia, lazada, blibli, tiktok, amazon, other
+        category: 'Productivity', // Kategori produk
+        tags: ['tag1', 'tag2', 'relevant'], // Tags untuk matching
+        rating: 4.8, // Optional
+        verified: true // Set true kalau udah dicek/rekomendasi
+    },
+    {
+        id: 'jas-hujan-sp3',
+        name: 'Jas Hujan Setelan Pria Wanita Anti Rembes Tebal',
+        description: 'Jas hujan setelan pria wanita anti rembes tebal, cocok untuk perjalanan hujan.',
+        price: 'Rp 80.000',
+        originalPrice: '-', // Optional, untuk show discount
+        discount: '-', // Optional
+        image: 'https://down-tx-id.img.susercontent.com/id-11134207-81ztf-mf24l8x0wglp96.webp',
+        link: 'https://s.shopee.co.id/5VNhWKJC84',
+        platform: 'shopee', // shopee, tokopedia, lazada, blibli, tiktok, amazon, other
+        category: 'Productivity', // Kategori produk
+        tags: ['tag1', 'tag2', 'relevant'], // Tags untuk matching
+        rating: 4.8, // Optional
+        verified: true // Set true kalau udah dicek/rekomendasi
+    }
+];
+
+// Mapping artikel dengan produk affiliate
+export const articleAffiliates: ArticleAffiliate[] = [
+    {
+        articleSlug: 'filosofis-waktu-syuruq',
+        context: 'Produk yang bisa membantu perjalanan berani memulai hal baru:',
+        productIds: ['jas-hujan-sp2', 'jas-hujan-sp1', 'jas-hujan-sp3']
+    }
+];
+
+// Helper functions
+export function getAffiliateByArticle(articleSlug: string): ArticleAffiliate | null {
+    return articleAffiliates.find(aff => aff.articleSlug === articleSlug) || null;
+}
+
+export function getAffiliateProductsByIds(productIds: string[]): AffiliateProduct[] {
+    return productIds
+        .map(id => affiliateProducts.find(product => product.id === id))
+        .filter((product): product is AffiliateProduct => product !== undefined);
+}
+
+export function getProductsByCategory(category: string): AffiliateProduct[] {
+    return affiliateProducts.filter(product =>
+        product.category.toLowerCase() === category.toLowerCase()
+    );
+}
+
+export function getProductsByTags(tags: string[]): AffiliateProduct[] {
+    return affiliateProducts.filter(product =>
+        tags.some(tag => product.tags.includes(tag))
+    );
+}
+
+export function getVerifiedProducts(): AffiliateProduct[] {
+    return affiliateProducts.filter(product => product.verified);
+}
+
+// Platform configuration
+export const platformConfig = {
+    shopee: {
+        name: 'Shopee',
+        color: '#EE4D2D',
+        icon: '🛒'
+    },
+    tokopedia: {
+        name: 'Tokopedia',
+        color: '#42B549',
+        icon: '🛍️'
+    },
+    lazada: {
+        name: 'Lazada',
+        color: '#0F1471',
+        icon: '🛒'
+    },
+    blibli: {
+        name: 'Blibli',
+        color: '#0095DA',
+        icon: '👜'
+    },
+    tiktok: {
+        name: 'TikTok Shop',
+        color: '#000000',
+        icon: '🎵'
+    },
+    amazon: {
+        name: 'Amazon',
+        color: '#FF9900',
+        icon: '📦'
+    },
+    other: {
+        name: 'Lainnya',
+        color: '#6B7280',
+        icon: '🔗'
+    }
+};

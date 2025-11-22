@@ -1,0 +1,139 @@
+---
+import type { AffiliateProduct } from "../lib/affiliates";
+import { platformConfig, getAffiliateProductsByIds } from "../lib/affiliates";
+
+export interface Props {
+  products: AffiliateProduct[];
+  context?: string;
+  title?: string;
+}
+
+const { products, context, title = "Rekomendasi untuk Kamu" } = Astro.props;
+---
+
+<div class="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20 border border-orange-200 dark:border-orange-800 rounded-xl p-6 my-8">
+  <!-- Header -->
+  <div class="mb-6">
+    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
+      <span class="text-2xl">🛒</span>
+      {title}
+    </h3>
+    {context && (
+      <p class="text-gray-700 dark:text-gray-300 text-sm">
+        {context}
+      </p>
+    )}
+  </div>
+
+  <!-- Disclosure -->
+  <div class="bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 mb-6">
+    <p class="text-xs text-yellow-800 dark:text-yellow-200 flex items-start gap-2">
+      <span class="text-sm">⚠️</span>
+      <span>
+        <strong>Disclosure:</strong> Some links in this section are affiliate links. If you make a purchase through these links, I may earn a small commission at no extra cost to you. This helps support the blog and allows me to keep creating valuable content.
+      </span>
+    </p>
+  </div>
+
+  <!-- Products Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {products.map((product) => {
+      const platform = platformConfig[product.platform];
+      return (
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
+          <!-- Product Image -->
+          <div class="relative aspect-video overflow-hidden">
+            <img 
+              src={product.image} 
+              alt={product.name}
+              class="w-full h-full object-cover"
+              loading="lazy"
+            />
+            <!-- Platform Badge -->
+            <div class="absolute top-2 left-2">
+              <span 
+                class="px-2 py-1 rounded-full text-xs font-medium text-white flex items-center gap-1"
+                style={`background-color: ${platform.color}`}
+              >
+                <span>{platform.icon}</span>
+                {platform.name}
+              </span>
+            </div>
+            <!-- Discount Badge -->
+            {product.discount && (
+              <div class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                -{product.discount}
+              </div>
+            )}
+          </div>
+
+          <!-- Product Info -->
+          <div class="p-4">
+            <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2 line-clamp-2">
+              {product.name}
+            </h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+              {product.description}
+            </p>
+            
+            <!-- Rating -->
+            {product.rating && (
+              <div class="flex items-center gap-1 mb-3">
+                <div class="flex text-yellow-400">
+                  {Array.from({ length: 5 }, (_, i) => (
+                    <span class={i < Math.floor(product.rating!) ? 'text-yellow-400' : 'text-gray-300'}>
+                      ★
+                    </span>
+                  ))}
+                </div>
+                <span class="text-xs text-gray-500">({product.rating})</span>
+              </div>
+            )}
+
+            <!-- Price -->
+            <div class="flex items-center gap-2 mb-4">
+              {product.originalPrice && (
+                <span class="text-sm text-gray-500 line-through">
+                  {product.originalPrice}
+                </span>
+              )}
+              <span class="text-lg font-bold text-gray-900 dark:text-gray-100">
+                {product.price}
+              </span>
+            </div>
+
+            <!-- CTA Button -->
+            <a 
+              href={product.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="block w-full text-center bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
+              onclick={`gtag('event', 'affiliate_click', { 'product_id': '${product.id}', 'platform': '${product.platform}', 'value': 1 });`}
+            >
+              <span class="flex items-center justify-center gap-2">
+                <span>Beli di {platform.name}</span>
+                <span>→</span>
+              </span>
+            </a>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+
+  <!-- Footer Note -->
+  <div class="mt-6 text-center">
+    <p class="text-xs text-gray-500 dark:text-gray-400">
+      💡 <em>All products are personally tested and recommended based on quality and relevance to the content.</em>
+    </p>
+  </div>
+</div>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

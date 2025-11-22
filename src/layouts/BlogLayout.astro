@@ -13,6 +13,11 @@ import Layout from "./Layout.astro";
 import SubscribeCard from "../components/SubscribeCard.astro";
 import ShareActions from "../components/ShareActions.astro";
 import FloatingReactions from "../components/FloatingReactions.astro";
+import AffiliateProducts from "../components/AffiliateProducts.astro";
+import {
+  getAffiliateByArticle,
+  getAffiliateProductsByIds,
+} from "../lib/affiliates";
 
 type Props = MarkdownLayoutProps<ArticleFrontmatter>;
 
@@ -20,6 +25,28 @@ const { frontmatter } = Astro.props;
 const shortDescription = getShortDescription(frontmatter.description);
 const articleDate = processArticleDate(frontmatter.timestamp);
 const sourceUrl = generateSourceUrl(frontmatter.filename, "blog");
+
+// Get affiliate products for this article
+// Get affiliate products for this article
+const articleAffiliate = getAffiliateByArticle(frontmatter.filename);
+let affiliateProducts = articleAffiliate
+  ? getAffiliateProductsByIds(articleAffiliate.productIds)
+  : [];
+
+// Merge with frontmatter affiliate products
+if (frontmatter.affiliateProducts && frontmatter.affiliateProducts.length > 0) {
+  const frontmatterProducts = getAffiliateProductsByIds(
+    frontmatter.affiliateProducts,
+  );
+  // Combine and deduplicate based on ID
+  affiliateProducts = [...affiliateProducts, ...frontmatterProducts].filter(
+    (product, index, self) =>
+      index === self.findIndex((t) => t.id === product.id),
+  );
+}
+
+const affiliateContext =
+  frontmatter.affiliateContext || articleAffiliate?.context;
 ---
 
 <Layout>
@@ -66,6 +93,19 @@ const sourceUrl = generateSourceUrl(frontmatter.filename, "blog");
       <Prose>
         <slot />
       </Prose>
+
+      <!-- Affiliate Products Section -->
+      {
+        affiliateProducts.length > 0 && (
+          <div class="my-12">
+            <AffiliateProducts
+              products={affiliateProducts}
+              context={affiliateContext}
+              title="Produk yang Mungkin Bantu"
+            />
+          </div>
+        )
+      }
 
       <div class="my-12">
         <ShareActions

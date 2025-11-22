@@ -80,4 +80,14 @@ export type ArticleFrontmatter = {
    * (eg. https://zaggonaut.dev/blog/my-article)
    */
   filename: string;
+
+  /**
+   * List of affiliate product IDs to display in this article
+   */
+  affiliateProducts?: string[];
+
+  /**
+   * Context/Title for the affiliate section (e.g. "Recommended Gear")
+   */
+  affiliateContext?: string;
 };

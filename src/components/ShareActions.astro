@@ -237,7 +237,12 @@ const shareTargets = [
               });
               trackShare("share_image_file");
             } else {
-              // Fallback: Copy Image URL
+              throw new Error("Web Share API not supported for files");
+            }
+          } catch (error) {
+            console.error("Failed to share image:", error);
+            // Fallback: Copy Image URL
+            try {
               await navigator.clipboard.writeText(shareImageUrl);
               if (typeof window.showToast === "function") {
                 window.showToast("URL Gambar tersalin!", { type: "success" });
@@ -245,12 +250,11 @@ const shareTargets = [
                 showFeedback("URL Gambar tersalin!");
               }
               trackShare("copy_image_url");
+            } catch (clipboardError) {
+              if (typeof window.showToast === "function") {
+                window.showToast("Gagal membagikan gambar", { type: "error" });
+              }
             }
-          } catch (error) {
-            console.error("Failed to share image:", error);
-            // Fallback: Open in new tab
-            window.open(shareImageUrl, "_blank");
-            trackShare("open_image_tab");
           }
         });
       } else if (shareImageBtn) {

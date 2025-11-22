@@ -133,8 +133,12 @@ const { title, url } = Astro.props;
 <script define:vars={{ title, url }}>
     function initializeTextShare() {
         const tooltip = document.getElementById("share-tooltip");
+        const twitterBtn = document.getElementById("share-twitter");
         const facebookBtn = document.getElementById("share-facebook");
         const linkedinBtn = document.getElementById("share-linkedin");
+        const copyBtn = document.getElementById("share-copy");
+        const whatsappBtn = document.getElementById("share-whatsapp");
+        const proseContent = document.querySelector(".prose");
 
         if (
             !tooltip ||

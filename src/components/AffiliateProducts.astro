@@ -1,6 +1,6 @@
 ---
 import type { AffiliateProduct } from "../lib/affiliates";
-import { platformConfig, getAffiliateProductsByIds } from "../lib/affiliates";
+import { platformConfig } from "../lib/affiliates";
 
 export interface Props {
   products: AffiliateProduct[];
@@ -8,123 +8,94 @@ export interface Props {
   title?: string;
 }
 
-const { products, context, title = "Rekomendasi untuk Kamu" } = Astro.props;
+const { products, context, title = "Rekomendasi Produk" } = Astro.props;
 ---
 
-<div class="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20 border border-orange-200 dark:border-orange-800 rounded-xl p-6 my-8">
+<div class="my-8 border-t border-b border-gray-200 dark:border-gray-800 py-6">
   <!-- Header -->
   <div class="mb-6">
-    <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
-      <span class="text-2xl">🛒</span>
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+      <i class="fa-solid fa-bag-shopping text-xl"></i>
       {title}
     </h3>
     {context && (
-      <p class="text-gray-700 dark:text-gray-300 text-sm">
+      <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">
         {context}
       </p>
     )}
   </div>
 
-  <!-- Disclosure -->
-  <div class="bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 mb-6">
-    <p class="text-xs text-yellow-800 dark:text-yellow-200 flex items-start gap-2">
-      <span class="text-sm">⚠️</span>
-      <span>
-        <strong>Disclosure:</strong> Some links in this section are affiliate links. If you make a purchase through these links, I may earn a small commission at no extra cost to you. This helps support the blog and allows me to keep creating valuable content.
-      </span>
-    </p>
-  </div>
-
   <!-- Products Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     {products.map((product) => {
       const platform = platformConfig[product.platform];
       return (
-        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
-          <!-- Product Image -->
-          <div class="relative aspect-video overflow-hidden">
+        <a 
+          href={product.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group flex gap-4 p-3 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all duration-200"
+          onclick={`gtag('event', 'affiliate_click', { 'product_id': '${product.id}', 'platform': '${product.platform}', 'value': 1 });`}
+        >
+          <!-- Product Image (Compact) -->
+          <div class="relative w-20 h-20 flex-shrink-0 rounded-md overflow-hidden bg-gray-100 dark:bg-gray-900">
             <img 
               src={product.image} 
               alt={product.name}
-              class="w-full h-full object-cover"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               loading="lazy"
             />
-            <!-- Platform Badge -->
-            <div class="absolute top-2 left-2">
-              <span 
-                class="px-2 py-1 rounded-full text-xs font-medium text-white flex items-center gap-1"
-                style={`background-color: ${platform.color}`}
-              >
-                <span>{platform.icon}</span>
-                {platform.name}
-              </span>
-            </div>
-            <!-- Discount Badge -->
-            {product.discount && (
-              <div class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+            {product.discount && product.discount !== '-' && (
+              <div class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-bl-md">
                 -{product.discount}
               </div>
             )}
           </div>
 
           <!-- Product Info -->
-          <div class="p-4">
-            <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2 line-clamp-2">
-              {product.name}
-            </h4>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
-              {product.description}
-            </p>
-            
-            <!-- Rating -->
-            {product.rating && (
-              <div class="flex items-center gap-1 mb-3">
-                <div class="flex text-yellow-400">
-                  {Array.from({ length: 5 }, (_, i) => (
-                    <span class={i < Math.floor(product.rating!) ? 'text-yellow-400' : 'text-gray-300'}>
-                      ★
-                    </span>
-                  ))}
-                </div>
-                <span class="text-xs text-gray-500">({product.rating})</span>
+          <div class="flex flex-col justify-between flex-grow min-w-0">
+            <div>
+              <div class="flex items-start justify-between gap-2">
+                <h4 class="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  {product.name}
+                </h4>
+                <span 
+                  class="text-[10px] px-1.5 py-0.5 rounded text-white whitespace-nowrap flex-shrink-0 opacity-70 group-hover:opacity-100 transition-opacity"
+                  style={`background-color: ${platform.color}`}
+                >
+              <i class={`${platform.icon} mr-1`}></i>
+              {platform.name}
+                </span>
               </div>
-            )}
+              
+              {product.rating && (
+                <div class="flex items-center gap-1 mt-1">
+                  <i class="fa-solid fa-star text-yellow-400 text-[10px]"></i>
+                  <span class="text-xs text-gray-500">{product.rating}</span>
+                </div>
+              )}
+            </div>
 
-            <!-- Price -->
-            <div class="flex items-center gap-2 mb-4">
-              {product.originalPrice && (
-                <span class="text-sm text-gray-500 line-through">
+            <div class="flex items-center gap-2 mt-2">
+              <span class="text-sm font-bold text-gray-900 dark:text-gray-100">
+                {product.price}
+              </span>
+              {product.originalPrice && product.originalPrice !== '-' && (
+                <span class="text-xs text-gray-400 line-through">
                   {product.originalPrice}
                 </span>
               )}
-              <span class="text-lg font-bold text-gray-900 dark:text-gray-100">
-                {product.price}
-              </span>
             </div>
-
-            <!-- CTA Button -->
-            <a 
-              href={product.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="block w-full text-center bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
-              onclick={`gtag('event', 'affiliate_click', { 'product_id': '${product.id}', 'platform': '${product.platform}', 'value': 1 });`}
-            >
-              <span class="flex items-center justify-center gap-2">
-                <span>Beli di {platform.name}</span>
-                <span>→</span>
-              </span>
-            </a>
           </div>
-        </div>
+        </a>
       );
     })}
   </div>
 
-  <!-- Footer Note -->
-  <div class="mt-6 text-center">
-    <p class="text-xs text-gray-500 dark:text-gray-400">
-      💡 <em>All products are personally tested and recommended based on quality and relevance to the content.</em>
+  <!-- Footer / Disclosure -->
+  <div class="mt-4 flex items-center justify-between gap-4 text-[10px] text-gray-400 dark:text-gray-500">
+    <p>
+      <i class="fa-solid fa-triangle-exclamation mr-1"></i> <em>Disclosure: Contains affiliate links. I may earn a commission at no extra cost to you.</em>
     </p>
   </div>
 </div>

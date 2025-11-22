@@ -77,7 +77,7 @@ export const articleAffiliates: ArticleAffiliate[] = [
     {
         articleSlug: 'filosofis-waktu-syuruq',
         context: 'Produk yang bisa membantu perjalanan berani memulai hal baru:',
-        productIds: ['jas-hujan-sp2', 'jas-hujan-sp1', 'jas-hujan-sp3']
+        productIds: ['jas-hujan-sp2', 'jas-hujan-sp1']
     }
 ];
 
@@ -113,36 +113,36 @@ export const platformConfig = {
     shopee: {
         name: 'Shopee',
         color: '#EE4D2D',
-        icon: '🛒'
+        icon: 'fa-solid fa-cart-shopping'
     },
     tokopedia: {
         name: 'Tokopedia',
         color: '#42B549',
-        icon: '🛍️'
+        icon: 'fa-solid fa-store'
     },
     lazada: {
         name: 'Lazada',
         color: '#0F1471',
-        icon: '🛒'
+        icon: 'fa-solid fa-bag-shopping'
     },
     blibli: {
         name: 'Blibli',
         color: '#0095DA',
-        icon: '👜'
+        icon: 'fa-solid fa-basket-shopping'
     },
     tiktok: {
         name: 'TikTok Shop',
         color: '#000000',
-        icon: '🎵'
+        icon: 'fa-brands fa-tiktok'
     },
     amazon: {
         name: 'Amazon',
         color: '#FF9900',
-        icon: '📦'
+        icon: 'fa-brands fa-amazon'
     },
     other: {
         name: 'Lainnya',
         color: '#6B7280',
-        icon: '🔗'
+        icon: 'fa-solid fa-link'
     }
 };

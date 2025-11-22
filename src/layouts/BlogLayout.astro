@@ -1,5 +1,6 @@
 ---
 import Section from "../components/common/Section.astro";
+import Breadcrumb from "../components/common/Breadcrumb.astro";
 import type { ArticleFrontmatter } from "../lib/types";
 import {
   getShortDescription,
@@ -18,6 +19,7 @@ import {
   getAffiliateByArticle,
   getAffiliateProductsByIds,
 } from "../lib/affiliates";
+import { generateArticleSchema, generateSocialMeta } from "../lib/seo";
 
 type Props = MarkdownLayoutProps<ArticleFrontmatter>;
 
@@ -26,7 +28,35 @@ const shortDescription = getShortDescription(frontmatter.description);
 const articleDate = processArticleDate(frontmatter.timestamp);
 const sourceUrl = generateSourceUrl(frontmatter.filename, "blog");
 
-// Get affiliate products for this article
+// Breadcrumb items
+const breadcrumbItems = [
+  { name: "Home", url: "/" },
+  { name: "Blog", url: "/blog" },
+  { name: frontmatter.title, url: frontmatter.url ?? sourceUrl },
+];
+
+// Generate Article structured data
+const articleSchema = generateArticleSchema(
+  {
+    title: frontmatter.title,
+    description: frontmatter.description,
+    publishedTime: frontmatter.timestamp,
+    author: GLOBAL.username,
+    tags: frontmatter.tags,
+    url: frontmatter.url ?? sourceUrl,
+  },
+  GLOBAL.rootUrl,
+);
+
+// Generate social meta tags
+const socialMeta = generateSocialMeta(
+  frontmatter.title,
+  frontmatter.description,
+  `${GLOBAL.rootUrl}/${GLOBAL.profileImage}`,
+  `${GLOBAL.rootUrl}${frontmatter.url ?? sourceUrl}`,
+  "article",
+);
+
 // Get affiliate products for this article
 const articleAffiliate = getAffiliateByArticle(frontmatter.filename);
 let affiliateProducts = articleAffiliate
@@ -55,8 +85,18 @@ const affiliateContext =
   image={`${GLOBAL.rootUrl}/${GLOBAL.profileImage}`}
   type="article"
 >
+  <!-- Social Meta Tags in Head -->
+  {
+    Object.entries(socialMeta).map(([property, content]) => (
+      <meta property={property} content={content} slot="head" />
+    ))
+  }
+
   <Section class="pt-8">
     <div class="max-w-prose mx-auto w-full">
+      <!-- Breadcrumb Navigation -->
+      <Breadcrumb items={breadcrumbItems} />
+
       <div class="flex flex-col gap-4 mt-8 mb-16 w-full">
         <h1 class="text-3xl sm:text-4xl leading-tight font-display break-words">
           {frontmatter.title}
@@ -99,4 +139,30 @@ const affiliateContext =
   </Section>
 
   <FloatingReactions slug={frontmatter.filename} title={frontmatter.title} />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+
+  <!-- Article-specific Analytics -->
+  <script
+    is:inline
+    define:vars={{
+      articleTitle: frontmatter.title,
+      articleTags: frontmatter.tags?.join(",") || "",
+      readingTime: frontmatter.time,
+    }}
+  >
+    // Track article view
+    if (typeof window !== "undefined") {
+      window.addEventListener("load", () => {
+        if (typeof window.trackPageView === "function") {
+          window.trackPageView(window.location.pathname, document.title, {
+            article_title: articleTitle,
+            article_tags: articleTags,
+            reading_time: readingTime,
+          });
+        }
+      });
+    }
+  </script>
 </Layout>

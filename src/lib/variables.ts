@@ -6,16 +6,16 @@ export const GLOBAL = {
   rootUrl: "https://ibedes.xyz",
   shortDescription: "Retro-Inspired Theme &<br /> Built for Astro",
   longDescription: "Zaggonaut is a retro-inspired theme for Astro, built using TypeScript, TailwindCSS, and Astro.",
-  
+
   // Social media links
   githubProfile: "https://github.com/ibedestudio",
   threadsProfile: "https://www.threads.com/@bellamujiaa",
-  
+
   // Common text names used throughout the site
   articlesName: "Articles",
   projectsName: "Projects",
   viewAll: "View All",
-  
+
   // Common descriptions used throughout the site
   noArticles: "No featured articles yet.",
   noProjects: "No featured projects yet.",
@@ -40,6 +40,7 @@ export const GLOBAL = {
     swag: "/swag",
     projects: "/projects",
     blog: "/blog",
+    tentang: "/tentang",
   },
 
   contactEmail: "ibedestudio@gmail.com",

@@ -1,0 +1,328 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Breadcrumb from "../components/common/Breadcrumb.astro";
+import SubscribeCard from "../components/SubscribeCard.astro";
+
+const colors = [
+    {
+        name: "Zag Dark",
+        var: "var(--color-zag-dark)",
+        class: "bg-[var(--color-zag-dark)]",
+    },
+    {
+        name: "Zag Light",
+        var: "var(--color-zag-light)",
+        class: "bg-[var(--color-zag-light)]",
+    },
+    {
+        name: "Zag Dark Muted",
+        var: "var(--color-zag-dark-muted)",
+        class: "bg-[var(--color-zag-dark-muted)]",
+    },
+    {
+        name: "Zag Light Muted",
+        var: "var(--color-zag-light-muted)",
+        class: "bg-[var(--color-zag-light-muted)]",
+    },
+    {
+        name: "Zag Accent Light",
+        var: "var(--color-zag-accent-light)",
+        class: "bg-[var(--color-zag-accent-light)]",
+    },
+    {
+        name: "Zag Accent Dark",
+        var: "var(--color-zag-accent-dark)",
+        class: "bg-[var(--color-zag-accent-dark)]",
+    },
+];
+
+const themeColors = [
+    { name: "Background", var: "var(--background)", class: "bg-background" },
+    { name: "Foreground", var: "var(--foreground)", class: "bg-foreground" },
+    { name: "Primary", var: "var(--primary)", class: "bg-primary" },
+    { name: "Secondary", var: "var(--secondary)", class: "bg-secondary" },
+    { name: "Muted", var: "var(--muted)", class: "bg-muted" },
+    { name: "Accent", var: "var(--accent)", class: "bg-accent" },
+    { name: "Destructive", var: "var(--destructive)", class: "bg-destructive" },
+    { name: "Border", var: "var(--border)", class: "bg-border" },
+];
+
+const icons = [
+    "fa-brands fa-github",
+    "fa-brands fa-threads",
+    "fa-brands fa-linkedin",
+    "fa-brands fa-facebook",
+    "fa-brands fa-whatsapp",
+    "fa-brands fa-instagram",
+    "fa-brands fa-twitter",
+    "fa-brands fa-x-twitter",
+    "fa-brands fa-youtube",
+    "fa-brands fa-tiktok",
+    "fa-solid fa-bag-shopping",
+];
+---
+
+<Layout
+    title="Design System | ibedes"
+    description="Design System documentation for ibedes website."
+>
+    <div class="container mx-auto px-4 py-12 space-y-16">
+        <header class="text-center space-y-4">
+            <h1
+                class="text-2xl sm:text-3xl md:text-5xl font-display uppercase tracking-wider break-words"
+            >
+                Design System
+            </h1>
+            <p class="text-xl text-muted-foreground font-serif italic">
+                The building blocks of ibedes.
+            </p>
+        </header>
+
+        <!-- Colors Section -->
+        <section class="space-y-8">
+            <h2 class="text-2xl font-display border-b border-border pb-4">
+                Colors
+            </h2>
+
+            <div class="space-y-6">
+                <h3 class="text-xl font-serif font-bold">Zag Palette</h3>
+                <div
+                    class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"
+                >
+                    {
+                        colors.map((color) => (
+                            <div class="space-y-2">
+                                <div
+                                    class={`h-24 w-full rounded-lg border border-border shadow-sm ${color.class}`}
+                                />
+                                <div class="text-xs font-mono space-y-1">
+                                    <p class="font-bold">{color.name}</p>
+                                    <p class="text-muted-foreground opacity-75">
+                                        {color.var}
+                                    </p>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+
+                <h3 class="text-xl font-serif font-bold mt-8">Theme Palette</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {
+                        themeColors.map((color) => (
+                            <div class="space-y-2">
+                                <div
+                                    class={`h-24 w-full rounded-lg border border-border shadow-sm ${color.class}`}
+                                />
+                                <div class="text-xs font-mono space-y-1">
+                                    <p class="font-bold">{color.name}</p>
+                                    <p class="text-muted-foreground opacity-75">
+                                        {color.var}
+                                    </p>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </div>
+        </section>
+
+        <!-- Typography Section -->
+        <section class="space-y-8">
+            <h2 class="text-2xl font-display border-b border-border pb-4">
+                Typography
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="space-y-6">
+                    <div class="space-y-2">
+                        <p class="text-sm font-mono text-muted-foreground">
+                            Display Font (Press Start 2P)
+                        </p>
+                        <p class="font-display text-3xl">
+                            The quick brown fox jumps over the lazy dog.
+                        </p>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-sm font-mono text-muted-foreground">
+                            Serif Font (Literata Variable)
+                        </p>
+                        <p class="font-serif text-3xl">
+                            The quick brown fox jumps over the lazy dog.
+                        </p>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-sm font-mono text-muted-foreground">
+                            Mono Font (IBM Plex Mono)
+                        </p>
+                        <p class="font-mono text-xl">
+                            The quick brown fox jumps over the lazy dog.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h1 class="text-4xl font-bold">Heading 1</h1>
+                    <h2 class="text-3xl font-bold">Heading 2</h2>
+                    <h3 class="text-2xl font-bold">Heading 3</h3>
+                    <h4 class="text-xl font-bold">Heading 4</h4>
+                    <p class="text-base leading-relaxed text-muted-foreground">
+                        Body text. Lorem ipsum dolor sit amet, consectetur
+                        adipiscing elit. Sed do eiusmod tempor incididunt ut
+                        labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut
+                        aliquip ex ea commodo consequat.
+                    </p>
+                    <p class="text-sm text-muted-foreground">
+                        Small text. Lorem ipsum dolor sit amet.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Components Section -->
+        <section class="space-y-8">
+            <h2 class="text-2xl font-display border-b border-border pb-4">
+                Components
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-12">
+                <!-- Buttons -->
+                <div class="space-y-6">
+                    <h3 class="text-xl font-serif font-bold">Buttons</h3>
+                    <div class="flex flex-wrap gap-4 items-center">
+                        <button class="cta-button cta-button--primary">
+                            Primary Button
+                        </button>
+                        <button class="cta-button cta-button--secondary">
+                            Secondary Button
+                        </button>
+                    </div>
+                    <div class="p-4 bg-muted rounded-lg">
+                        <p class="text-sm font-mono mb-2">
+                            Dark Mode Preview (simulated)
+                        </p>
+                        <div
+                            class="dark p-4 bg-background rounded border border-border flex gap-4"
+                        >
+                            <button class="cta-button cta-button--primary">
+                                Primary
+                            </button>
+                            <button class="cta-button cta-button--secondary">
+                                Secondary
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Links -->
+                <div class="space-y-6">
+                    <h3 class="text-xl font-serif font-bold">Links</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <a href="#" class="service-link">
+                                Service Link
+                                <span class="service-link__arrow">
+                                    <svg
+                                        viewBox="0 0 28 14"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            d="M0 7H26M26 7L20 1M26 7L20 13"
+                                            stroke="currentColor"
+                                            stroke-width="2"></path>
+                                    </svg>
+                                </span>
+                            </a>
+                        </div>
+                        <div>
+                            <a href="#" class="text-primary hover:underline"
+                                >Standard Text Link</a
+                            >
+                        </div>
+                        <div
+                            class="flex items-center gap-2 text-sm text-muted-foreground"
+                        >
+                            <Breadcrumb
+                                items={[
+                                    { name: "Home", url: "/" },
+                                    {
+                                        name: "Design System",
+                                        url: "/design-system",
+                                    },
+                                ]}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inputs -->
+            <div class="space-y-6">
+                <h3 class="text-xl font-serif font-bold">Inputs</h3>
+                <div class="max-w-md space-y-4">
+                    <div class="space-y-2">
+                        <label class="text-sm font-mono">Email Input</label>
+                        <input
+                            type="email"
+                            placeholder="nama@emailkamu.com"
+                            class="w-full rounded-xl border-[3px] border-black/60 dark:border-white/70 bg-transparent px-4 py-3 font-mono focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 dark:focus-visible:outline-emerald-300"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards -->
+            <div class="space-y-6">
+                <h3 class="text-xl font-serif font-bold">Cards</h3>
+                <SubscribeCard />
+            </div>
+
+            <!-- Marquee -->
+            <div class="space-y-4">
+                <h3 class="text-xl font-serif font-bold">Retro Marquee</h3>
+                <div class="retro-marquee">
+                    <div class="retro-marquee__track">
+                        <span
+                            >Design System • Components • Typography • Colors •</span
+                        >
+                        <span
+                            >Design System • Components • Typography • Colors •</span
+                        >
+                        <span
+                            >Design System • Components • Typography • Colors •</span
+                        >
+                        <span
+                            >Design System • Components • Typography • Colors •</span
+                        >
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Icons Section -->
+        <section class="space-y-8">
+            <h2 class="text-2xl font-display border-b border-border pb-4">
+                Icons
+            </h2>
+            <p class="text-muted-foreground">
+                Hover over icons to see brand colors.
+            </p>
+
+            <div class="flex flex-wrap gap-8 text-3xl">
+                {
+                    icons.map((icon) => (
+                        <a
+                            href="#"
+                            class="transition-colors duration-200"
+                            aria-label="Icon demo"
+                        >
+                            <i class={icon} />
+                        </a>
+                    ))
+                }
+            </div>
+        </section>
+    </div>
+</Layout>

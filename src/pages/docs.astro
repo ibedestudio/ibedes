@@ -1,6 +1,5 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Section from "../components/common/Section.astro";
 import Breadcrumb from "../components/common/Breadcrumb.astro";
 import { GLOBAL } from "../lib/variables";
 
@@ -9,345 +8,196 @@ const breadcrumbItems = [
     { name: "Documentation", url: "/docs" },
 ];
 
-const sections = [
+const docSections = [
     {
         title: "Getting Started",
-        icon: "fa-rocket",
+        icon: "fa-solid fa-flag-checkered",
         items: [
             {
-                name: "Introduction",
-                description: "Learn about ibedes and what we do",
+                title: "Introduction",
+                description:
+                    "Overview of the ibedes project structure and goals.",
+                link: "#",
             },
             {
-                name: "Quick Start",
-                description: "Get up and running in minutes",
+                title: "Installation",
+                description: "How to set up the project locally.",
+                link: "#",
             },
             {
-                name: "Installation",
-                description: "Step-by-step installation guide",
+                title: "Project Structure",
+                description: "Understanding the file organization.",
+                link: "#",
+            },
+        ],
+    },
+    {
+        title: "Core Concepts",
+        icon: "fa-solid fa-atom",
+        items: [
+            {
+                title: "Design System",
+                description: "Colors, typography, and core UI principles.",
+                link: "/design-system",
+                badge: "New",
+            },
+            {
+                title: "Routing",
+                description: "How pages and navigation work.",
+                link: "#",
+            },
+            {
+                title: "Data Fetching",
+                description: "Handling API requests and content loading.",
+                link: "#",
             },
         ],
     },
     {
         title: "Features",
-        icon: "fa-star",
+        icon: "fa-solid fa-wand-magic-sparkles",
         items: [
             {
-                name: "Toast Notifications",
-                description: "User feedback system with 4 types",
+                title: "Blog System",
+                description:
+                    "Markdown-based blogging with categories and tags.",
+                link: "/blog",
             },
             {
-                name: "Skeleton Loaders",
-                description: "Loading states with 5 variants",
+                title: "Projects Portfolio",
+                description: "Showcasing work and case studies.",
+                link: "/projects",
             },
             {
-                name: "SEO Optimization",
-                description: "Structured data & meta tags",
-            },
-            {
-                name: "Analytics Tracking",
-                description: "Comprehensive event tracking",
-            },
-            {
-                name: "Performance Monitoring",
-                description: "Web Vitals & metrics",
+                title: "Dark Mode",
+                description: "Built-in theme switching capability.",
+                link: "#",
             },
         ],
     },
     {
-        title: "Components",
-        icon: "fa-cube",
-        items: [
-            { name: "Toast", description: "Notification component" },
-            {
-                name: "SkeletonLoader",
-                description: "Loading placeholder component",
-            },
-            { name: "Breadcrumb", description: "Navigation component" },
-            {
-                name: "OptimizedImage",
-                description: "Image optimization component",
-            },
-            {
-                name: "AffiliateProducts",
-                description: "Product showcase component",
-            },
-        ],
-    },
-    {
-        title: "Utilities",
-        icon: "fa-wrench",
-        items: [
-            { name: "SEO Utils", description: "Schema generators & meta tags" },
-            { name: "Analytics", description: "Event tracking functions" },
-            { name: "Performance", description: "Web Vitals monitoring" },
-        ],
-    },
-    {
-        title: "Guides",
-        icon: "fa-book",
+        title: "Reference",
+        icon: "fa-solid fa-book-bookmark",
         items: [
             {
-                name: "Enhancement Guide",
-                description: "Complete enhancement documentation",
+                title: "Changelog",
+                description: "History of changes and updates.",
+                link: "/changelog",
             },
             {
-                name: "Implementation Checklist",
-                description: "Step-by-step implementation",
-            },
-            { name: "Quick Reference", description: "Quick code snippets" },
-            {
-                name: "Priority Guides",
-                description: "Priority 1, 2, 3 implementation",
+                title: "API Reference",
+                description: "Backend API endpoints and usage.",
+                link: "#",
             },
         ],
-    },
-];
-
-const resources = [
-    {
-        title: "Enhancement Documentation",
-        description: "Complete guide for all enhancements",
-        link: "/ENHANCEMENTS.md",
-        icon: "fa-file-lines",
-        color: "blue",
-    },
-    {
-        title: "Quick Reference",
-        description: "Quick code snippets and examples",
-        link: "/QUICK_REFERENCE.md",
-        icon: "fa-bolt",
-        color: "yellow",
-    },
-    {
-        title: "Implementation Checklist",
-        description: "Step-by-step implementation guide",
-        link: "/IMPLEMENTATION_CHECKLIST.md",
-        icon: "fa-list-check",
-        color: "green",
-    },
-    {
-        title: "Skeleton Demo",
-        description: "Interactive skeleton loader demo",
-        link: "/demo-skeleton",
-        icon: "fa-eye",
-        color: "purple",
     },
 ];
 ---
 
 <Layout
-    title={`Documentation • ${GLOBAL.username}`}
-    description="Complete documentation for ibedes website features, components, and utilities"
+    title="Documentation | ibedes"
+    description="Comprehensive documentation for the ibedes platform."
 >
-    <Section class="py-12">
-        <div class="max-w-6xl mx-auto">
-            <!-- Breadcrumb -->
+    <div class="container mx-auto px-4 py-12 space-y-12">
+        <!-- Header Section -->
+        <div class="space-y-6 max-w-4xl">
             <Breadcrumb items={breadcrumbItems} />
 
-            <!-- Header -->
-            <div class="mb-8 mt-6">
+            <div class="space-y-4">
                 <h1
-                    class="text-3xl sm:text-4xl lg:text-5xl font-display mb-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4"
+                    class="text-2xl sm:text-3xl md:text-5xl font-display uppercase tracking-wider break-words"
                 >
-                    <i class="fa-solid fa-book text-2xl sm:text-3xl lg:text-4xl"
-                    ></i>
-                    <span>Documentation</span>
+                    Documentation
                 </h1>
                 <p
-                    class="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-400"
+                    class="text-xl text-muted-foreground font-serif leading-relaxed max-w-2xl"
                 >
-                    Complete guide untuk semua fitur, komponen, dan utilities
-                    yang tersedia di website ibedes.
+                    Everything you need to know about building and maintaining
+                    the ibedes platform. Guides, references, and design
+                    patterns.
                 </p>
             </div>
+        </div>
 
-            <!-- Quick Stats -->
-            <div
-                class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8 sm:mb-12"
-            >
-                <div
-                    class="p-4 sm:p-6 border-2 border-black/10 dark:border-white/10 rounded-lg text-center"
+        <!-- Search / Quick Actions (Placeholder) -->
+        <div
+            class="p-6 rounded-2xl border-2 border-dashed border-border bg-muted/30 flex flex-col sm:flex-row items-center justify-between gap-4"
+        >
+            <div class="flex items-center gap-3 text-muted-foreground">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span class="font-mono text-sm"
+                    >Search documentation... (Coming Soon)</span
                 >
-                    <div
-                        class="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1 sm:mb-2"
-                    >
-                        25+
-                    </div>
-                    <div
-                        class="text-xs sm:text-sm text-gray-600 dark:text-gray-400"
-                    >
-                        Features
-                    </div>
-                </div>
-                <div
-                    class="p-4 sm:p-6 border-2 border-black/10 dark:border-white/10 rounded-lg text-center"
-                >
-                    <div
-                        class="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400 mb-1 sm:mb-2"
-                    >
-                        12
-                    </div>
-                    <div
-                        class="text-xs sm:text-sm text-gray-600 dark:text-gray-400"
-                    >
-                        Components
-                    </div>
-                </div>
-                <div
-                    class="p-4 sm:p-6 border-2 border-black/10 dark:border-white/10 rounded-lg text-center"
-                >
-                    <div
-                        class="text-2xl sm:text-3xl font-bold text-purple-600 dark:text-purple-400 mb-1 sm:mb-2"
-                    >
-                        7
-                    </div>
-                    <div
-                        class="text-xs sm:text-sm text-gray-600 dark:text-gray-400"
-                    >
-                        Utilities
-                    </div>
-                </div>
-                <div
-                    class="p-4 sm:p-6 border-2 border-black/10 dark:border-white/10 rounded-lg text-center"
-                >
-                    <div
-                        class="text-2xl sm:text-3xl font-bold text-orange-600 dark:text-orange-400 mb-1 sm:mb-2"
-                    >
-                        100%
-                    </div>
-                    <div
-                        class="text-xs sm:text-sm text-gray-600 dark:text-gray-400"
-                    >
-                        Production Ready
-                    </div>
-                </div>
             </div>
-
-            <!-- Documentation Sections -->
-            <div class="space-y-12">
-                {
-                    sections.map((section) => (
-                        <div>
-                            <h2 class="text-2xl font-display mb-6 flex items-center gap-3">
-                                <i
-                                    class={`fa-solid ${section.icon} text-emerald-600 dark:text-emerald-400`}
-                                />
-                                {section.title}
-                            </h2>
-                            <div class="grid md:grid-cols-2 gap-4">
-                                {section.items.map((item) => (
-                                    <div class="p-4 border-2 border-black/10 dark:border-white/10 rounded-lg hover:border-emerald-500 dark:hover:border-emerald-400 transition-colors">
-                                        <h3 class="font-semibold text-lg mb-2">
-                                            {item.name}
-                                        </h3>
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">
-                                            {item.description}
-                                        </p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    ))
-                }
-            </div>
-
-            <!-- Resources -->
-            <div class="mt-16">
-                <h2
-                    class="text-xl sm:text-2xl font-display mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3"
-                >
-                    <i
-                        class="fa-solid fa-folder-open text-emerald-600 dark:text-emerald-400"
-                    ></i>
-                    Resources
-                </h2>
-                <div class="grid md:grid-cols-2 gap-6">
-                    {
-                        resources.map((resource) => (
-                            <a
-                                href={resource.link}
-                                target={
-                                    resource.link.startsWith("/demo")
-                                        ? "_self"
-                                        : "_blank"
-                                }
-                                class="group p-6 border-2 border-black/10 dark:border-white/10 rounded-lg hover:border-emerald-500 dark:hover:border-emerald-400 transition-all hover:-translate-y-1"
-                            >
-                                <div class="flex items-start gap-4">
-                                    <div
-                                        class={`w-12 h-12 rounded-lg bg-${resource.color}-100 dark:bg-${resource.color}-900/30 flex items-center justify-center flex-shrink-0`}
-                                    >
-                                        <i
-                                            class={`fa-solid ${resource.icon} text-${resource.color}-600 dark:text-${resource.color}-400 text-xl`}
-                                        />
-                                    </div>
-                                    <div class="flex-1">
-                                        <h3 class="font-semibold text-lg mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                                            {resource.title}
-                                            <i class="fa-solid fa-arrow-up-right-from-square ml-2 text-sm opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        </h3>
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">
-                                            {resource.description}
-                                        </p>
-                                    </div>
-                                </div>
-                            </a>
-                        ))
-                    }
-                </div>
-            </div>
-
-            <!-- Quick Links -->
-            <div
-                class="mt-16 p-8 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800"
-            >
-                <h2
-                    class="text-2xl font-display mb-4 inline-flex items-center gap-3"
-                >
-                    <i class="fa-solid fa-link"></i>
-                    <span>Quick Links</span>
-                </h2>
-                <div class="grid md:grid-cols-3 gap-4">
-                    <a
-                        href="/changelog"
-                        class="px-4 py-3 bg-white dark:bg-gray-800 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors border border-emerald-200 dark:border-emerald-800"
-                    >
-                        <i class="fa-solid fa-clock-rotate-left mr-2"></i>
-                        Changelog
-                    </a>
-                    <a
-                        href="/blog"
-                        class="px-4 py-3 bg-white dark:bg-gray-800 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors border border-emerald-200 dark:border-emerald-800"
-                    >
-                        <i class="fa-solid fa-newspaper mr-2"></i>
-                        Blog
-                    </a>
-                    <a
-                        href="https://github.com/ibedestudio/ibedes"
-                        target="_blank"
-                        class="px-4 py-3 bg-white dark:bg-gray-800 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/30 transition-colors border border-emerald-200 dark:border-emerald-800"
-                    >
-                        <i class="fa-brands fa-github mr-2"></i>
-                        GitHub
-                    </a>
-                </div>
-            </div>
-
-            <!-- Help Section -->
-            <div class="mt-12 text-center">
-                <p class="text-gray-600 dark:text-gray-400 mb-4">
-                    Butuh bantuan atau ada pertanyaan?
-                </p>
+            <div class="flex gap-2">
                 <a
-                    href={GLOBAL.contactWhatsApp}
+                    href="https://github.com/ibedestudio/ibedes"
                     target="_blank"
-                    class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
+                    class="cta-button cta-button--secondary text-xs py-2 px-4"
                 >
-                    <i class="fa-brands fa-whatsapp text-xl"></i>
-                    Contact Us
+                    <i class="fa-brands fa-github mr-2"></i> GitHub
                 </a>
             </div>
         </div>
-    </Section>
+
+        <!-- Documentation Grid -->
+        <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
+            {
+                docSections.map((section) => (
+                    <section class="space-y-6">
+                        <div class="flex items-center gap-3 pb-2 border-b border-border">
+                            <div class="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+                                <i class={`${section.icon} text-xl`} />
+                            </div>
+                            <h2 class="text-2xl font-display">
+                                {section.title}
+                            </h2>
+                        </div>
+
+                        <div class="grid gap-4">
+                            {section.items.map((item) => (
+                                <a
+                                    href={item.link}
+                                    class="group block p-5 rounded-xl border border-border bg-card hover:border-primary/50 hover:shadow-md transition-all duration-200"
+                                >
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h3 class="font-bold font-serif text-lg group-hover:text-primary transition-colors">
+                                            {item.title}
+                                        </h3>
+                                        {item.badge && (
+                                            <span class="px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-primary text-primary-foreground rounded-full">
+                                                {item.badge}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <p class="text-sm text-muted-foreground leading-relaxed">
+                                        {item.description}
+                                    </p>
+                                </a>
+                            ))}
+                        </div>
+                    </section>
+                ))
+            }
+        </div>
+
+        <!-- Help / Support -->
+        <section
+            class="mt-16 pt-12 border-t border-border text-center space-y-6"
+        >
+            <h2 class="text-2xl font-display">Need more help?</h2>
+            <p class="text-muted-foreground">
+                Can't find what you're looking for? Reach out to the team.
+            </p>
+            <div class="flex justify-center gap-4">
+                <a
+                    href={GLOBAL.contactWhatsApp}
+                    target="_blank"
+                    class="cta-button cta-button--primary"
+                >
+                    Contact Support
+                </a>
+            </div>
+        </section>
+    </div>
 </Layout>

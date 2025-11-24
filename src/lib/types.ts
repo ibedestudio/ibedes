@@ -90,4 +90,29 @@ export type ArticleFrontmatter = {
    * Context/Title for the affiliate section (e.g. "Recommended Gear")
    */
   affiliateContext?: string;
+
+  /**
+   * Publication date (alternative to timestamp)
+   */
+  pubDate?: string;
+
+  /**
+   * URL for the featured image
+   */
+  featuredImage?: string;
+
+  /**
+   * Caption/Credit for the featured image
+   */
+  featuredImageCaption?: string;
+
+  /**
+   * Alt text for the featured image
+   */
+  featuredImageAlt?: string;
+
+  /**
+   * Reading time provided by Astro/Remark
+   */
+  minutesRead?: string;
 };

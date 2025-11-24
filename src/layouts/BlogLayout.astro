@@ -34,7 +34,9 @@ type Props = MarkdownLayoutProps<ArticleFrontmatter>;
 const { frontmatter, headings } = Astro.props;
 const shortDescription = getShortDescription(frontmatter.description);
 const articleDate = processArticleDate(frontmatter.timestamp);
-const sourceUrl = generateSourceUrl(frontmatter.filename, "blog");
+const sourceUrl = frontmatter.filename
+  ? generateSourceUrl(frontmatter.filename, "blog")
+  : "";
 
 // Breadcrumb items
 const breadcrumbItems = [
@@ -57,7 +59,9 @@ const articleSchema = generateArticleSchema(
 );
 
 // Generate social meta tags with dynamic OG image
-const ogImageUrl = `${GLOBAL.rootUrl}/og/${frontmatter.filename}.svg`;
+const ogImageUrl = frontmatter.filename
+  ? `${GLOBAL.rootUrl}/og/${frontmatter.filename}.svg`
+  : `${GLOBAL.rootUrl}/og/default.svg`;
 const socialMeta = generateSocialMeta(
   frontmatter.title,
   frontmatter.description,
@@ -67,25 +71,24 @@ const socialMeta = generateSocialMeta(
 );
 
 // Get affiliate products for this article
-const articleAffiliate = getAffiliateByArticle(frontmatter.filename);
-let affiliateProducts = articleAffiliate
-  ? getAffiliateProductsByIds(articleAffiliate.productIds)
-  : [];
+let affiliateProducts: any[] = [];
 
-// Merge with frontmatter affiliate products
-if (frontmatter.affiliateProducts && frontmatter.affiliateProducts.length > 0) {
-  const frontmatterProducts = getAffiliateProductsByIds(
-    frontmatter.affiliateProducts,
-  );
-  // Combine and deduplicate based on ID
-  affiliateProducts = [...affiliateProducts, ...frontmatterProducts].filter(
-    (product, index, self) =>
-      index === self.findIndex((t) => t.id === product.id),
-  );
+// Only check for affiliate mapping if filename exists
+if (frontmatter.filename) {
+  const articleAffiliate = getAffiliateByArticle(frontmatter.filename);
+  if (articleAffiliate) {
+    const mappedProducts = getAffiliateProductsByIds(
+      articleAffiliate.productIds,
+    );
+    affiliateProducts = [...affiliateProducts, ...mappedProducts];
+  }
 }
 
-const affiliateContext =
-  frontmatter.affiliateContext || articleAffiliate?.context;
+if (frontmatter.affiliateProducts && frontmatter.affiliateProducts.length > 0) {
+  affiliateProducts = getAffiliateProductsByIds(frontmatter.affiliateProducts);
+}
+
+const affiliateContext = frontmatter.affiliateContext;
 ---
 
 <Layout
@@ -108,25 +111,56 @@ const affiliateContext =
           <!-- Breadcrumb Navigation -->
           <Breadcrumb items={breadcrumbItems} />
 
-          <div class="flex flex-col gap-4 mt-8 mb-16 w-full">
+          <div class="flex flex-col gap-4 mt-8 mb-8 w-full">
             <h1
               class="text-3xl sm:text-4xl leading-tight font-display break-words"
             >
               {frontmatter.title}
             </h1>
 
-            <div class="flex justify-between items-center text-sm w-full">
-              <span class="whitespace-nowrap">{articleDate}</span>
-              <span class="whitespace-nowrap">{frontmatter.time} min</span>
+            <div
+              class="flex justify-between items-center text-sm w-full text-muted-foreground font-mono"
+            >
+              <span class="whitespace-nowrap">
+                {
+                  processArticleDate(
+                    frontmatter.pubDate || frontmatter.timestamp || new Date(),
+                  )
+                }
+              </span>
+              <span class="whitespace-nowrap">
+                {frontmatter.minutesRead || frontmatter.time || "5 min"} read
+              </span>
             </div>
           </div>
+
+          {
+            frontmatter.featuredImage && (
+              <figure class="mb-10 w-full">
+                <div class="rounded-xl overflow-hidden shadow-sm">
+                  <img
+                    src={frontmatter.featuredImage}
+                    alt={frontmatter.featuredImageAlt || frontmatter.title}
+                    class="w-full h-auto object-cover max-h-[500px]"
+                  />
+                </div>
+                {frontmatter.featuredImageCaption && (
+                  <figcaption class="mt-3 text-center text-sm text-muted-foreground italic font-mono">
+                    <Fragment set:html={frontmatter.featuredImageCaption} />
+                  </figcaption>
+                )}
+              </figure>
+            )
+          }
 
           <Prose id="article-content">
             <slot />
           </Prose>
 
           <RelatedArticles
-            currentSlug={frontmatter.filename.split("/").pop() ?? ""}
+            currentSlug={frontmatter.filename
+              ? (frontmatter.filename.split("/").pop() ?? "")
+              : ""}
             tags={frontmatter.tags ?? []}
           />
 
@@ -172,7 +206,10 @@ const affiliateContext =
     title={frontmatter.title}
     url={frontmatter.url ?? sourceUrl}
   />
-  <FloatingReactions slug={frontmatter.filename} title={frontmatter.title} />
+  <FloatingReactions
+    slug={frontmatter.filename || "default"}
+    title={frontmatter.title}
+  />
 
   <!-- Structured Data -->
   <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />

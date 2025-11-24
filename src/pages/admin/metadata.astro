@@ -1,0 +1,251 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { GLOBAL } from "../../lib/variables";
+import { affiliateProducts } from "../../lib/affiliates";
+
+export const prerender = false;
+
+// Extract unique values
+const categories = [
+    ...new Set(affiliateProducts.map((p) => p.category).filter(Boolean)),
+].sort();
+const tags = [
+    ...new Set(affiliateProducts.flatMap((p) => p.tags || [])),
+].sort();
+
+// Calculate usage counts
+const categoryUsage = categories.map((cat) => ({
+    name: cat,
+    count: affiliateProducts.filter((p) => p.category === cat).length,
+}));
+
+const tagUsage = tags.map((tag) => ({
+    name: tag,
+    count: affiliateProducts.filter((p) => p.tags?.includes(tag)).length,
+}));
+---
+
+<Layout title={`Manage Metadata - ${GLOBAL.username}`}>
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <div class="flex items-center gap-4 mb-8">
+            <a
+                href="/admin"
+                class="text-muted-foreground hover:text-foreground transition-colors"
+            >
+                <i class="fa-solid fa-arrow-left text-xl"></i>
+            </a>
+            <h1
+                class="text-2xl sm:text-3xl font-display uppercase tracking-wider"
+            >
+                Manage Metadata
+            </h1>
+        </div>
+
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <!-- Categories Section -->
+            <div
+                class="zag-bg border-[3px] border-black/60 dark:border-white/70 rounded-xl p-6 shadow-sm"
+            >
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-folder text-primary"></i> Categories
+                </h2>
+                <div class="space-y-3">
+                    {
+                        categoryUsage.map((cat) => (
+                            <div class="flex items-center justify-between p-3 bg-muted/30 rounded-lg border border-black/10 dark:border-white/10">
+                                <div>
+                                    <span class="font-mono font-bold">
+                                        {cat.name}
+                                    </span>
+                                    <span class="text-xs text-muted-foreground ml-2">
+                                        ({cat.count})
+                                    </span>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button
+                                        class="rename-btn text-blue-600 hover:text-blue-700 p-1"
+                                        data-type="category"
+                                        data-value={cat.name}
+                                        title="Rename"
+                                    >
+                                        <i class="fa-solid fa-pen" />
+                                    </button>
+                                    <button
+                                        class="delete-btn text-red-600 hover:text-red-700 p-1"
+                                        data-type="category"
+                                        data-value={cat.name}
+                                        title="Delete"
+                                    >
+                                        <i class="fa-solid fa-trash" />
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </div>
+
+            <!-- Tags Section -->
+            <div
+                class="zag-bg border-[3px] border-black/60 dark:border-white/70 rounded-xl p-6 shadow-sm"
+            >
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-tags text-primary"></i> Tags
+                </h2>
+                <div class="space-y-3 max-h-[600px] overflow-y-auto pr-2">
+                    {
+                        tagUsage.map((tag) => (
+                            <div class="flex items-center justify-between p-3 bg-muted/30 rounded-lg border border-black/10 dark:border-white/10">
+                                <div>
+                                    <span class="font-mono font-bold text-sm">
+                                        #{tag.name}
+                                    </span>
+                                    <span class="text-xs text-muted-foreground ml-2">
+                                        ({tag.count})
+                                    </span>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button
+                                        class="rename-btn text-blue-600 hover:text-blue-700 p-1"
+                                        data-type="tag"
+                                        data-value={tag.name}
+                                        title="Rename"
+                                    >
+                                        <i class="fa-solid fa-pen" />
+                                    </button>
+                                    <button
+                                        class="delete-btn text-red-600 hover:text-red-700 p-1"
+                                        data-type="tag"
+                                        data-value={tag.name}
+                                        title="Delete"
+                                    >
+                                        <i class="fa-solid fa-trash" />
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </div>
+
+            <!-- Products Section -->
+            <div
+                class="zag-bg border-[3px] border-black/60 dark:border-white/70 rounded-xl p-6 shadow-sm md:col-span-2 lg:col-span-1"
+            >
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-box text-primary"></i> Products
+                </h2>
+                <div class="space-y-3 max-h-[600px] overflow-y-auto pr-2">
+                    {
+                        affiliateProducts.map((product) => (
+                            <div class="flex items-center justify-between p-3 bg-muted/30 rounded-lg border border-black/10 dark:border-white/10">
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-mono font-bold text-sm truncate">
+                                        {product.name}
+                                    </div>
+                                    <div class="text-xs text-muted-foreground">
+                                        ID: {product.id}
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <a
+                                        href={`/admin/edit-product?id=${product.id}`}
+                                        class="text-blue-600 hover:text-blue-700 p-1"
+                                        title="Edit"
+                                    >
+                                        <i class="fa-solid fa-pen" />
+                                    </a>
+                                    <button
+                                        class="delete-product-btn text-red-600 hover:text-red-700 p-1"
+                                        data-id={product.id}
+                                        data-name={product.name}
+                                        title="Delete"
+                                    >
+                                        <i class="fa-solid fa-trash" />
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle Rename
+        document.querySelectorAll(".rename-btn").forEach((btn) => {
+            btn.addEventListener("click", async () => {
+                const type = (btn as HTMLElement).dataset.type;
+                const oldValue = (btn as HTMLElement).dataset.value;
+
+                const newValue = prompt(
+                    `Rename ${type} "${oldValue}" to:`,
+                    oldValue,
+                );
+
+                if (newValue && newValue !== oldValue) {
+                    await updateMetadata(type, "rename", oldValue, newValue);
+                }
+            });
+        });
+
+        // Handle Delete Category/Tag
+        document.querySelectorAll(".delete-btn").forEach((btn) => {
+            btn.addEventListener("click", async () => {
+                const type = (btn as HTMLElement).dataset.type;
+                const value = (btn as HTMLElement).dataset.value;
+
+                if (
+                    confirm(
+                        `Are you sure you want to delete the ${type} "${value}"? This will remove it from all products.`,
+                    )
+                ) {
+                    await updateMetadata(type, "delete", value);
+                }
+            });
+        });
+
+        // Handle Delete Product
+        document.querySelectorAll(".delete-product-btn").forEach((btn) => {
+            btn.addEventListener("click", async () => {
+                const id = (btn as HTMLElement).dataset.id;
+                const name = (btn as HTMLElement).dataset.name;
+
+                if (
+                    confirm(
+                        `Are you sure you want to delete the product "${name}"? This action cannot be undone.`,
+                    )
+                ) {
+                    await updateMetadata("product", "delete", id);
+                }
+            });
+        });
+
+        async function updateMetadata(type, action, oldValue, newValue = null) {
+            try {
+                const response = await fetch("/api/admin/metadata", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ type, action, oldValue, newValue }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    if (typeof window.showToast === "function") {
+                        window.showToast(`${type} ${action}d successfully!`, {
+                            type: "success",
+                        });
+                    }
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    alert(`Error: ${result.error}`);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Failed to update metadata");
+            }
+        }
+    </script>
+</Layout>

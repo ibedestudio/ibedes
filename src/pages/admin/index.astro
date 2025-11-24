@@ -1,0 +1,414 @@
+---
+import fs from "node:fs/promises";
+import path from "node:path";
+import matter from "gray-matter";
+import Layout from "../../layouts/Layout.astro";
+import { GLOBAL } from "../../lib/variables";
+import { affiliateProducts } from "../../lib/affiliates";
+
+export const prerender = false;
+
+const blogDir = path.join(process.cwd(), "src/pages/blog");
+let articles = [];
+
+try {
+    const files = await fs.readdir(blogDir);
+    console.log(`[Admin] Found ${files.length} files in ${blogDir}`);
+    for (const file of files) {
+        if (file.endsWith(".md")) {
+            try {
+                const content = await fs.readFile(
+                    path.join(blogDir, file),
+                    "utf-8",
+                );
+                const { data } = matter(content);
+                articles.push({
+                    filename: file,
+                    title: data.title || file,
+                    description: data.description || "",
+                    date: data.pubDate || data.date || "",
+                    affiliateProducts: data.affiliateProducts || [],
+                });
+            } catch (err) {
+                console.error(`[Admin] Error parsing ${file}:`, err);
+            }
+        }
+    }
+} catch (e) {
+    console.error("[Admin] Error reading blog directory", e);
+}
+
+// Sort by date if available, otherwise filename
+articles.sort((a, b) => {
+    if (a.date && b.date)
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+    return a.filename.localeCompare(b.filename);
+});
+---
+
+<Layout title={`Admin Dashboard - ${GLOBAL.username}`}>
+    <div class="container mx-auto px-4 py-8 max-w-5xl">
+        <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8"
+        >
+            <div>
+                <h1
+                    class="text-2xl sm:text-4xl font-display uppercase tracking-wider"
+                >
+                    Admin Dashboard
+                </h1>
+                <p
+                    class="text-muted-foreground mt-2 text-sm sm:text-base font-serif italic"
+                >
+                    Manage your articles and affiliate links.
+                </p>
+            </div>
+            <div class="flex gap-3 flex-wrap">
+                <a
+                    href="/admin/editor"
+                    class="cta-button cta-button--primary flex-1 sm:flex-none flex items-center justify-center gap-2 no-underline"
+                >
+                    <i class="fa-solid fa-plus"></i> New Article
+                </a>
+                <a
+                    href="/admin/add-product"
+                    class="cta-button cta-button--secondary flex-1 sm:flex-none flex items-center justify-center gap-2 no-underline"
+                >
+                    <i class="fa-solid fa-tag"></i> Add Product
+                </a>
+                <a
+                    href="/admin/metadata"
+                    class="cta-button bg-blue-600 hover:bg-blue-700 text-white flex-1 sm:flex-none flex items-center justify-center gap-2 no-underline rounded-xl px-4 py-2 font-mono text-sm font-bold border-2 border-blue-800 transition-colors"
+                >
+                    <i class="fa-solid fa-list"></i> Metadata
+                </a>
+            </div>
+        </div>
+
+        <div class="grid gap-6">
+            <div
+                class="zag-bg border-[3px] border-black/60 dark:border-white/70 rounded-xl overflow-hidden shadow-sm"
+            >
+                <div
+                    class="p-6 border-b-[3px] border-black/60 dark:border-white/70 flex justify-between items-center bg-muted/20"
+                >
+                    <h2
+                        class="text-xl font-serif font-bold flex items-center gap-2"
+                    >
+                        <i class="fa-solid fa-newspaper text-primary"></i>
+                        Articles
+                    </h2>
+                    <span
+                        class="font-mono text-xs px-3 py-1 rounded-full border border-black/20 dark:border-white/20 bg-background"
+                    >
+                        {articles.length} posts
+                    </span>
+                </div>
+
+                <!-- Desktop Table View -->
+                <div class="hidden md:block overflow-x-auto">
+                    <table class="w-full text-left font-mono text-sm">
+                        <thead
+                            class="bg-muted/30 border-b-[3px] border-black/60 dark:border-white/70 uppercase"
+                        >
+                            <tr>
+                                <th class="px-6 py-4 font-bold">Title</th>
+                                <th class="px-6 py-4 font-bold">Date</th>
+                                <th class="px-6 py-4 font-bold">Affiliates</th>
+                                <th class="px-6 py-4 font-bold text-right"
+                                    >Actions</th
+                                >
+                            </tr>
+                        </thead>
+                        <tbody
+                            class="divide-y divide-black/10 dark:divide-white/10"
+                        >
+                            {
+                                articles.map((article) => (
+                                    <tr class="hover:bg-muted/10 transition-colors group">
+                                        <td class="px-6 py-4">
+                                            <div class="font-bold text-lg group-hover:text-primary transition-colors">
+                                                {article.title}
+                                            </div>
+                                            <div class="text-xs text-muted-foreground truncate max-w-md">
+                                                {article.filename}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 text-muted-foreground">
+                                            {article.date
+                                                ? new Date(
+                                                      article.date,
+                                                  ).toLocaleDateString()
+                                                : "-"}
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            {article.affiliateProducts &&
+                                            article.affiliateProducts.length >
+                                                0 ? (
+                                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                                                    <i class="fa-solid fa-tag text-[10px]" />
+                                                    {
+                                                        article
+                                                            .affiliateProducts
+                                                            .length
+                                                    }{" "}
+                                                    Products
+                                                </span>
+                                            ) : (
+                                                <span class="text-muted-foreground text-xs">
+                                                    -
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <div class="flex justify-end gap-3">
+                                                <a
+                                                    href={`/blog/${article.filename.replace(".md", "")}`}
+                                                    target="_blank"
+                                                    class="text-muted-foreground hover:text-foreground transition-colors"
+                                                    title="View"
+                                                >
+                                                    <i class="fa-solid fa-eye" />
+                                                </a>
+                                                <a
+                                                    href={`/admin/editor?file=${article.filename}`}
+                                                    class="text-primary hover:text-primary/80 transition-colors"
+                                                    title="Edit"
+                                                >
+                                                    <i class="fa-solid fa-pen-to-square" />
+                                                </a>
+                                                <button
+                                                    class="delete-btn text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+                                                    data-filename={
+                                                        article.filename
+                                                    }
+                                                    title="Delete"
+                                                >
+                                                    <i class="fa-solid fa-trash" />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile Card View -->
+                <div
+                    class="md:hidden divide-y divide-black/10 dark:divide-white/10 font-mono"
+                >
+                    {
+                        articles.map((article) => (
+                            <div class="p-4 flex flex-col gap-3">
+                                <div>
+                                    <h3 class="font-bold text-lg mb-1">
+                                        {article.title}
+                                    </h3>
+                                    <p class="text-xs text-muted-foreground">
+                                        {article.filename}
+                                    </p>
+                                </div>
+
+                                <div class="flex justify-between items-center text-sm text-muted-foreground">
+                                    <span>
+                                        <i class="fa-regular fa-calendar mr-2" />
+                                        {article.date
+                                            ? new Date(
+                                                  article.date,
+                                              ).toLocaleDateString()
+                                            : "-"}
+                                    </span>
+                                    {article.affiliateProducts &&
+                                    article.affiliateProducts.length > 0 ? (
+                                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                                            {article.affiliateProducts.length}{" "}
+                                            Products
+                                        </span>
+                                    ) : null}
+                                </div>
+                                <div class="flex gap-3 mt-2">
+                                    <a
+                                        href={`/blog/${article.filename.replace(".md", "")}`}
+                                        target="_blank"
+                                        class="flex-1 cta-button cta-button--secondary text-center py-2 text-xs flex items-center justify-center gap-2 no-underline"
+                                    >
+                                        <i class="fa-solid fa-eye" /> View
+                                    </a>
+                                    <a
+                                        href={`/admin/editor?file=${article.filename}`}
+                                        class="flex-1 cta-button cta-button--primary text-center py-2 text-xs flex items-center justify-center gap-2 no-underline"
+                                    >
+                                        <i class="fa-solid fa-pen-to-square" />{" "}
+                                        Edit
+                                    </a>
+                                    <button
+                                        class="delete-btn flex-1 cta-button text-center py-2 text-xs flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white border-red-600"
+                                        data-filename={article.filename}
+                                    >
+                                        <i class="fa-solid fa-trash" /> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12">
+            <div
+                class="zag-bg border-[3px] border-black/60 dark:border-white/70 rounded-xl overflow-hidden shadow-sm"
+            >
+                <div
+                    class="p-6 border-b-[3px] border-black/60 dark:border-white/70 flex justify-between items-center bg-muted/20"
+                >
+                    <h2
+                        class="text-xl font-serif font-bold flex items-center gap-2"
+                    >
+                        <i class="fa-solid fa-tags text-primary"></i>
+                        Affiliate Products
+                    </h2>
+                    <span
+                        class="font-mono text-xs px-3 py-1 rounded-full border border-black/20 dark:border-white/20 bg-background"
+                    >
+                        {affiliateProducts.length} items
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left font-mono text-sm">
+                        <thead
+                            class="bg-muted/30 border-b-[3px] border-black/60 dark:border-white/70 uppercase"
+                        >
+                            <tr>
+                                <th class="px-6 py-4 font-bold">Product</th>
+                                <th class="px-6 py-4 font-bold">Category</th>
+                                <th class="px-6 py-4 font-bold">Price</th>
+                                <th class="px-6 py-4 font-bold text-right"
+                                    >Actions</th
+                                >
+                            </tr>
+                        </thead>
+                        <tbody
+                            class="divide-y divide-black/10 dark:divide-white/10"
+                        >
+                            {
+                                affiliateProducts.map((product) => (
+                                    <tr class="hover:bg-muted/10 transition-colors group">
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-3">
+                                                <img
+                                                    src={product.image}
+                                                    alt={product.name}
+                                                    class="w-10 h-10 rounded object-cover border border-black/20 dark:border-white/20"
+                                                />
+                                                <div>
+                                                    <div class="font-bold group-hover:text-primary transition-colors line-clamp-1">
+                                                        {product.name}
+                                                    </div>
+                                                    <div class="text-xs text-muted-foreground font-mono">
+                                                        {product.id}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-muted/50 border border-black/10 dark:border-white/10">
+                                                {product.category}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            {product.price || "-"}
+                                            {product.discount && (
+                                                <span class="ml-2 text-xs text-red-500 font-bold">
+                                                    {product.discount} OFF
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <a
+                                                href={`/admin/edit-product?id=${product.id}`}
+                                                class="text-primary hover:text-primary/80 transition-colors"
+                                                title="Edit"
+                                            >
+                                                <i class="fa-solid fa-pen-to-square" />
+                                            </a>
+                                        </td>
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle delete button clicks
+        document.querySelectorAll(".delete-btn").forEach((btn) => {
+            btn.addEventListener("click", async (e) => {
+                const button = btn as HTMLButtonElement;
+                const filename = button.dataset.filename;
+
+                if (
+                    !confirm(
+                        `Are you sure you want to delete "${filename}"? This action cannot be undone.`,
+                    )
+                ) {
+                    return;
+                }
+
+                try {
+                    button.disabled = true;
+                    button.innerHTML =
+                        '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+                    const response = await fetch("/api/admin/delete", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ filename }),
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        // Show success toast
+                        if (typeof window.showToast === "function") {
+                            window.showToast("Article deleted successfully!", {
+                                type: "success",
+                            });
+                        }
+                        // Reload the page to show updated list
+                        setTimeout(() => window.location.reload(), 500);
+                    } else {
+                        if (typeof window.showToast === "function") {
+                            window.showToast("Error: " + result.error, {
+                                type: "error",
+                            });
+                        } else {
+                            alert("Error deleting file: " + result.error);
+                        }
+                        button.disabled = false;
+                        button.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                    }
+                } catch (error) {
+                    console.error(error);
+                    if (typeof window.showToast === "function") {
+                        window.showToast("Failed to delete article", {
+                            type: "error",
+                        });
+                    } else {
+                        alert("Error deleting file");
+                    }
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                }
+            });
+        });
+    </script>
+</Layout>

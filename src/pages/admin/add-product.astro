@@ -1,0 +1,392 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { GLOBAL } from "../../lib/variables";
+import { affiliateProducts } from "../../lib/affiliates";
+
+// Extract unique values for suggestions
+const existingIds = affiliateProducts.map((p) => p.id);
+const uniqueCategories = [
+    ...new Set(affiliateProducts.map((p) => p.category).filter(Boolean)),
+];
+const uniqueTags = [...new Set(affiliateProducts.flatMap((p) => p.tags || []))];
+
+export const prerender = false;
+---
+
+<Layout title={`Add Affiliate Product - ${GLOBAL.username}`}>
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"
+        >
+            <div class="flex items-center gap-4">
+                <a
+                    href="/admin"
+                    class="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                    <i class="fa-solid fa-arrow-left text-xl"></i>
+                </a>
+                <h1
+                    class="text-2xl sm:text-3xl font-display uppercase tracking-wider"
+                >
+                    Add Affiliate Product
+                </h1>
+            </div>
+            <button
+                id="save-product-btn"
+                class="cta-button cta-button--primary w-full sm:w-auto flex items-center justify-center gap-2"
+            >
+                <i class="fa-solid fa-save"></i> Save Product
+            </button>
+        </div>
+
+        <div
+            class="zag-bg border-[3px] border-black/60 dark:border-white/70 rounded-xl p-6 shadow-sm space-y-6"
+        >
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs font-mono font-bold mb-1"
+                        >Product ID*</label
+                    >
+                    <input
+                        type="text"
+                        id="product-id"
+                        placeholder="e.g., jas-hujan-sp4"
+                        required
+                        class="w-full rounded-xl border-[3px] border-black/60 dark:border-white/70 bg-transparent px-4 py-2 font-mono text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 dark:focus-visible:outline-emerald-300"
+                        list="existing-ids"
+                    />
+                    <datalist id="existing-ids">
+                        {existingIds.map((id) => <option value={id} />)}
+                    </datalist>
+                    <p class="text-xs text-muted-foreground mt-1 font-mono">
+                        Unique identifier (lowercase, use hyphens)
+                    </p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-mono font-bold mb-1"
+                        >Product Name*</label
+                    >
+                    <input
+                        type="text"
+                        id="product-name"
+                        placeholder="e.g., Jas Hujan Premium"
+                        required
+                        class="w-full rounded-xl border-[3px] border-black/60 dark:border-white/70 bg-transparent px-4 py-2 font-mono text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 dark:focus-visible:outline-emerald-300"
+                    />
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-mono font-bold mb-1"
+                    >Description*</label
+                >
+                <textarea
+                    id="product-description"
+                    rows="3"
+                    placeholder="Product description..."
+                    required
+                    class="w-full rounded-xl border-[3px] border-black/60 dark:border-white/70 bg-transparent px-4 py-2 font-mono text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 dark:focus-visible:outline-emerald-300 resize-none"
+                ></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs font-mono font-bold mb-1"
+                        >Price</label
+                    >
+                    <input
+                        type="text"
+                        id="product-price"
+                        placeholder="e.g., Rp 80.000"
+                        class="w-full rounded-xl border-[3px] border-black/60 dark:border-white/70 bg-transparent px-4 py-2 font-mono text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 dark:focus-visible:outline-emerald-300"
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-xs font-mono font-bold mb-1"
+                        >Original Price</label
+                    >
+                    <input
+                        type="text"
+                        id="product-original-price"
+                        placeholder="e.g., Rp 100.000"
+                        class="w-full rounded-xl border-[3px] border-black/60 dark:border-white/70 bg-transparent px-4 py-2 font-mono text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 dark:focus-visible:outline-emerald-300"
+                    />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs font-mono font-bold mb-1"
+                        >Discount</label
+                    >
+                    <input
+                        type="text"
+                        id="product-discount"
+                        placeholder="e.g., 20%"
+                        class="w-full rounded-xl border-[3px] border-black/60 dark:border-white/70 bg-transparent px-4 py-2 font-mono text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 dark:focus-visible:outline-emerald-300"
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-xs font-mono font-bold mb-1"
+                        >Platform*</label
+                    >
+                    <select
+                        id="product-platform"
+                        required
+                        class="w-full rounded-xl border-[3px] border-black/60 dark:border-white/70 bg-transparent px-4 py-2 font-mono text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 dark:focus-visible:outline-emerald-300"
+                    >
+                        <option value="shopee">Shopee</option>
+                        <option value="tokopedia">Tokopedia</option>
+                        <option value="lazada">Lazada</option>
+                        <option value="blibli">Blibli</option>
+                        <option value="tiktok">TikTok Shop</option>
+                        <option value="amazon">Amazon</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-mono font-bold mb-1"
+                    >Image URL*</label
+                >
+                <input
+                    type="url"
+                    id="product-image"
+                    placeholder="https://example.com/image.jpg"
+                    required
+                    class="w-full rounded-xl border-[3px] border-black/60 dark:border-white/70 bg-transparent px-4 py-2 font-mono text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 dark:focus-visible:outline-emerald-300"
+                />
+            </div>
+
+            <div>
+                <label class="block text-xs font-mono font-bold mb-1"
+                    >Affiliate Link*</label
+                >
+                <input
+                    type="url"
+                    id="product-link"
+                    placeholder="https://affiliate-link.com"
+                    required
+                    class="w-full rounded-xl border-[3px] border-black/60 dark:border-white/70 bg-transparent px-4 py-2 font-mono text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 dark:focus-visible:outline-emerald-300"
+                />
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs font-mono font-bold mb-1"
+                        >Category</label
+                    >
+                    <input
+                        type="text"
+                        id="product-category"
+                        placeholder="e.g., Productivity"
+                        class="w-full rounded-xl border-[3px] border-black/60 dark:border-white/70 bg-transparent px-4 py-2 font-mono text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 dark:focus-visible:outline-emerald-300"
+                        list="categories-list"
+                    />
+                    <datalist id="categories-list">
+                        {uniqueCategories.map((cat) => <option value={cat} />)}
+                    </datalist>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-mono font-bold mb-1"
+                        >Rating</label
+                    >
+                    <input
+                        type="number"
+                        id="product-rating"
+                        placeholder="4.8"
+                        min="0"
+                        max="5"
+                        step="0.1"
+                        class="w-full rounded-xl border-[3px] border-black/60 dark:border-white/70 bg-transparent px-4 py-2 font-mono text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 dark:focus-visible:outline-emerald-300"
+                    />
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-mono font-bold mb-1"
+                    >Tags (comma-separated)</label
+                >
+                <input
+                    type="text"
+                    id="product-tags"
+                    placeholder="e.g., outdoor, waterproof, essential"
+                    class="w-full rounded-xl border-[3px] border-black/60 dark:border-white/70 bg-transparent px-4 py-2 font-mono text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 dark:focus-visible:outline-emerald-300"
+                    list="tags-list"
+                />
+                <datalist id="tags-list">
+                    {uniqueTags.map((tag) => <option value={tag} />)}
+                </datalist>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <input
+                    type="checkbox"
+                    id="product-verified"
+                    class="rounded border-black/60 dark:border-white/70 text-primary focus:ring-primary"
+                />
+                <label for="product-verified" class="text-sm font-mono"
+                    >Mark as verified/recommended</label
+                >
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const saveBtn = document.getElementById("save-product-btn");
+        const priceInput = document.getElementById("product-price");
+        const originalPriceInput = document.getElementById(
+            "product-original-price",
+        );
+        const discountInput = document.getElementById("product-discount");
+
+        // Auto-calculate discount
+        function calculateDiscount() {
+            if (!priceInput || !originalPriceInput || !discountInput) return;
+
+            const priceStr = priceInput.value.replace(/[^0-9]/g, "");
+            const originalPriceStr = originalPriceInput.value.replace(
+                /[^0-9]/g,
+                "",
+            );
+
+            if (priceStr && originalPriceStr) {
+                const price = parseInt(priceStr);
+                const originalPrice = parseInt(originalPriceStr);
+
+                if (originalPrice > price) {
+                    const discount = Math.round(
+                        ((originalPrice - price) / originalPrice) * 100,
+                    );
+                    discountInput.value = `${discount}%`;
+                }
+            }
+        }
+
+        priceInput?.addEventListener("input", calculateDiscount);
+        originalPriceInput?.addEventListener("input", calculateDiscount);
+
+        saveBtn?.addEventListener("click", async () => {
+            const productId = document
+                .getElementById("product-id")
+                .value.trim();
+            const productName = document
+                .getElementById("product-name")
+                .value.trim();
+            const description = document
+                .getElementById("product-description")
+                .value.trim();
+            const price = document.getElementById("product-price").value.trim();
+            const originalPrice = document
+                .getElementById("product-original-price")
+                .value.trim();
+            const discount = document
+                .getElementById("product-discount")
+                .value.trim();
+            const platform = document.getElementById("product-platform").value;
+            const image = document.getElementById("product-image").value.trim();
+            const link = document.getElementById("product-link").value.trim();
+            // Process Category: Take first item if comma separated, trim
+            let categoryRaw = document
+                .getElementById("product-category")
+                .value.trim();
+            const category = categoryRaw.split(",")[0].trim() || "General";
+
+            // Process Tags: Split, trim, filter empty, unique
+            const tagsRaw = document.getElementById("product-tags").value;
+            const tags = [
+                ...new Set(
+                    tagsRaw
+                        .split(",")
+                        .map((t) => t.trim())
+                        .filter((t) => t),
+                ),
+            ];
+            const verified =
+                document.getElementById("product-verified").checked;
+
+            if (!productId || !productName || !description || !image || !link) {
+                if (typeof window.showToast === "function") {
+                    window.showToast("Please fill all required fields", {
+                        type: "error",
+                    });
+                } else {
+                    alert("Please fill all required fields");
+                }
+                return;
+            }
+
+            const product = {
+                id: productId,
+                name: productName,
+                description,
+                price: price || undefined,
+                originalPrice: originalPrice || undefined,
+                discount: discount || undefined,
+                image,
+                link,
+                platform,
+                category: category || "General",
+                tags,
+                rating: rating ? parseFloat(rating) : undefined,
+                verified,
+            };
+
+            try {
+                saveBtn.disabled = true;
+                saveBtn.innerHTML =
+                    '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+                const response = await fetch("/api/admin/add-product", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(product),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    if (typeof window.showToast === "function") {
+                        window.showToast("Product added successfully!", {
+                            type: "success",
+                        });
+                    }
+
+                    setTimeout(() => {
+                        window.location.href = "/admin";
+                    }, 1500);
+                } else {
+                    if (typeof window.showToast === "function") {
+                        window.showToast("Error: " + result.error, {
+                            type: "error",
+                        });
+                    } else {
+                        alert("Error: " + result.error);
+                    }
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML =
+                        '<i class="fa-solid fa-save"></i> Save Product';
+                }
+            } catch (error) {
+                console.error(error);
+                if (typeof window.showToast === "function") {
+                    window.showToast("Failed to save product", {
+                        type: "error",
+                    });
+                } else {
+                    alert("Failed to save product");
+                }
+                saveBtn.disabled = false;
+                saveBtn.innerHTML =
+                    '<i class="fa-solid fa-save"></i> Save Product';
+            }
+        });
+    </script>
+</Layout>

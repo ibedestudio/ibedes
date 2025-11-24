@@ -1,13 +1,21 @@
 ---
-layout: ../../layouts/BlogLayout.astro
+layout: "../../layouts/BlogLayout.astro"
 title: "Memulai dengan Berani"
 description: "Sebuah refleksi tentang makna keberanian dalam memulai sesuatu, di tengah rasa takut dan ketidaksiapan yang sering menghantui."
-tags: ["Motivasi", "Refleksi", "Kehidupan"]
-time: 6
-featured: true
-timestamp: "2025-11-07"
-filename: "memulai-dengan-berani"
-url: "/blog/memulai-dengan-berani"
+pubDate: "2025-11-24"
+filename: memulai-dengan-berani
+url: /blog/memulai-dengan-berani
+tags:
+  - Motivasi
+  - Keberanian
+  - Self-Improvement
+time: 5
+featured: false
+timestamp: 2025-11-24
+affiliateProducts:
+  - "jas-hujan-sp1"
+  - "jas-hujan-sp2"
+  - "jas-hujan-sp3"
 ---
 
 ## Memulai dengan Berani

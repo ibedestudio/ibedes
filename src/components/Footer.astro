@@ -20,6 +20,14 @@ const year = date.getFullYear();
             </li>
           ))
         }
+        {
+          GLOBAL.footerMenu &&
+            Object.entries(GLOBAL.footerMenu).map((i) => (
+              <li>
+                <Anchor url={i[1]}>{i[0]}</Anchor>
+              </li>
+            ))
+        }
       </ul>
       <div class="flex flex-start items-start gap-4 w-full">
         <i

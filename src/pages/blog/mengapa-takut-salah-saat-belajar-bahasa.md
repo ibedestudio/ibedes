@@ -1,13 +1,20 @@
 ---
-layout: ../../layouts/BlogLayout.astro
-title: "Mengapa Kita Takut Salah Saat Belajar Bahasa?"
-description: "Refleksi tentang rasa takut, gengsi, dan tekanan mental yang membuat orang dewasa sering merasa sulit berkembang dalam belajar bahasa — serta cara mengatasinya dengan lebih santai dan realistis."
-tags: ["Belajar Bahasa", "Refleksi", "Psikologi", "Bahasa Inggris"]
+layout: "../../layouts/BlogLayout.astro"
+tags:
+  - "Belajar Bahasa"
+  - "Refleksi"
+  - "Psikologi"
+  - "Bahasa Inggris"
 time: 8
 featured: true
 timestamp: "2025-11-09"
 filename: "mengapa-takut-salah-saat-belajar-bahasa"
 url: "/blog/mengapa-takut-salah-saat-belajar-bahasa"
+title: "Mengapa Kita Takut Salah Saat Belajar Bahasa?"
+description: "Refleksi tentang rasa takut, gengsi, dan tekanan mental yang membuat orang dewasa sering merasa sulit berkembang dalam belajar bahasa — serta cara mengatasinya dengan lebih santai dan realistis."
+pubDate: "2025-11-24"
+affiliateProducts:
+  - "jas-hujan-sp3"
 ---
 
 <figure class="max-w-xl mx-auto my-8">

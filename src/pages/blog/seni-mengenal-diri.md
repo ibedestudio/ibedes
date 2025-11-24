@@ -1,26 +1,27 @@
 ---
-layout: ../../layouts/BlogLayout.astro
-title: "Seni Mengenal Diri: Antara Akal, Jiwa, dan Cinta Ilahi"
-description: "Renungan tentang bagaimana manusia dapat mengenal dirinya melalui keseimbangan antara akal yang berpikir, jiwa yang merasa, dan cinta Ilahi yang menuntun keduanya kembali kepada sumbernya."
-tags: ["Tasawuf", "Filsafat Islam", "Refleksi", "Spiritual", "Jiwa"]
+layout: "../../layouts/BlogLayout.astro"
+tags:
+  - "Tasawuf"
+  - "Filsafat Islam"
+  - "Refleksi"
+  - "Spiritual"
+  - "Jiwa"
 time: 9
 featured: true
 timestamp: "2025-11-12"
 filename: "seni-mengenal-diri"
 url: "/blog/seni-mengenal-diri"
+title: "Seni Mengenal Diri: Antara Akal, Jiwa, dan Cinta Ilahi"
+description: "Renungan tentang bagaimana manusia dapat mengenal dirinya melalui keseimbangan antara akal yang berpikir, jiwa yang merasa, dan cinta Ilahi yang menuntun keduanya kembali kepada sumbernya."
+pubDate: "2025-11-24"
+featuredImage: "https://images.unsplash.com/photo-1503264116251-35a269479413?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1470"
+featuredImageAlt: "Cahaya pagi lembut menembus kabut, simbol keseimbangan antara akal, jiwa, dan cinta Ilahi"
+featuredImageCaption: "Foto oleh <b>Tim Foster</b> di Unsplash"
+affiliateProducts:
+  - "jas-hujan-sp3"
+  - "tripod-kamera-1"
+  - "smart-watch-1"
 ---
-
-<figure class="max-w-xl mx-auto my-8">
-  <img
-    src="https://images.unsplash.com/photo-1503264116251-35a269479413?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1470"
-    alt="Cahaya pagi lembut menembus kabut, simbol keseimbangan antara akal, jiwa, dan cinta Ilahi"
-    class="w-full rounded-lg shadow-md"
-    loading="lazy"
-  />
-  <figcaption class="mt-3 text-center text-sm text-zag-dark/70 dark:text-zag-light/70">
-    Foto oleh <b>Tim Foster</b> di Unsplash
-  </figcaption>
-</figure>
 
 ## Seni Mengenal Diri: Antara Akal, Jiwa, dan Cinta Ilahi
 

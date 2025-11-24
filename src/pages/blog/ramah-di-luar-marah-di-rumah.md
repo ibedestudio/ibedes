@@ -1,13 +1,23 @@
 ---
-layout: ../../layouts/BlogLayout.astro
-title: "Mengapa Seseorang Bisa Ramah di Luar, tapi Mudah Meledak di Rumah?"
-description: "Sebuah refleksi psikologis dan emosional tentang fenomena umum: seseorang terlihat ramah di luar rumah, namun mudah marah kepada keluarga. Mengapa ini terjadi, dan apa yang sebenarnya sedang terjadi di dalam dirinya?"
-tags: ["Refleksi", "Psikologi", "Keluarga", "Emosi", "Ayah"]
+layout: "../../layouts/BlogLayout.astro"
+tags:
+  - "Refleksi"
+  - "Psikologi"
+  - "Keluarga"
+  - "Emosi"
+  - "Ayah"
 time: 7
 featured: true
 timestamp: "2025-11-12"
 filename: "ramah-di-luar-marah-di-rumah"
 url: "/blog/ramah-di-luar-marah-di-rumah"
+title: "Mengapa Seseorang Bisa Ramah di Luar, tapi Mudah Meledak di Rumah?"
+description: "Sebuah refleksi psikologis dan emosional tentang fenomena umum: seseorang terlihat ramah di luar rumah, namun mudah marah kepada keluarga. Mengapa ini terjadi, dan apa yang sebenarnya sedang terjadi di dalam dirinya?"
+pubDate: "2025-11-24"
+affiliateProducts:
+  - "jas-hujan-sp3"
+  - "tripod-kamera-1"
+  - "smart-watch-1"
 ---
 
 <figure class="max-w-xl mx-auto my-8">

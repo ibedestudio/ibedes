@@ -36,10 +36,12 @@ export const GLOBAL = {
   // Menu items
   menu: {
     home: "/",
-    services: "/services",
-    swag: "/swag",
-    projects: "/projects",
     blog: "/blog",
+    swag: "/swag",
+    services: "/services",
+  },
+  footerMenu: {
+    projects: "/projects",
   },
 
   contactEmail: "ibedestudio@gmail.com",

@@ -1,13 +1,19 @@
 ---
-layout: ../../layouts/BlogLayout.astro
-title: "Mulai dengan Why Sebelum How"
-description: "Sebelum memikirkan bahasa apa yang harus dipelajari, tentukan dulu alasan kenapa kamu mau belajar coding. Langkah ini sederhana tapi penting agar kamu tidak mudah menyerah."
-tags: ["Motivasi", "Belajar Coding", "Mindset Pemula"]
+layout: "../../layouts/BlogLayout.astro"
+tags:
+  - "Motivasi"
+  - "Belajar Coding"
+  - "Mindset Pemula"
 time: 7
 featured: true
 timestamp: "2025-11-07"
 filename: "mulai-dengan-why-sebelum-how"
 url: "/blog/mulai-dengan-why-sebelum-how"
+title: "Mulai dengan Why Sebelum How"
+description: "Sebelum memikirkan bahasa apa yang harus dipelajari, tentukan dulu alasan kenapa kamu mau belajar coding. Langkah ini sederhana tapi penting agar kamu tidak mudah menyerah."
+pubDate: "2025-11-24"
+affiliateProducts:
+  - "jas-hujan-sp1"
 ---
 
 ## Mulai dengan Why Sebelum How

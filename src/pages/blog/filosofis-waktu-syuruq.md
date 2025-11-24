@@ -1,31 +1,25 @@
 ---
-layout: ../../layouts/BlogLayout.astro
-title: Filosofisnya Waktu Syurūq
-description: Renungan tentang syurūq sebagai transisi dari gelap menuju terang, waktu ketika hati manusia menjadi paling lembut dan paling mudah menerima ketenangan.
+layout: "../../layouts/BlogLayout.astro"
+filename: "filosofis-waktu-syuruq"
+url: "/blog/filosofis-waktu-syuruq"
 tags:
-  - Refleksi
-  - Spiritual
-  - Sufistik
-  - Syuruk
-  - Dzikir
+  - "Refleksi"
+  - "Spiritual"
+  - "Sufistik"
+  - "Syuruk"
+  - "Dzikir"
 time: 8
 featured: true
-timestamp: 2025-11-11
-filename: filosofis-waktu-syuruq
-url: /blog/filosofis-waktu-syuruq
+timestamp: "2025-11-11T00:00:00.000Z"
+title: "Filosofisnya Waktu Syurūq"
+description: "Renungan tentang syurūq sebagai transisi dari gelap menuju terang, waktu ketika hati manusia menjadi paling lembut dan paling mudah menerima ketenangan."
+pubDate: "2025-11-24"
+featuredImage: "https://images.pexels.com/photos/13710182/pexels-photo-13710182.jpeg"
+affiliateProducts:
+  - "jas-hujan-sp2"
+  - "tripod-kamera-1"
+affiliateContext: "Produk yang bisa membantu perjalanan berani memulai hal baru:"
 ---
-
-<figure class="max-w-xl mx-auto my-8">
-  <img
-    src="https://images.pexels.com/photos/13710182/pexels-photo-13710182.jpeg"
-    alt="Cahaya syurūq yang perlahan naik di ufuk timur"
-    class="w-full rounded-lg shadow-md"
-    loading="lazy"
-  />
-  <figcaption class="mt-3 text-center text-sm text-zag-dark/70 dark:text-zag-light/70">
-    Photo by <b>Alex wolf</b> <a href = "https://www.pexels.com/photo/car-with-the-lights-on-at-sunset-on-the-beach-of-tuxpan-veracruz-in-mexico-13710182/">pexels</a>
-  </figcaption>
-</figure>
 
 ## Filosofisnya Waktu Syurūq
 

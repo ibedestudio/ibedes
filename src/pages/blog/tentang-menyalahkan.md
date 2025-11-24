@@ -1,13 +1,21 @@
 ---
-layout: ../../layouts/BlogLayout.astro
-title: "Tentang Menyalahkan, dan Mengapa Kita Suka Melakukannya"
-description: "Sebuah refleksi tentang kecenderungan manusia untuk saling menyalahkan, dan bagaimana cara keluar dari lingkaran itu dengan lebih tenang dan dewasa."
-tags: ["Refleksi", "Kehidupan", "Psikologi"]
+layout: "../../layouts/BlogLayout.astro"
+tags:
+  - "Refleksi"
+  - "Kehidupan"
+  - "Psikologi"
 time: 7
 featured: true
 timestamp: "2025-11-08"
 filename: "tentang-menyalahkan"
 url: "/blog/tentang-menyalahkan"
+title: "Tentang Menyalahkan, dan Mengapa Kita Suka Melakukannya"
+description: "Sebuah refleksi tentang kecenderungan manusia untuk saling menyalahkan, dan bagaimana cara keluar dari lingkaran itu dengan lebih tenang dan dewasa."
+pubDate: "2025-11-24"
+affiliateProducts:
+  - "jas-hujan-sp3"
+  - "tripod-kamera-1"
+  - "smart-watch-1"
 ---
 
 <figure class="max-w-xl mx-auto my-8">

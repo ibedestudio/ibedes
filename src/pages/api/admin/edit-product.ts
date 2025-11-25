@@ -1,9 +1,31 @@
-import type { APIRoute } from 'astro';
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import type { APIRoute } from "astro";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import type { AffiliateProduct } from "../../../lib/affiliates";
 
 export const prerender = false;
+
+const normalizePrice = (value?: string) => {
+    if (!value) return undefined;
+    const digits = String(value).replace(/[^\d]/g, "");
+    return digits || undefined;
+};
+
+const normalizeTags = (tags: unknown): string[] => {
+    if (Array.isArray(tags)) {
+        return tags
+            .map((tag) => String(tag).trim())
+            .filter((tag) => tag.length > 0);
+    }
+    if (typeof tags === "string") {
+        return tags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter((tag) => tag.length > 0);
+    }
+    return [];
+};
 
 export const POST: APIRoute = async ({ request }) => {
     try {
@@ -13,58 +35,78 @@ export const POST: APIRoute = async ({ request }) => {
 
         // Validate required fields
         if (!product.id || !product.name || !product.description || !product.image || !product.link || !product.platform) {
-            return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 });
+            return new Response(JSON.stringify({ error: "Missing required fields" }), { status: 400 });
         }
 
-        // Read the current affiliates.ts file
-        const currentDir = fileURLToPath(new URL('.', import.meta.url));
-        const projectRoot = path.resolve(currentDir, '../../../../');
-        const affiliatesPath = path.join(projectRoot, 'src/lib/affiliates.ts');
-        let fileContent = await fs.readFile(affiliatesPath, 'utf-8');
+        const currentDir = fileURLToPath(new URL(".", import.meta.url));
+        const projectRoot = path.resolve(currentDir, "../../../../");
+        const affiliatesJsonPath = path.join(
+            projectRoot,
+            "src/data/affiliate-products.json",
+        );
 
-        // Construct the new product entry string
-        const newProductEntry = `{
-        id: ${JSON.stringify(product.id)},
-        name: ${JSON.stringify(product.name)},
-        description: ${JSON.stringify(product.description)},
-        ${product.price ? `price: ${JSON.stringify(product.price)},` : ''}
-        ${product.originalPrice ? `originalPrice: ${JSON.stringify(product.originalPrice)},` : ''}
-        ${product.discount ? `discount: ${JSON.stringify(product.discount)},` : ''}
-        image: ${JSON.stringify(product.image)},
-        link: ${JSON.stringify(product.link)},
-        platform: ${JSON.stringify(product.platform)},
-        category: ${JSON.stringify(product.category || 'General')},
-        tags: [${product.tags?.map((t: string) => JSON.stringify(t)).join(', ') || ''}],
-        ${product.rating ? `rating: ${product.rating},` : ''}
-        ${product.verified ? `verified: true` : ''}
-    }`;
+        let products: AffiliateProduct[] = [];
 
-        // Find the product block to replace
-        // We look for { ... id: 'product-id' ... }
-        // The regex looks for:
-        // 1. { (start of object)
-        // 2. Any whitespace
-        // 3. id: 'product.id' (or "product.id")
-        // 4. Any content until the matching closing brace }
-
-        // Note: This regex assumes the standard formatting we use. 
-        // It matches from the opening { containing the ID, up to the next } that is followed by a comma or end of array.
-
-        const regex = new RegExp(`\\{\\s*id:\\s*['"]${product.id}['"][\\s\\S]*?\\}`, 'g');
-
-        if (!regex.test(fileContent)) {
-            return new Response(JSON.stringify({ error: 'Product not found in file' }), { status: 404 });
+        try {
+            const fileContent = await fs.readFile(affiliatesJsonPath, "utf-8");
+            products = JSON.parse(fileContent);
+        } catch (err) {
+            console.error("[Admin API] Unable to read affiliate-products.json", err);
+            return new Response(
+                JSON.stringify({ error: "Affiliate product store not found" }),
+                { status: 500 },
+            );
         }
 
-        fileContent = fileContent.replace(regex, newProductEntry);
+        const productIndex = products.findIndex(
+            (item) => item.id.toLowerCase() === String(product.id).toLowerCase(),
+        );
+
+        if (productIndex === -1) {
+            return new Response(JSON.stringify({ error: "Product not found in store" }), {
+                status: 404,
+            });
+        }
+
+        const normalizedPrice = normalizePrice(product.price);
+        const normalizedOriginalPrice = normalizePrice(product.originalPrice);
+
+        const updatedProduct: AffiliateProduct = {
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            image: product.image,
+            link: product.link,
+            platform: product.platform,
+            category: product.category || "General",
+            tags: normalizeTags(product.tags),
+            verified: Boolean(product.verified),
+        };
+
+        if (normalizedPrice) updatedProduct.price = normalizedPrice;
+        if (normalizedOriginalPrice)
+            updatedProduct.originalPrice = normalizedOriginalPrice;
+        if (product.discount) updatedProduct.discount = product.discount;
+        if (typeof product.rating === "number" && !Number.isNaN(product.rating)) {
+            updatedProduct.rating = product.rating;
+        }
+
+        products[productIndex] = updatedProduct;
 
         // Write back to file
-        await fs.writeFile(affiliatesPath, fileContent, 'utf-8');
+        await fs.writeFile(
+            affiliatesJsonPath,
+            JSON.stringify(products, null, 4),
+            "utf-8",
+        );
         console.log(`[Admin API] Product updated successfully`);
 
-        return new Response(JSON.stringify({ success: true, message: 'Product updated successfully' }), { status: 200 });
+        return new Response(
+            JSON.stringify({ success: true, message: "Product updated successfully" }),
+            { status: 200 },
+        );
     } catch (error: any) {
-        console.error('[Admin API] Error updating product:', error);
-        return new Response(JSON.stringify({ error: error.message || 'Internal Server Error' }), { status: 500 });
+        console.error("[Admin API] Error updating product:", error);
+        return new Response(JSON.stringify({ error: error.message || "Internal Server Error" }), { status: 500 });
     }
 };

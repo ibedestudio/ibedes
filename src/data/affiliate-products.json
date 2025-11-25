@@ -1,0 +1,153 @@
+[
+    {
+        "id": "jas-hujan-sp1",
+        "name": "Jas Hujan Setelan Premium Unisex (Hitam)",
+        "description": "Setelan jas hujan double-layer dengan bahan anti rembes untuk perjalanan motor atau aktivitas luar ruangan.",
+        "price": "79000",
+        "originalPrice": "120000",
+        "discount": "34%",
+        "image": "https://down-tx-id.img.susercontent.com/id-11134207-7rbk1-majvemtwdal586.webp",
+        "link": "https://s.shopee.co.id/6fZetdnADp",
+        "platform": "shopee",
+        "category": "Outdoor",
+        "tags": [
+            "perjalanan",
+            "motor",
+            "hujan"
+        ],
+        "rating": 4.8,
+        "verified": true
+    },
+    {
+        "id": "jas-hujan-sp2",
+        "name": "Jas Hujan Setelan Premium Unisex (Navy)",
+        "description": "Versi navy dengan material tebal dan jahitan press untuk perlindungan ekstra saat hujan deras.",
+        "price": "82000",
+        "originalPrice": "135000",
+        "discount": "39%",
+        "image": "https://down-tx-id.img.susercontent.com/id-11134207-81ztf-mf24l8x0wglp96.webp",
+        "link": "https://s.shopee.co.id/5VNhWKJC84",
+        "platform": "shopee",
+        "category": "Outdoor",
+        "tags": [
+            "perjalanan",
+            "hujan",
+            "safety"
+        ],
+        "rating": 4.8,
+        "verified": true
+    },
+    {
+        "id": "jas-hujan-sp3",
+        "name": "Jas Hujan Setelan Premium Unisex (Army)",
+        "description": "Pilihan warna army dengan reflektor malam dan kantong ritsleting, cocok untuk komuter harian.",
+        "price": "84000",
+        "originalPrice": "149000",
+        "discount": "44%",
+        "image": "https://down-tx-id.img.susercontent.com/id-11134207-81ztf-mf24l8x0wglp96.webp",
+        "link": "https://s.shopee.co.id/5VNhWKJC84",
+        "platform": "shopee",
+        "category": "Outdoor",
+        "tags": [
+            "perjalanan",
+            "refleksi",
+            "mindful-living"
+        ],
+        "rating": 4.9,
+        "verified": true
+    },
+    {
+        "id": "tripod-kamera-1",
+        "name": "INBEX IB-2R 170CM Tripod + Bluetooth Remote",
+        "description": "Tripod aluminium tinggi dengan holder HP, remote bluetooth, dan tas jinjing untuk produksi konten stabil.",
+        "price": "79699",
+        "originalPrice": "400000",
+        "discount": "80%",
+        "image": "https://down-id.img.susercontent.com/file/id-11134207-7r98s-ly7rdig42me338@resize_w450_nl.webp",
+        "link": "https://s.shopee.co.id/3fw7k6v8Hg",
+        "platform": "shopee",
+        "category": "Content Creation",
+        "tags": [
+            "kamera",
+            "tripod",
+            "konten"
+        ],
+        "rating": 4.8,
+        "verified": true
+    },
+    {
+        "id": "smart-watch-1",
+        "name": "Samsung SmartWatch XS 11 PRO MAX",
+        "description": "Jam tangan pintar dengan sensor kesehatan, notifikasi real-time, dan baterai tahan lama untuk menjaga ritme produktif.",
+        "price": "142499",
+        "originalPrice": "8888888",
+        "discount": "98%",
+        "image": "https://down-ws-id.img.susercontent.com/id-11134207-82250-mh9x4u6msrgvc9.webp",
+        "link": "https://s.shopee.co.id/9zqBGrKNwi",
+        "platform": "shopee",
+        "category": "Wearables",
+        "tags": [
+            "smartwatch",
+            "produktivitas",
+            "kesehatan"
+        ],
+        "rating": 4.7,
+        "verified": true
+    },
+    {
+        "id": "kipas-portable1",
+        "name": "USB Mini Fan Kipas Digital Display",
+        "description": "Kipas portable turbo dengan layar indikator baterai dan sudut adjustable.",
+        "price": "43700",
+        "originalPrice": "45000",
+        "discount": "3%",
+        "image": "https://down-id.img.susercontent.com/file/sg-11134201-8258x-mev4122dts05ef.webp",
+        "link": "https://s.shopee.co.id/6pt9xT2VpM",
+        "platform": "shopee",
+        "category": "Home Office",
+        "tags": [
+            "kipasusb",
+            "elektronik",
+            "portable"
+        ],
+        "rating": 4.7,
+        "verified": true
+    },
+    {
+        "id": "kipas-portable2",
+        "name": "USB Mini Fan Kipas High-speed kipas kipas angin Digital Display Adjustable Turbo kipas Fan USB Mini Fan",
+        "description": "Mini kipas Strong Wind 100 Gear Wind Speed kipas angin LED Display Adjustable Turbo kipas tangan untuk olahraga luar ruangan dan pendinginan cepat",
+        "image": "https://down-cvs-id.img.susercontent.com/id-11134207-8224u-mg4l8vn391qlb8.webp",
+        "link": "https://s.shopee.co.id/3AzrbeWyUp",
+        "platform": "shopee",
+        "category": "kipas USB",
+        "tags": [
+            "kipasusb",
+            "elektronik",
+            "gadget"
+        ],
+        "verified": false,
+        "price": "123000",
+        "originalPrice": "300000",
+        "discount": "59%",
+        "rating": 4.9
+    },
+    {
+        "id": "TWS-Earbuds1",
+        "name": "Soundcore Anker R50i NC Earbuds Adaptive Noise Canceling Headset Earphone Bluetooth 5.4 TWS Low Latency",
+        "description": "Waktu Putar yang Panjang: Saat ANC dimatikan, earbud ini memberikan hingga 10 jam pemutaran dari satu kali pengisian, dapat diperpanjang hingga 45 jam dengan casing. Saat ANC diaktifkan, Anda mendapatkan 7 jam penggunaan dan 30 jam dengan casing pengisian. Pada saat situasi mendesak, pengisian cepat 10 menit memberikan tambahan 2 jam waktu pemutaran.",
+        "image": "https://affiliate.shopee.co.id/offer/product_offer/25578048399?trace=%7B%22trace_id%22%3A%220.LgT3s8YAHn.100%22%2C%22list_type%22%3A100%2C%22exp_group_ids%22%3A%5B568996%2C516444%2C568994%2C568989%2C447311%2C592696%2C568978%2C592758%2C568972%2C600605%2C601382%2C568998%2C447104%2C502629%2C602372%5D%2C%22root_trace_id%22%3A%220.LgT3s8YAHn.100%22%2C%22root_list_type%22%3A100%7D",
+        "link": "https://s.shopee.co.id/6fZjobmxaG",
+        "platform": "shopee",
+        "category": "TWS",
+        "tags": [
+            "elektronik",
+            "tws",
+            "gadget"
+        ],
+        "price": "287000",
+        "originalPrice": "1099000",
+        "discount": "74%",
+        "rating": 4.9
+    }
+]

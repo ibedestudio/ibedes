@@ -4,11 +4,13 @@ import path from "node:path";
 import matter from "gray-matter";
 import Layout from "../../layouts/Layout.astro";
 import { GLOBAL } from "../../lib/variables";
-import { affiliateProducts } from "../../lib/affiliates";
+import { loadAffiliateProducts } from "../../lib/affiliates";
+import { formatRupiah } from "../../lib/utils";
 
 export const prerender = false;
 
 const blogDir = path.join(process.cwd(), "src/pages/blog");
+const affiliateProducts = await loadAffiliateProducts();
 let articles = [];
 let totalWords = 0;
 let totalReadingTime = 0;
@@ -305,7 +307,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                             <p class="admin-product__title">{product.name}</p>
                                             <p class="admin-product__meta">{product.category ?? "Kategori belum diisi"}</p>
                                             <p class="admin-product__price">
-                                                {product.price ?? "-"}
+                                                {formatRupiah(product.price)}
                                                 {product.discount && (
                                                     <span class="admin-pill-badge">{product.discount} OFF</span>
                                                 )}
@@ -447,7 +449,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                         </div>
                                         <div>
                                             <dt>Harga</dt>
-                                            <dd>{product.price ?? "-"}</dd>
+                                            <dd>{formatRupiah(product.price)}</dd>
                                         </div>
                                         {product.discount ? (
                                             <div>

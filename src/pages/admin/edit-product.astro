@@ -1,7 +1,10 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { GLOBAL } from "../../lib/variables";
-import { affiliateProducts } from "../../lib/affiliates";
+import { loadAffiliateProducts } from "../../lib/affiliates";
+import { formatRupiah } from "../../lib/utils";
+
+const affiliateProducts = await loadAffiliateProducts();
 
 // Extract unique values for suggestions
 const existingIds = affiliateProducts.map((p) => p.id);
@@ -104,8 +107,10 @@ if (!product) {
                     <input
                         type="text"
                         id="product-price"
-                        value={product.price || ""}
-                        placeholder="e.g., Rp 80.000"
+                        value={product.price ? formatRupiah(product.price) : ""}
+                        placeholder="Rp 0"
+                        inputmode="numeric"
+                        data-currency-input
                         class="w-full rounded-xl border-[3px] border-black/60 dark:border-white/70 bg-transparent px-4 py-2 font-mono text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 dark:focus-visible:outline-emerald-300"
                     />
                 </div>
@@ -117,8 +122,14 @@ if (!product) {
                     <input
                         type="text"
                         id="product-original-price"
-                        value={product.originalPrice || ""}
-                        placeholder="e.g., Rp 100.000"
+                        value={
+                            product.originalPrice
+                                ? formatRupiah(product.originalPrice)
+                                : ""
+                        }
+                        placeholder="Rp 0"
+                        inputmode="numeric"
+                        data-currency-input
                         class="w-full rounded-xl border-[3px] border-black/60 dark:border-white/70 bg-transparent px-4 py-2 font-mono text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 dark:focus-visible:outline-emerald-300"
                     />
                 </div>
@@ -287,16 +298,39 @@ if (!product) {
             "product-original-price",
         );
         const discountInput = document.getElementById("product-discount");
+        const ratingInput = document.getElementById("product-rating");
+
+        const getNumericValue = (value = "") =>
+            value.toString().replace(/[^0-9]/g, "");
+
+        const formatCurrencyDisplay = (digits = "") =>
+            digits
+                ? `Rp ${digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`
+                : "";
+
+        function enhanceCurrencyInput(input) {
+            if (!input) return;
+            const applyFormat = () => {
+                const digits = getNumericValue(input.value);
+                input.value = formatCurrencyDisplay(digits);
+            };
+            input.addEventListener("focus", () => {
+                input.value = getNumericValue(input.value);
+            });
+            input.addEventListener("blur", applyFormat);
+            applyFormat();
+        }
+
+        document
+            .querySelectorAll("[data-currency-input]")
+            .forEach((input) => enhanceCurrencyInput(input));
 
         // Auto-calculate discount
         function calculateDiscount() {
             if (!priceInput || !originalPriceInput || !discountInput) return;
 
-            const priceStr = priceInput.value.replace(/[^0-9]/g, "");
-            const originalPriceStr = originalPriceInput.value.replace(
-                /[^0-9]/g,
-                "",
-            );
+            const priceStr = getNumericValue(priceInput.value);
+            const originalPriceStr = getNumericValue(originalPriceInput.value);
 
             if (priceStr && originalPriceStr) {
                 const price = parseInt(priceStr);
@@ -324,10 +358,12 @@ if (!product) {
             const description = document
                 .getElementById("product-description")
                 .value.trim();
-            const price = document.getElementById("product-price").value.trim();
-            const originalPrice = document
-                .getElementById("product-original-price")
-                .value.trim();
+            const priceValue = getNumericValue(
+                document.getElementById("product-price").value,
+            );
+            const originalPriceValue = getNumericValue(
+                document.getElementById("product-original-price").value,
+            );
             const discount = document
                 .getElementById("product-discount")
                 .value.trim();
@@ -350,6 +386,7 @@ if (!product) {
                         .filter((t) => t),
                 ),
             ];
+            const ratingValue = ratingInput?.value.trim();
             const verified =
                 document.getElementById("product-verified").checked;
 
@@ -368,15 +405,15 @@ if (!product) {
                 id: productId,
                 name: productName,
                 description,
-                price: price || undefined,
-                originalPrice: originalPrice || undefined,
+                price: priceValue || undefined,
+                originalPrice: originalPriceValue || undefined,
                 discount: discount || undefined,
                 image,
                 link,
                 platform,
                 category: category || "General",
                 tags,
-                rating: rating ? parseFloat(rating) : undefined,
+                rating: ratingValue ? parseFloat(ratingValue) : undefined,
                 verified,
             };
 

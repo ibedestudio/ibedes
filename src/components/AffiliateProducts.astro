@@ -4,6 +4,7 @@ import type { AffiliateProduct } from "../lib/affiliates";
 import { platformConfig } from "../lib/affiliates";
 import { generateProductSchema } from "../lib/seo";
 import { GLOBAL } from "../lib/variables";
+import { formatRupiah } from "../lib/utils";
 import SkeletonLoader from "./common/SkeletonLoader.astro";
 
 export interface Props {
@@ -15,13 +16,18 @@ export interface Props {
 
 const { products, context, title = "Rekomendasi Produk", showSkeleton = false } = Astro.props;
 
+const sanitizePrice = (value?: string | number) => {
+  const digits = value ? String(value).replace(/[^\d]/g, "") : "";
+  return digits || "0";
+};
+
 // Generate structured data for each product
 const productSchemas = products.map(product => 
   generateProductSchema({
     name: product.name,
     description: product.description || context || title || "Rekomendasi Produk",
     image: product.image,
-    price: product.price || "0",
+    price: sanitizePrice(product.price),
     currency: 'IDR',
     availability: 'InStock',
     rating: product.rating,
@@ -114,11 +120,11 @@ const productSchemas = products.map(product =>
 
             <div class="flex items-center gap-2 mt-2">
               <span class="text-sm font-bold text-gray-900 dark:text-gray-100">
-                {product.price}
+                {formatRupiah(product.price)}
               </span>
               {product.originalPrice && product.originalPrice !== '-' && (
                 <span class="text-xs text-gray-400 line-through">
-                  {product.originalPrice}
+                  {formatRupiah(product.originalPrice)}
                 </span>
               )}
             </div>

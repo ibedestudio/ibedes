@@ -64,7 +64,7 @@ const socialMeta = generateSocialMeta(
 // Get affiliate products for this article
 const affiliateData = getAffiliateByArticle(article.slug);
 const affiliateProducts = affiliateData
-    ? getAffiliateProductsByIds(affiliateData.productIds)
+    ? await getAffiliateProductsByIds(affiliateData.productIds)
     : [];
 ---
 

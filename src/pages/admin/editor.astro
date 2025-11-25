@@ -3,8 +3,9 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import matter from "gray-matter";
 import Layout from "../../layouts/Layout.astro";
-import { affiliateProducts } from "../../lib/affiliates";
+import { loadAffiliateProducts } from "../../lib/affiliates";
 import { GLOBAL } from "../../lib/variables";
+import { formatRupiah } from "../../lib/utils";
 
 export const prerender = false;
 
@@ -48,7 +49,8 @@ if (filename) {
     }
 }
 
-const allProducts = affiliateProducts;
+const allProducts = await loadAffiliateProducts();
+const sortedProducts = [...allProducts].reverse();
 ---
 
 <Layout title={`Editor - ${GLOBAL.username}`}>
@@ -276,35 +278,70 @@ const allProducts = affiliateProducts;
                         />
                     </div>
 
-                    <div class="editor-checkbox-list custom-scrollbar">
-                        {allProducts.length > 0 ? (
-                            allProducts.map((product) => (
-                                <label class="editor-checkbox-item">
-                                    <input
-                                        type="checkbox"
-                                        name="affiliate-products"
-                                        value={product.id}
-                                        checked={
-                                            frontmatter.affiliateProducts &&
-                                            frontmatter.affiliateProducts.includes(
-                                                product.id,
-                                            )
-                                        }
-                                    />
-                                    <div class="editor-checkbox-copy">
-                                        <span>{product.name}</span>
-                                        <small>
-                                            {product.platform} · {product.price ?? "-"}
-                                        </small>
-                                    </div>
+                    {sortedProducts.length > 0 ? (
+                        <>
+                            <div class="editor-field">
+                                <label for="product-search" class="editor-label">
+                                    Cari produk
                                 </label>
-                            ))
-                        ) : (
-                            <p class="editor-empty">
-                                Belum ada produk afiliasi yang tersedia.
+                                <input
+                                    type="search"
+                                    id="product-search"
+                                    class="editor-input"
+                                    placeholder="Cari nama, ID, kategori, atau tag"
+                                    autocomplete="off"
+                                />
+                                <p class="editor-hint">
+                                    Daftar diurut berdasarkan produk terbaru.
+                                </p>
+                            </div>
+
+                            <div
+                                class="editor-checkbox-list custom-scrollbar"
+                                data-product-picker
+                            >
+                                {sortedProducts.map((product) => (
+                                    <label
+                                        class="editor-checkbox-item"
+                                        data-product-option
+                                        data-product-keywords={[
+                                            product.name,
+                        product.id,
+                                            product.category ?? "",
+                                            ...(product.tags ?? []),
+                                        ]
+                                            .join(" ")
+                                            .toLowerCase()}
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            name="affiliate-products"
+                                            value={product.id}
+                                            checked={
+                                                frontmatter.affiliateProducts &&
+                                                frontmatter.affiliateProducts.includes(
+                                                    product.id,
+                                                )
+                                            }
+                                        />
+                                        <div class="editor-checkbox-copy">
+                                            <span>{product.name}</span>
+                                            <small>
+                                                {product.platform} · {formatRupiah(product.price)}
+                                            </small>
+                                        </div>
+                                    </label>
+                                ))}
+                            </div>
+                            <p class="editor-empty hidden" data-product-search-empty>
+                                Tidak ada produk yang cocok dengan pencarianmu.
                             </p>
-                        )}
-                    </div>
+                        </>
+                    ) : (
+                        <p class="editor-empty">
+                            Belum ada produk afiliasi yang tersedia.
+                        </p>
+                    )}
                 </div>
             </aside>
         </div>
@@ -329,6 +366,13 @@ const allProducts = affiliateProducts;
         const productCountChip = document.querySelector("[data-product-count]");
         const productCheckboxes = Array.from(
             document.querySelectorAll('input[name="affiliate-products"]'),
+        );
+        const productSearchInput = document.getElementById("product-search");
+        const productOptions = Array.from(
+            document.querySelectorAll("[data-product-option]"),
+        );
+        const productSearchEmpty = document.querySelector(
+            "[data-product-search-empty]",
         );
 
         let currentFilename = initialFilename ?? "";
@@ -380,6 +424,26 @@ const allProducts = affiliateProducts;
         });
 
         updateProductCountDisplay();
+
+        function filterProductOptions() {
+            if (!productOptions.length) return;
+            const term = productSearchInput?.value.trim().toLowerCase() ?? "";
+            let visibleCount = 0;
+            productOptions.forEach((option) => {
+                const keywords = option.dataset.productKeywords || "";
+                const isVisible = !term || keywords.includes(term);
+                option.classList.toggle("hidden", !isVisible);
+                if (isVisible) {
+                    visibleCount += 1;
+                }
+            });
+            if (productSearchEmpty) {
+                productSearchEmpty.classList.toggle("hidden", visibleCount > 0);
+            }
+        }
+
+        productSearchInput?.addEventListener("input", filterProductOptions);
+        filterProductOptions();
 
         function updatePreview() {
             const url = urlInput.value.trim();

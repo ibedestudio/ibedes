@@ -1,9 +1,11 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { GLOBAL } from "../../lib/variables";
-import { affiliateProducts } from "../../lib/affiliates";
+import { loadAffiliateProducts } from "../../lib/affiliates";
 
 export const prerender = false;
+
+const affiliateProducts = await loadAffiliateProducts();
 
 // Extract unique values
 const categories = [

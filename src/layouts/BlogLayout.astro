@@ -77,7 +77,7 @@ let affiliateProducts: any[] = [];
 if (frontmatter.filename) {
   const articleAffiliate = getAffiliateByArticle(frontmatter.filename);
   if (articleAffiliate) {
-    const mappedProducts = getAffiliateProductsByIds(
+    const mappedProducts = await getAffiliateProductsByIds(
       articleAffiliate.productIds,
     );
     affiliateProducts = [...affiliateProducts, ...mappedProducts];
@@ -85,7 +85,9 @@ if (frontmatter.filename) {
 }
 
 if (frontmatter.affiliateProducts && frontmatter.affiliateProducts.length > 0) {
-  affiliateProducts = getAffiliateProductsByIds(frontmatter.affiliateProducts);
+  affiliateProducts = await getAffiliateProductsByIds(
+    frontmatter.affiliateProducts,
+  );
 }
 
 const affiliateContext = frontmatter.affiliateContext;

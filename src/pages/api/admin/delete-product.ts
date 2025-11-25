@@ -2,10 +2,9 @@ import type { APIRoute } from "astro";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import type { AffiliateProduct } from "../../../lib/affiliates";
 
 export const prerender = false;
-
-const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export const POST: APIRoute = async ({ request }) => {
     try {
@@ -20,44 +19,40 @@ export const POST: APIRoute = async ({ request }) => {
 
         const currentDir = fileURLToPath(new URL(".", import.meta.url));
         const projectRoot = path.resolve(currentDir, "../../../../");
-        const affiliatesPath = path.join(projectRoot, "src/lib/affiliates.ts");
+        const affiliatesJsonPath = path.join(
+            projectRoot,
+            "src/data/affiliate-products.json",
+        );
 
-        let fileContent = await fs.readFile(affiliatesPath, "utf-8");
-        const arrayRegex =
-            /export const affiliateProducts: AffiliateProduct\[\] = \[([\s\S]*?)\];/;
-        const arrayMatch = fileContent.match(arrayRegex);
+        let products: AffiliateProduct[] = [];
 
-        if (!arrayMatch) {
+        try {
+            const fileContent = await fs.readFile(affiliatesJsonPath, "utf-8");
+            products = JSON.parse(fileContent);
+        } catch (err) {
+            console.error("[Admin API] Unable to read affiliate-products.json", err);
             return new Response(
-                JSON.stringify({ error: "Could not locate affiliateProducts array" }),
+                JSON.stringify({ error: "Affiliate product store not found" }),
                 { status: 500 },
             );
         }
 
-        const body = arrayMatch[1];
-        const productPattern = new RegExp(
-            `\\s*\\{[\\s\\S]*?id:\\s*['\"]${escapeRegExp(id)}['\"][\\s\\S]*?\\}\\s*,?`,
-            "m",
+        const filteredProducts = products.filter(
+            (product) => product.id.toLowerCase() !== String(id).toLowerCase(),
         );
 
-        if (!productPattern.test(body)) {
+        if (filteredProducts.length === products.length) {
             return new Response(
-                JSON.stringify({ error: `Product with id \"${id}\" not found` }),
+                JSON.stringify({ error: `Product with id "${id}" not found` }),
                 { status: 404 },
             );
         }
 
-        const updatedBody = body
-            .replace(productPattern, "\n")
-            .replace(/\n{3,}/g, "\n\n")
-            .trimEnd();
-
-        fileContent = fileContent.replace(
-            arrayRegex,
-            `export const affiliateProducts: AffiliateProduct[] = [${updatedBody}\n];`,
+        await fs.writeFile(
+            affiliatesJsonPath,
+            JSON.stringify(filteredProducts, null, 4),
+            "utf-8",
         );
-
-        await fs.writeFile(affiliatesPath, fileContent, "utf-8");
         console.log(`[Admin API] Deleted product ${id}`);
 
         return new Response(

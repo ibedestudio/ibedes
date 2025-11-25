@@ -92,3 +92,20 @@ export const generateSourceUrl = (
 ) => {
   return `${GLOBAL.rootUrl}/${contentType}/${sourceUrl}`;
 };
+
+/**
+ * Format angka/teks harga menjadi Rupiah standar (Rp 120.000)
+ */
+export const formatRupiah = (value?: string | number | null) => {
+  if (value === undefined || value === null) return "-";
+  const digits = String(value).replace(/[^\d]/g, "");
+  if (!digits) return String(value);
+  const numericValue = Number(digits);
+  if (Number.isNaN(numericValue)) return String(value);
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(numericValue);
+};

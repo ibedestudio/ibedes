@@ -1,5 +1,8 @@
 // Affiliate management system for ibedes.xyz
 
+import fs from "node:fs/promises";
+import path from "node:path";
+
 export interface AffiliateProduct {
     id: string;
     name: string;
@@ -22,10 +25,31 @@ export interface ArticleAffiliate {
     context?: string; // context untuk menampilkan produk (contoh: "Produk yang membantu perjalanan spiritual")
 }
 
-// Database affiliate produk
-export const affiliateProducts: AffiliateProduct[] = [
-    // Produk untuk artikel motivasi
-];
+const AFFILIATE_DATA_PATH = path.join(
+    process.cwd(),
+    "src/data/affiliate-products.json",
+);
+
+async function readAffiliateFile(): Promise<AffiliateProduct[]> {
+    try {
+        const content = await fs.readFile(AFFILIATE_DATA_PATH, "utf-8");
+        const parsed = JSON.parse(content);
+        if (Array.isArray(parsed)) {
+            return parsed as AffiliateProduct[];
+        }
+        console.warn(
+            "[Affiliate Store] affiliate-products.json is not an array. Returning empty list.",
+        );
+        return [];
+    } catch (error) {
+        console.error("[Affiliate Store] Failed to read affiliate products:", error);
+        return [];
+    }
+}
+
+export async function loadAffiliateProducts(): Promise<AffiliateProduct[]> {
+    return readAffiliateFile();
+}
 
 // Mapping artikel dengan produk affiliate
 export const articleAffiliates: ArticleAffiliate[] = [];
@@ -35,26 +59,30 @@ export function getAffiliateByArticle(articleSlug: string): ArticleAffiliate | n
     return articleAffiliates.find(aff => aff.articleSlug === articleSlug) || null;
 }
 
-export function getAffiliateProductsByIds(productIds: string[]): AffiliateProduct[] {
+export async function getAffiliateProductsByIds(productIds: string[]): Promise<AffiliateProduct[]> {
+    const products = await loadAffiliateProducts();
     return productIds
-        .map(id => affiliateProducts.find(product => product.id === id))
+        .map(id => products.find(product => product.id === id))
         .filter((product): product is AffiliateProduct => product !== undefined);
 }
 
-export function getProductsByCategory(category: string): AffiliateProduct[] {
-    return affiliateProducts.filter(product =>
-        product.category.toLowerCase() === category.toLowerCase()
+export async function getProductsByCategory(category: string): Promise<AffiliateProduct[]> {
+    const products = await loadAffiliateProducts();
+    return products.filter(product =>
+        product.category?.toLowerCase() === category.toLowerCase()
     );
 }
 
-export function getProductsByTags(tags: string[]): AffiliateProduct[] {
-    return affiliateProducts.filter(product =>
+export async function getProductsByTags(tags: string[]): Promise<AffiliateProduct[]> {
+    const products = await loadAffiliateProducts();
+    return products.filter(product =>
         tags.some(tag => product.tags.includes(tag))
     );
 }
 
-export function getVerifiedProducts(): AffiliateProduct[] {
-    return affiliateProducts.filter(product => product.verified);
+export async function getVerifiedProducts(): Promise<AffiliateProduct[]> {
+    const products = await loadAffiliateProducts();
+    return products.filter(product => product.verified);
 }
 
 // Platform configuration

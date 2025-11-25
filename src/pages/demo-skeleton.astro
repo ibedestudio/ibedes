@@ -3,9 +3,9 @@ import Layout from "../layouts/Layout.astro";
 import Section from "../components/common/Section.astro";
 import SkeletonLoader from "../components/common/SkeletonLoader.astro";
 import AffiliateProducts from "../components/AffiliateProducts.astro";
-import { affiliateProducts } from "../lib/affiliates";
+import { loadAffiliateProducts } from "../lib/affiliates";
 
-const demoProducts = affiliateProducts.slice(0, 2);
+const demoProducts = (await loadAffiliateProducts()).slice(0, 2);
 ---
 
 <Layout

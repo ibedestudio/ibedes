@@ -6,14 +6,14 @@ import react from "@astrojs/react";
 
 import sitemap from "@astrojs/sitemap";
 
-import node from "@astrojs/node";
+import netlify from "@astrojs/netlify";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://ibedes.xyz",
   output: "server",
-  adapter: node({
-    mode: "standalone",
+  adapter: netlify({
+    edgeMiddleware: false,
   }),
   image: {
     remotePatterns: [

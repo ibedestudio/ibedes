@@ -9,7 +9,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^9.5.1",
+    "@astrojs/netlify": "^6.6.2",
     "@astrojs/react": "^4.4.2",
     "@astrojs/sitemap": "^3.6.0",
     "@react-three/fiber": "^9.4.0",
@@ -19,7 +19,7 @@
     "@tailwindcss/vite": "^4.0.12",
     "@types/react": "^19.2.6",
     "@types/react-dom": "^19.2.3",
-    "astro": "^5.3.1",
+    "astro": "^5.16.0",
     "fuse.js": "^7.1.0",
     "gray-matter": "^4.0.3",
     "gsap": "^3.13.0",

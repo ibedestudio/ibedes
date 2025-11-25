@@ -42,6 +42,7 @@ export const GLOBAL = {
   },
   footerMenu: {
     projects: "/projects",
+    docs: "/docs",
   },
 
   contactEmail: "ibedestudio@gmail.com",

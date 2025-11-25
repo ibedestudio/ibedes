@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export const prerender = false;
 
@@ -12,7 +13,9 @@ export const POST: APIRoute = async ({ request }) => {
             return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 });
         }
 
-        const affiliatesPath = path.join(process.cwd(), 'src/lib/affiliates.ts');
+        const currentDir = fileURLToPath(new URL('.', import.meta.url));
+        const projectRoot = path.resolve(currentDir, '../../../../');
+        const affiliatesPath = path.join(projectRoot, 'src/lib/affiliates.ts');
         let fileContent = await fs.readFile(affiliatesPath, 'utf-8');
 
         if (type === 'category') {

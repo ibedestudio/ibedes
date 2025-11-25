@@ -8,12 +8,17 @@ import sitemap from "@astrojs/sitemap";
 
 import netlify from "@astrojs/netlify";
 
+// Use Netlify adapter only in production build
+const isDev = process.env.NODE_ENV === 'development' || process.argv.includes('dev');
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://ibedes.xyz",
   output: "server",
-  adapter: netlify({
+  adapter: isDev ? undefined : netlify({
     edgeMiddleware: false,
+    imageCDN: false,
+    cacheOnDemandPages: false,
   }),
   image: {
     remotePatterns: [

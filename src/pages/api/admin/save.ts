@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export const prerender = false;
 
@@ -11,7 +12,10 @@ export const POST: APIRoute = async ({ request }) => {
             data = await request.json();
         } catch (e) {
             console.error('[Admin API] Error parsing JSON body:', e);
-            return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400 });
+            return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' }
+            });
         }
 
         const { filename, content } = data;
@@ -20,26 +24,46 @@ export const POST: APIRoute = async ({ request }) => {
 
         if (!filename || !content) {
             console.error('[Admin API] Missing filename or content');
-            return new Response(JSON.stringify({ error: 'Missing filename or content' }), { status: 400 });
+            return new Response(JSON.stringify({ error: 'Missing filename or content' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' }
+            });
         }
 
-        // Ensure we only write to the blog directory for safety
-        const blogDir = path.join(process.cwd(), 'src/pages/blog');
+        // Get the project root directory - works in both dev and Netlify
+        const currentDir = fileURLToPath(new URL('.', import.meta.url));
+        const projectRoot = path.resolve(currentDir, '../../../../');
+        const blogDir = path.join(projectRoot, 'src/pages/blog');
         const filePath = path.join(blogDir, filename);
 
+        console.log(`[Admin API] Project root: ${projectRoot}`);
+        console.log(`[Admin API] Blog dir: ${blogDir}`);
         console.log(`[Admin API] Target path: ${filePath}`);
 
         if (!filePath.startsWith(blogDir)) {
             console.error('[Admin API] Invalid file path');
-            return new Response(JSON.stringify({ error: 'Invalid file path' }), { status: 403 });
+            return new Response(JSON.stringify({ error: 'Invalid file path' }), {
+                status: 403,
+                headers: { 'Content-Type': 'application/json' }
+            });
         }
 
         await fs.writeFile(filePath, content, 'utf-8');
         console.log(`[Admin API] File saved successfully`);
 
-        return new Response(JSON.stringify({ success: true, message: 'File saved successfully' }), { status: 200 });
+        return new Response(JSON.stringify({ success: true, message: 'File saved successfully' }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
     } catch (error: any) {
         console.error('[Admin API] Error saving file:', error);
-        return new Response(JSON.stringify({ error: error.message || 'Internal Server Error' }), { status: 500 });
+        console.error('[Admin API] Error stack:', error.stack);
+        return new Response(JSON.stringify({
+            error: error.message || 'Internal Server Error',
+            details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        });
     }
 };

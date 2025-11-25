@@ -12,6 +12,7 @@
     "@astrojs/netlify": "^6.6.2",
     "@astrojs/react": "^4.4.2",
     "@astrojs/sitemap": "^3.6.0",
+    "@octokit/rest": "^22.0.1",
     "@react-three/fiber": "^9.4.0",
     "@react-three/postprocessing": "^3.0.4",
     "@resvg/resvg-js": "^2.6.2",

@@ -1,7 +1,5 @@
 import type { APIRoute } from 'astro';
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { getGitHubCMS } from '../../../lib/github-cms';
 
 export const prerender = false;
 
@@ -20,7 +18,7 @@ export const POST: APIRoute = async ({ request }) => {
 
         const { filename } = data;
 
-        console.log(`[Admin API] Deleting file: ${filename}`);
+        console.log(`[Admin API] Deleting file via GitHub: ${filename}`);
 
         if (!filename) {
             console.error('[Admin API] Missing filename');
@@ -30,36 +28,28 @@ export const POST: APIRoute = async ({ request }) => {
             });
         }
 
-        // Get project root - works in both dev and Netlify
-        const currentDir = fileURLToPath(new URL('.', import.meta.url));
-        const projectRoot = path.resolve(currentDir, '../../../../');
-        const blogDir = path.join(projectRoot, 'src/pages/blog');
-        const filePath = path.join(blogDir, filename);
-
-        console.log(`[Admin API] Target path: ${filePath}`);
-
-        if (!filePath.startsWith(blogDir)) {
-            console.error('[Admin API] Invalid file path');
-            return new Response(JSON.stringify({ error: 'Invalid file path' }), {
+        // Validate filename (security)
+        if (filename.includes('..') || filename.startsWith('/')) {
+            console.error('[Admin API] Invalid filename');
+            return new Response(JSON.stringify({ error: 'Invalid filename' }), {
                 status: 403,
                 headers: { 'Content-Type': 'application/json' }
             });
         }
 
-        // Check if file exists
-        try {
-            await fs.access(filePath);
-        } catch {
-            return new Response(JSON.stringify({ error: 'File not found' }), {
-                status: 404,
-                headers: { 'Content-Type': 'application/json' }
-            });
-        }
+        // Use GitHub CMS to delete file
+        const github = getGitHubCMS();
+        const filePath = `src/pages/blog/${filename}`;
+        const commitMessage = `Delete article: ${filename}`;
 
-        await fs.unlink(filePath);
-        console.log(`[Admin API] File deleted successfully`);
+        await github.deleteFile(filePath, commitMessage);
 
-        return new Response(JSON.stringify({ success: true, message: 'File deleted successfully' }), {
+        console.log(`[Admin API] File deleted successfully via GitHub`);
+
+        return new Response(JSON.stringify({
+            success: true,
+            message: 'File deleted successfully. Netlify will auto-deploy in ~2 minutes.'
+        }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
         });

@@ -1,7 +1,5 @@
 import type { APIRoute } from 'astro';
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { getGitHubCMS } from '../../../lib/github-cms';
 
 export const prerender = false;
 
@@ -20,7 +18,7 @@ export const POST: APIRoute = async ({ request }) => {
 
         const { filename, content } = data;
 
-        console.log(`[Admin API] Saving file: ${filename}`);
+        console.log(`[Admin API] Saving file via GitHub: ${filename}`);
 
         if (!filename || !content) {
             console.error('[Admin API] Missing filename or content');
@@ -30,28 +28,28 @@ export const POST: APIRoute = async ({ request }) => {
             });
         }
 
-        // Get the project root directory - works in both dev and Netlify
-        const currentDir = fileURLToPath(new URL('.', import.meta.url));
-        const projectRoot = path.resolve(currentDir, '../../../../');
-        const blogDir = path.join(projectRoot, 'src/pages/blog');
-        const filePath = path.join(blogDir, filename);
-
-        console.log(`[Admin API] Project root: ${projectRoot}`);
-        console.log(`[Admin API] Blog dir: ${blogDir}`);
-        console.log(`[Admin API] Target path: ${filePath}`);
-
-        if (!filePath.startsWith(blogDir)) {
-            console.error('[Admin API] Invalid file path');
-            return new Response(JSON.stringify({ error: 'Invalid file path' }), {
+        // Validate filename (security)
+        if (filename.includes('..') || filename.startsWith('/')) {
+            console.error('[Admin API] Invalid filename');
+            return new Response(JSON.stringify({ error: 'Invalid filename' }), {
                 status: 403,
                 headers: { 'Content-Type': 'application/json' }
             });
         }
 
-        await fs.writeFile(filePath, content, 'utf-8');
-        console.log(`[Admin API] File saved successfully`);
+        // Use GitHub CMS to save file
+        const github = getGitHubCMS();
+        const filePath = `src/pages/blog/${filename}`;
+        const commitMessage = `Update article: ${filename}`;
 
-        return new Response(JSON.stringify({ success: true, message: 'File saved successfully' }), {
+        await github.saveFile(filePath, content, commitMessage);
+
+        console.log(`[Admin API] File saved successfully via GitHub`);
+
+        return new Response(JSON.stringify({
+            success: true,
+            message: 'File saved successfully. Netlify will auto-deploy in ~2 minutes.'
+        }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
         });

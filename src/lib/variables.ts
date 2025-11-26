@@ -43,7 +43,12 @@ export const GLOBAL = {
   footerMenu: {
     projects: "/projects",
     about: "/about",
+    contact: "/contact",
     docs: "/docs",
+    "tentang saya": "/tentang-saya",
+    "privacy policy": "/privacy-policy",
+    disclaimer: "/disclaimer",
+    "terms & conditions": "/terms-and-conditions",
   },
 
   contactEmail: "ibedestudio@gmail.com",

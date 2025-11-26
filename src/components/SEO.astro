@@ -1,33 +1,51 @@
 ---
+import { generateBreadcrumbSchema, generateWebsiteSchema } from "../lib/seo";
 import { GLOBAL } from "../lib/variables";
 
 interface Props {
     title: string;
     description: string;
     image?: string;
+    imageAlt?: string;
     canonicalURL?: string | URL;
     type?: "website" | "article";
     keywords?: string;
     author?: string;
     publishedTime?: string;
     modifiedTime?: string;
+    breadcrumbs?: { name: string; url: string }[];
 }
 
 const {
     title,
     description,
     image = "/og-image.png",
+    imageAlt,
     canonicalURL = new URL(Astro.url.pathname, Astro.site),
     type = "website",
     keywords,
     author = GLOBAL.username,
     publishedTime,
     modifiedTime,
+    breadcrumbs = [{ name: "Home", url: "/" }],
 } = Astro.props;
 
 const siteName = "Ibedes";
 const twitterHandle = "@bellamujiaa";
 const locale = "id_ID";
+
+const siteUrl = Astro.site ?? Astro.url;
+const canonicalUrlValue =
+    typeof canonicalURL === "string"
+        ? new URL(canonicalURL, siteUrl).href
+        : canonicalURL.href;
+const resolvedImageUrl = new URL(image, siteUrl).href;
+const resolvedImageAlt = imageAlt || title;
+const resolvedBreadcrumbSchema = generateBreadcrumbSchema(
+    breadcrumbs,
+    siteUrl.href,
+);
+const websiteSchema = generateWebsiteSchema(siteUrl.href, siteName, description);
 
 // Enhanced schema with more SEO data
 const schema = {
@@ -35,8 +53,8 @@ const schema = {
     "@type": type === "article" ? "BlogPosting" : "WebSite",
     headline: title,
     description: description,
-    image: new URL(image, Astro.url).href,
-    url: Astro.url.href,
+    image: resolvedImageUrl,
+    url: canonicalUrlValue,
     author: {
         "@type": "Person",
         name: author,
@@ -55,19 +73,6 @@ const schema = {
     inLanguage: "id-ID",
 };
 
-// Breadcrumb schema for better navigation
-const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-        {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: Astro.site?.href,
-        },
-    ],
-};
 ---
 
 <!-- Global Metadata -->
@@ -78,7 +83,7 @@ const breadcrumbSchema = {
 <meta name="generator" content={Astro.generator} />
 
 <!-- Canonical URL -->
-<link rel="canonical" href={canonicalURL} />
+<link rel="canonical" href={canonicalUrlValue} />
 
 <!-- Primary Meta Tags -->
 <title>{title}</title>
@@ -90,10 +95,11 @@ const breadcrumbSchema = {
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content={type} />
-<meta property="og:url" content={Astro.url} />
+<meta property="og:url" content={canonicalUrlValue} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:image" content={new URL(image, Astro.url)} />
+<meta property="og:image" content={resolvedImageUrl} />
+<meta property="og:image:alt" content={resolvedImageAlt} />
 <meta property="og:site_name" content={siteName} />
 <meta property="og:locale" content={locale} />
 {
@@ -108,13 +114,14 @@ const breadcrumbSchema = {
 }
 
 <!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content={Astro.url} />
-<meta property="twitter:title" content={title} />
-<meta property="twitter:description" content={description} />
-<meta property="twitter:image" content={new URL(image, Astro.url)} />
-{twitterHandle && <meta property="twitter:creator" content={twitterHandle} />}
-<meta property="twitter:site" content={twitterHandle} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonicalUrlValue} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={resolvedImageUrl} />
+<meta name="twitter:image:alt" content={resolvedImageAlt} />
+{twitterHandle && <meta name="twitter:creator" content={twitterHandle} />}
+<meta name="twitter:site" content={twitterHandle} />
 
 <!-- Robots -->
 <meta
@@ -135,5 +142,6 @@ const breadcrumbSchema = {
 <script type="application/ld+json" set:html={JSON.stringify(schema)} />
 <script
     type="application/ld+json"
-    set:html={JSON.stringify(breadcrumbSchema)}
+    set:html={JSON.stringify(resolvedBreadcrumbSchema)}
 />
+<script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />

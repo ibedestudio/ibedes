@@ -1,0 +1,65 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Section from "../components/common/Section.astro";
+import Breadcrumb from "../components/common/Breadcrumb.astro";
+
+const breadcrumbItems = [
+  { name: "Home", url: "/" },
+  { name: "Disclaimer", url: "/disclaimer" },
+];
+
+const seoTitle = "Disclaimer | ibedes";
+const seoDescription =
+  "Disclaimer untuk konten, opini, dan rekomendasi di ibedes. Pelajari batasan tanggung jawab dan kebijakan afiliasi.";
+const seoKeywords = "disclaimer ibedes, batasan tanggung jawab, afiliasi";
+---
+
+<Layout
+  title={seoTitle}
+  description={seoDescription}
+  keywords={seoKeywords}
+  canonicalURL="/disclaimer"
+  breadcrumbs={breadcrumbItems}
+>
+  <Section class="py-10 sm:py-16 space-y-10 sm:space-y-14">
+    <Breadcrumb items={breadcrumbItems} />
+
+    <header class="space-y-4">
+      <p class="text-xs sm:text-sm font-mono uppercase tracking-[0.3em] text-primary">Disclaimer</p>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-display uppercase tracking-wide">Disclaimer</h1>
+      <p class="text-base sm:text-lg text-muted-foreground max-w-3xl font-serif leading-relaxed">
+        Semua konten di ibedes dibagikan untuk tujuan edukasi dan informasi umum. Gunakan dengan kebijaksanaan Anda sendiri dan pastikan melakukan pengecekan tambahan sesuai konteks.
+      </p>
+    </header>
+
+    <div class="space-y-6">
+      <div class="p-6 border-2 border-border rounded-xl bg-card/60 space-y-2">
+        <h2 class="text-xl font-display uppercase tracking-wide">Akurasi Konten</h2>
+        <p class="text-sm sm:text-base text-muted-foreground font-serif leading-relaxed">
+          Saya berusaha menjaga informasi tetap akurat dan terkini, namun tidak ada jaminan bahwa semua konten bebas dari kesalahan atau kelalaian. Implementasi kode dan konfigurasi sistem lakukan sesuai kebutuhan Anda.
+        </p>
+      </div>
+
+      <div class="p-6 border-2 border-border rounded-xl bg-card/60 space-y-2">
+        <h2 class="text-xl font-display uppercase tracking-wide">Tanggung Jawab Pengguna</h2>
+        <p class="text-sm sm:text-base text-muted-foreground font-serif leading-relaxed">
+          Keputusan yang Anda buat berdasarkan informasi di situs ini sepenuhnya menjadi tanggung jawab Anda. Saya tidak bertanggung jawab atas kerugian atau kerusakan yang timbul dari penerapan konten tanpa uji dan penilaian lebih lanjut.
+        </p>
+      </div>
+
+      <div class="p-6 border-2 border-border rounded-xl bg-card/60 space-y-2">
+        <h2 class="text-xl font-display uppercase tracking-wide">Afiliasi & Rekomendasi</h2>
+        <p class="text-sm sm:text-base text-muted-foreground font-serif leading-relaxed">
+          Beberapa tautan mungkin bersifat afiliasi atau rujukan. Saya hanya merekomendasikan alat yang saya gunakan atau percaya bermanfaat, dan opini tetap independen.
+        </p>
+      </div>
+
+      <div class="p-6 border-2 border-border rounded-xl bg-card/60 space-y-2">
+        <h2 class="text-xl font-display uppercase tracking-wide">Perubahan</h2>
+        <p class="text-sm sm:text-base text-muted-foreground font-serif leading-relaxed">
+          Konten dan kebijakan ini dapat diperbarui sewaktu-waktu tanpa pemberitahuan. Silakan cek halaman ini secara berkala untuk versi terbaru.
+        </p>
+      </div>
+    </div>
+  </Section>
+</Layout>

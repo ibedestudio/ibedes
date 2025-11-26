@@ -25,55 +25,80 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
     data-supabase-key={supabaseEnabled ? supabaseAnonKey : undefined}
 >
     <div class="engagement-fab" data-floating-controls hidden>
-        <button
-            type="button"
-            class="engagement-fab__button engagement-fab__button-like"
-            data-like-button
-            aria-label="Kirim tepuk"
-        >
-            <i class="fa-solid fa-heart text-red-500"></i>
-            <span class="engagement-fab__count" data-like-count>0</span>
-            <span class="floating-heart-container" data-floating-heart-container
-            ></span>
-        </button>
-        <button
-            type="button"
-            class="engagement-fab__button"
-            data-scroll-comments
-            aria-label="Buka komentar"
-        >
-            <i class="fa-solid fa-comment text-blue-500"></i>
-        </button>
+        <div class="engagement-fab__panel">
+            <div class="engagement-fab__header">
+                <span class="engagement-fab__title">Kirim reaksi</span>
+                <span class="engagement-fab__hint">Dukung penulis</span>
+            </div>
+            <div class="engagement-fab__actions">
+                <button
+                    type="button"
+                    class="engagement-fab__button engagement-fab__button-like"
+                    data-like-button
+                    aria-label="Kirim tepuk"
+                >
+                    <span class="engagement-fab__icon">
+                        <i class="fa-solid fa-heart"></i>
+                    </span>
+                    <div class="engagement-fab__meta">
+                        <span class="engagement-fab__label">Tepuk</span>
+                        <span class="engagement-fab__count" data-like-count>0</span>
+                    </div>
+                    <span class="floating-heart-container" data-floating-heart-container
+                    ></span>
+                </button>
+                <button
+                    type="button"
+                    class="engagement-fab__button engagement-fab__button-comment"
+                    data-scroll-comments
+                    aria-label="Buka komentar"
+                >
+                    <span class="engagement-fab__icon">
+                        <i class="fa-solid fa-comment"></i>
+                    </span>
+                    <div class="engagement-fab__meta">
+                        <span class="engagement-fab__label">Komentar</span>
+                        <span class="engagement-fab__hint">Baca & tulis</span>
+                    </div>
+                </button>
+            </div>
+        </div>
     </div>
 
     <div class="engagement-mobile-bar" data-floating-controls hidden>
-        <button
-            type="button"
-            class="engagement-mobile-bar__action"
-            data-like-button
-            aria-label="Kirim tepuk"
-        >
-            <i class="fa-solid fa-heart text-red-500 text-lg"></i>
-            <span class="font-semibold" data-like-count>0</span>
-            <span class="text-[10px] uppercase tracking-widest opacity-70"
-                >Suka</span
+        <div class="engagement-mobile-bar__rail">
+            <button
+                type="button"
+                class="engagement-mobile-bar__action"
+                data-like-button
+                aria-label="Kirim tepuk"
             >
-            <span class="floating-heart-container" data-floating-heart-container
-            ></span>
-        </button>
-        <div class="w-px bg-black/10 dark:bg-white/10 my-2"></div>
-        <button
-            type="button"
-            class="engagement-mobile-bar__action"
-            data-scroll-comments
-            aria-label="Menuju komentar"
-        >
-            <i class="fa-solid fa-comment text-blue-500 text-lg"></i>
-            <span
-                class="font-mono text-[10px] uppercase tracking-widest opacity-70"
-                >Komentar</span
+                <span class="engagement-mobile-bar__icon">
+                    <i class="fa-solid fa-heart"></i>
+                </span>
+                <div class="engagement-mobile-bar__meta">
+                    <span class="engagement-mobile-bar__label">Tepuk</span>
+                    <span class="engagement-mobile-bar__count" data-like-count>0</span>
+                </div>
+                <span class="floating-heart-container" data-floating-heart-container
+                ></span>
+            </button>
+            <div class="engagement-mobile-bar__divider" aria-hidden="true"></div>
+            <button
+                type="button"
+                class="engagement-mobile-bar__action"
+                data-scroll-comments
+                aria-label="Menuju komentar"
             >
-        </button>
+                <span class="engagement-mobile-bar__icon">
+                    <i class="fa-solid fa-comment"></i>
+                </span>
+                <div class="engagement-mobile-bar__meta">
+                    <span class="engagement-mobile-bar__label">Komentar</span>
+                    <span class="engagement-mobile-bar__hint">Buka panel</span>
+                </div>
+            </button>
+        </div>
     </div>
 
     <!-- Comment popup modal -->
@@ -193,6 +218,7 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
             const floatingControls = Array.from(
                 root.querySelectorAll("[data-floating-controls]"),
             );
+            let footerVisible = false;
 
             const likesKey = `ibedes:likes:${slug}`;
             const commentsKey = `ibedes:comments:${slug}`;
@@ -347,7 +373,7 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
                 const maxScroll = Math.max(1, scrollHeight - clientHeight);
                 const progress =
                     scrollHeight <= clientHeight ? 1 : scrollTop / maxScroll;
-                const shouldShow = progress >= 0.3;
+                const shouldShow = progress >= 0.3 && !footerVisible;
                 floatingControls.forEach((el) => {
                     el.classList.toggle(
                         "engagement-floating--visible",
@@ -364,6 +390,23 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
             window.addEventListener("scroll", updateFloatingVisibility, {
                 passive: true,
             });
+
+            const footer = document.querySelector("footer");
+            if (footer && "IntersectionObserver" in window) {
+                const observer = new IntersectionObserver(
+                    (entries) => {
+                        footerVisible = entries.some((entry) =>
+                            entry.isIntersecting
+                        );
+                        updateFloatingVisibility();
+                    },
+                    {
+                        threshold: 0.1,
+                        rootMargin: "0px",
+                    },
+                );
+                observer.observe(footer);
+            }
 
             const showCommentPopup = () => {
                 const popup = root.querySelector("[data-comment-popup]");
@@ -722,7 +765,7 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
 
     .engagement-floating-container {
         opacity: 0;
-        transform: translateY(12px);
+        transform: translateY(16px) scale(0.98);
         transition:
             opacity 220ms ease,
             transform 260ms ease;
@@ -731,129 +774,261 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
 
     .engagement-floating--visible {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
         pointer-events: auto;
     }
 
     .engagement-floating--hidden {
         opacity: 0;
-        transform: translateY(12px);
+        transform: translateY(16px) scale(0.98);
         pointer-events: none;
     }
 
     .engagement-fab {
         position: fixed;
-        bottom: 2rem;
-        right: 2rem;
+        bottom: 1.5rem;
+        right: 1.5rem;
         display: none;
+        z-index: 40;
+        width: min(320px, calc(100vw - 2rem));
+    }
+
+    .engagement-fab__panel {
+        background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.95),
+                rgba(239, 246, 255, 0.92)
+            ),
+            radial-gradient(circle at 25% 20%, rgba(59, 130, 246, 0.12), transparent 38%),
+            radial-gradient(circle at 80% 10%, rgba(16, 185, 129, 0.15), transparent 40%);
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        border-radius: 1rem;
+        padding: 0.75rem;
+        box-shadow: 0 18px 45px -12px rgba(15, 23, 42, 0.35);
+        backdrop-filter: blur(16px);
+        display: flex;
         flex-direction: column;
         gap: 0.75rem;
-        z-index: 40;
+    }
+
+    .engagement-fab__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
+    .engagement-fab__title {
+        font-family: var(--font-display, "IBM Plex Mono", monospace);
+        font-size: 0.9rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .engagement-fab__hint {
+        font-size: 0.75rem;
+        color: rgba(15, 23, 42, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .engagement-fab__actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
     }
 
     .engagement-fab__button {
-        display: inline-flex;
+        display: flex;
         align-items: center;
-        justify-content: center;
-        width: 3.5rem;
-        height: 3.5rem;
-        border-radius: 999px;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(12px);
-        color: #111;
-        font-size: 1.25rem;
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        gap: 0.6rem;
+        width: 100%;
+        border-radius: 0.85rem;
+        border: 2px solid transparent;
+        background: rgba(255, 255, 255, 0.7);
+        padding: 0.65rem 0.75rem;
+        color: #0f172a;
         position: relative;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .engagement-fab__button-like {
-        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
     }
 
     .floating-heart-container {
         position: absolute;
-        top: -10px;
-        left: -10px;
-        right: -10px;
-        bottom: -10px;
+        inset: -14px;
         pointer-events: none;
         z-index: 10;
     }
 
     .engagement-fab__button:hover {
-        transform: translateY(-4px) scale(1.05);
-        border-color: rgba(16, 185, 129, 0.5);
-        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 16px 28px -18px rgba(15, 23, 42, 0.5);
+    }
+
+    .engagement-fab__button-like {
+        border-color: rgba(239, 68, 68, 0.18);
+        box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.08);
+    }
+
+    .engagement-fab__button-like:hover {
+        border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    .engagement-fab__button-comment {
+        border-color: rgba(59, 130, 246, 0.18);
+        box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.08);
+    }
+
+    .engagement-fab__button-comment:hover {
+        border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    .engagement-fab__icon {
+        display: grid;
+        place-items: center;
+        width: 2.6rem;
+        height: 2.6rem;
+        border-radius: 0.9rem;
+        background: rgba(15, 23, 42, 0.05);
+        color: #0f172a;
+        font-size: 1.15rem;
+    }
+
+    .engagement-fab__button-like .engagement-fab__icon {
+        background: rgba(239, 68, 68, 0.12);
+        color: #dc2626;
+    }
+
+    .engagement-fab__button-comment .engagement-fab__icon {
+        background: rgba(59, 130, 246, 0.12);
+        color: #1d4ed8;
+    }
+
+    .engagement-fab__meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+    }
+
+    .engagement-fab__label {
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-size: 0.8rem;
     }
 
     .engagement-fab__count {
-        font-size: 0.75rem;
-        font-weight: 700;
-        position: absolute;
-        top: -4px;
-        right: -4px;
-        background: #10b981;
-        color: white;
-        padding: 2px 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        padding: 0.1rem 0.5rem;
         border-radius: 999px;
-        min-width: 20px;
-        text-align: center;
-        border: 2px solid white;
+        background: rgba(239, 68, 68, 0.12);
+        color: #991b1b;
+        font-weight: 700;
+        font-size: 0.85rem;
+        border: 1px solid rgba(239, 68, 68, 0.4);
     }
 
     .engagement-mobile-bar {
         position: fixed;
         left: 50%;
         transform: translateX(-50%);
-        bottom: 1.5rem;
-        width: min(90vw, 320px);
+        bottom: 1rem;
+        width: min(92vw, 420px);
         display: none;
-        gap: 0;
-        padding: 0.5rem;
-        border-radius: 1.5rem;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        background: rgba(255, 255, 255, 0.9);
-        box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.15);
         z-index: 40;
+    }
+
+    .engagement-mobile-bar__rail {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        align-items: stretch;
+        gap: 0.25rem;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 1.25rem;
+        border: 2px solid rgba(0, 0, 0, 0.06);
+        padding: 0.4rem;
+        box-shadow: 0 18px 30px -16px rgba(15, 23, 42, 0.45);
         backdrop-filter: blur(12px);
     }
 
     .engagement-mobile-bar__action {
-        flex: 1;
-        display: inline-flex;
-        flex-direction: column;
+        display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 0.1rem;
-        border-radius: 1rem;
+        gap: 0.6rem;
         border: none;
-        background: transparent;
-        font-size: 0.95rem;
-        padding: 0.25rem;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 1rem;
+        padding: 0.55rem 0.8rem;
+        font-size: 1rem;
+        color: #0f172a;
         position: relative;
-        transition: background 0.2s ease;
+        transition: transform 0.16s ease, background 0.16s ease;
     }
 
     .engagement-mobile-bar__action:active {
-        background: rgba(0, 0, 0, 0.05);
-        transform: scale(0.95);
+        transform: translateY(1px);
+        background: rgba(15, 23, 42, 0.05);
+    }
+
+    .engagement-mobile-bar__icon {
+        display: grid;
+        place-items: center;
+        width: 2.4rem;
+        height: 2.4rem;
+        border-radius: 0.85rem;
+        background: rgba(15, 23, 42, 0.06);
+        color: #0f172a;
+    }
+
+    .engagement-mobile-bar__meta {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.1rem;
+    }
+
+    .engagement-mobile-bar__label {
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-size: 0.8rem;
+    }
+
+    .engagement-mobile-bar__count {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #b91c1c;
+    }
+
+    .engagement-mobile-bar__hint {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: rgba(15, 23, 42, 0.6);
+    }
+
+    .engagement-mobile-bar__divider {
+        width: 2px;
+        background: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0),
+            rgba(0, 0, 0, 0.18),
+            rgba(0, 0, 0, 0)
+        );
     }
 
     .engagement-mobile-bar .floating-heart-container {
         position: absolute;
-        top: -20px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100px;
-        height: 100px;
+        top: -28px;
+        left: 18px;
+        width: 96px;
+        height: 96px;
         pointer-events: none;
         z-index: 10;
-    }
-
-    .engagement-mobile-bar__action:first-of-type {
-        /* Removed specific background */
     }
 
     @media (max-width: 1023px) {
@@ -871,21 +1046,60 @@ const supabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
         }
     }
 
+    :global(.dark) .engagement-fab__panel {
+        background: linear-gradient(
+                135deg,
+                rgba(24, 24, 27, 0.92),
+                rgba(15, 23, 42, 0.92)
+            ),
+            radial-gradient(circle at 25% 20%, rgba(96, 165, 250, 0.12), transparent 38%),
+            radial-gradient(circle at 80% 10%, rgba(52, 211, 153, 0.14), transparent 40%);
+        border-color: rgba(255, 255, 255, 0.08);
+        color: #e2e8f0;
+        box-shadow: 0 18px 45px -12px rgba(0, 0, 0, 0.75);
+    }
+
+    :global(.dark) :where(.engagement-fab__button, .engagement-mobile-bar__action) {
+        background: rgba(24, 24, 27, 0.75);
+        color: #e2e8f0;
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    :global(.dark) .engagement-fab__icon,
+    :global(.dark) .engagement-mobile-bar__icon {
+        background: rgba(255, 255, 255, 0.08);
+        color: #fca5a5;
+    }
+
+    :global(.dark) .engagement-fab__button-comment .engagement-fab__icon,
+    :global(.dark) .engagement-mobile-bar__action:nth-of-type(2) .engagement-mobile-bar__icon {
+        color: #93c5fd;
+    }
+
     :global(.dark)
-        [data-engagement]
-        :where(.engagement-fab__button, .engagement-mobile-bar) {
-        background: rgba(24, 24, 27, 0.85);
-        border-color: rgba(255, 255, 255, 0.1);
-        color: #f8fafc;
-        box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+        :where(.engagement-fab__hint, .engagement-mobile-bar__hint, .engagement-fab__title) {
+        color: rgba(226, 232, 240, 0.75);
     }
 
     :global(.dark) .engagement-fab__count {
-        border-color: #18181b;
+        background: rgba(239, 68, 68, 0.22);
+        color: #fecdd3;
+        border-color: rgba(248, 113, 113, 0.6);
     }
 
-    :global(.dark) .engagement-mobile-bar__action:active {
-        background: rgba(255, 255, 255, 0.05);
+    :global(.dark) .engagement-mobile-bar__rail {
+        background: rgba(15, 23, 42, 0.92);
+        border-color: rgba(255, 255, 255, 0.06);
+        box-shadow: 0 18px 30px -16px rgba(0, 0, 0, 0.8);
+    }
+
+    :global(.dark) .engagement-mobile-bar__divider {
+        background: linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0),
+            rgba(255, 255, 255, 0.3),
+            rgba(255, 255, 255, 0)
+        );
     }
 
     :global(.floating-heart) {

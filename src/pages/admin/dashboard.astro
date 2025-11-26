@@ -1069,6 +1069,36 @@ const previewProducts = affiliateProducts.slice(0, 3);
                 aria-labelledby="analytics-tab"
             >
                 <div class="admin-panel admin-panel--stack">
+                    <div class="admin-card" data-realtime-card>
+                        <div class="admin-card__header">
+                            <div>
+                                <p class="admin-eyebrow">Live</p>
+                                <h2>Pengunjung aktif</h2>
+                                <p class="admin-card__meta">
+                                    Data real-time dari Google Analytics 4
+                                </p>
+                            </div>
+                            <span
+                                class="admin-chip admin-chip--muted"
+                                data-realtime-status
+                            >
+                                Menyambung...
+                            </span>
+                        </div>
+
+                        <div class="admin-realtime">
+                            <div class="admin-realtime__value" data-realtime-value>
+                                --
+                            </div>
+                            <p class="admin-realtime__label">
+                                pengunjung sedang aktif
+                            </p>
+                            <p class="admin-realtime__meta" data-realtime-meta>
+                                Mengambil data terbaru...
+                            </p>
+                        </div>
+                    </div>
+
                     <div class="admin-card">
                         <div class="admin-card__header">
                             <div>
@@ -1342,6 +1372,19 @@ const previewProducts = affiliateProducts.slice(0, 3);
         const filterSummaryLabel = document.querySelector<HTMLElement>(
             "[data-filter-summary]",
         );
+        const realtimeCard = document.querySelector<HTMLElement>(
+            "[data-realtime-card]",
+        );
+        const realtimeValue = document.querySelector<HTMLElement>(
+            "[data-realtime-value]",
+        );
+        const realtimeStatus = document.querySelector<HTMLElement>(
+            "[data-realtime-status]",
+        );
+        const realtimeMeta = document.querySelector<HTMLElement>(
+            "[data-realtime-meta]",
+        );
+        let realtimeIntervalId: number | null = null;
         const searchInput = document.querySelector<HTMLInputElement>(
             "[data-notification-search]",
         );
@@ -1362,6 +1405,79 @@ const previewProducts = affiliateProducts.slice(0, 3);
                 console.warn("[Admin] Failed to parse notifications", error);
                 return [];
             }
+        };
+
+        const setRealtimeStatus = (
+            label: string,
+            state: "loading" | "ok" | "error" | "warning",
+        ) => {
+            if (realtimeStatus) {
+                realtimeStatus.textContent = label;
+                realtimeStatus.dataset.state = state;
+            }
+        };
+
+        const formatErrorMessage = (error: unknown) => {
+            if (error instanceof Error) return error.message;
+            if (typeof error === "string") return error;
+            return "Terjadi kesalahan";
+        };
+
+        const updateRealtimeAnalytics = async () => {
+            if (!realtimeCard) return;
+            setRealtimeStatus("Menyambung...", "loading");
+
+            try {
+                const response = await fetch("/api/analytics/realtime", {
+                    headers: { Accept: "application/json" },
+                });
+
+                const payload = await response.json().catch(() => ({}));
+
+                const isUnconfigured =
+                    response.status === 501 || payload?.configured === false;
+
+                if (isUnconfigured) {
+                    setRealtimeStatus("Belum dikonfigurasi", "warning");
+                    if (realtimeMeta) {
+                        realtimeMeta.textContent =
+                            payload?.error ||
+                            "Tambahkan GA4_PROPERTY_ID, GA4_CLIENT_EMAIL, dan GA4_PRIVATE_KEY di environment server.";
+                    }
+                    if (realtimeIntervalId) window.clearInterval(realtimeIntervalId);
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(
+                        payload?.error || "Gagal memuat data pengunjung real-time",
+                    );
+                }
+
+                const activeUsers = Number(payload?.activeUsers ?? 0);
+                if (realtimeValue) {
+                    realtimeValue.textContent = Number.isFinite(activeUsers)
+                        ? activeUsers.toLocaleString("id-ID")
+                        : "0";
+                }
+                if (realtimeMeta) {
+                    realtimeMeta.textContent = `Diperbarui ${new Date().toLocaleTimeString("id-ID")}`;
+                }
+                setRealtimeStatus("Tersambung", "ok");
+            } catch (error) {
+                console.error("[Admin] Realtime analytics error", error);
+                setRealtimeStatus("Tidak terhubung", "error");
+                if (realtimeMeta) {
+                    realtimeMeta.textContent = formatErrorMessage(error);
+                }
+            }
+        };
+
+        const startRealtimePolling = () => {
+            if (!realtimeCard) return;
+            updateRealtimeAnalytics();
+            if (realtimeIntervalId) window.clearInterval(realtimeIntervalId);
+            realtimeIntervalId = window.setInterval(updateRealtimeAnalytics, 30000);
         };
 
         type AdminNotification = {
@@ -2350,6 +2466,9 @@ const previewProducts = affiliateProducts.slice(0, 3);
                 const tabName = btn.getAttribute("data-tab");
                 if (tabName) {
                     switchTab(tabName);
+                    if (tabName === "analytics") {
+                        startRealtimePolling();
+                    }
                     window.scrollTo({ top: 0, behavior: "smooth" });
                 }
             });
@@ -2359,6 +2478,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
             setActiveTab("overview");
             updateFilterChips();
             bootstrapNotifications();
+            startRealtimePolling();
         }
 
         // Hide bottom nav when approaching footer
@@ -2932,6 +3052,12 @@ const previewProducts = affiliateProducts.slice(0, 3);
         font-size: var(--admin-font-base);
         margin: 0.1rem 0 0;
         line-height: 1.3;
+    }
+
+    .admin-card__meta {
+        margin: 0.25rem 0 0;
+        font-size: var(--admin-font-sm);
+        color: color-mix(in srgb, var(--color-foreground) 70%, transparent);
     }
 
     .admin-eyebrow {
@@ -3896,6 +4022,66 @@ const previewProducts = affiliateProducts.slice(0, 3);
     .admin-metric strong {
         font-size: clamp(1.05rem, 1.9vw, 1.25rem);
         font-family: var(--font-display);
+    }
+
+    .admin-realtime {
+        display: grid;
+        gap: 0.35rem;
+        align-items: center;
+    }
+
+    .admin-realtime__value {
+        font-size: clamp(2.4rem, 4vw, 3rem);
+        font-family: var(--font-display);
+        letter-spacing: 0.02em;
+        line-height: 1;
+    }
+
+    .admin-realtime__label {
+        font-size: var(--admin-font-base);
+        color: color-mix(in srgb, var(--color-foreground) 70%, transparent);
+        margin: 0;
+    }
+
+    .admin-realtime__meta {
+        font-size: var(--admin-font-sm);
+        color: color-mix(in srgb, var(--color-foreground) 60%, transparent);
+        margin: 0;
+    }
+
+    [data-realtime-status] {
+        align-self: flex-start;
+    }
+
+    [data-realtime-status][data-state="ok"] {
+        background: color-mix(
+            in srgb,
+            var(--color-success, #3fcf8e) 12%,
+            transparent
+        );
+        color: color-mix(
+            in srgb,
+            var(--color-success, #3fcf8e) 80%,
+            transparent
+        );
+    }
+
+    [data-realtime-status][data-state="error"] {
+        background: color-mix(
+            in srgb,
+            var(--color-danger, #ff6b6b) 12%,
+            transparent
+        );
+        color: color-mix(
+            in srgb,
+            var(--color-danger, #ff6b6b) 80%,
+            transparent
+        );
+    }
+
+    [data-realtime-status][data-state="warning"] {
+        background: color-mix(in srgb, #ffb546 12%, transparent);
+        color: color-mix(in srgb, #a36100 80%, transparent);
     }
 
     .admin-progress {

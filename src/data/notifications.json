@@ -1,0 +1,79 @@
+[
+    {
+        "id": "notif-comment-01",
+        "type": "comment",
+        "title": "Komentar baru",
+        "message": "Rani membalas diskusi di artikel produktivitas.",
+        "time": "2025-11-26T14:33:52.037Z",
+        "status": "unread",
+        "href": "/blog/menumbuhkan-kebiasaan-baca",
+        "priority": "high",
+        "category": "Engagement",
+        "source": "manual",
+        "tags": ["komentar", "artikel"]
+    },
+    {
+        "id": "notif-like-02",
+        "type": "like",
+        "title": "Love diterima",
+        "message": "Artikel UX Writing mendapat 12 love baru hari ini.",
+        "time": "2025-11-26T14:13:52.037Z",
+        "status": "unread",
+        "href": "/blog/ux-writing-untuk-pemula",
+        "priority": "medium",
+        "category": "Engagement",
+        "source": "manual",
+        "tags": ["reaksi", "artikel"]
+    },
+    {
+        "id": "notif-message-03",
+        "type": "message",
+        "title": "Kotak masuk",
+        "message": "Ada pertanyaan baru dari halaman kontak.",
+        "time": "2025-11-26T12:38:52.037Z",
+        "status": "unread",
+        "href": "/admin/messages",
+        "priority": "medium",
+        "category": "Support",
+        "source": "manual",
+        "tags": ["pertanyaan", "kontak"]
+    },
+    {
+        "id": "notif-system-03",
+        "type": "system",
+        "title": "Aksi diperlukan",
+        "message": "Ada 2 produk afiliasi belum memiliki deskripsi lengkap.",
+        "time": "2025-11-25T12:38:52.037Z",
+        "status": "read",
+        "href": "/admin/add-product",
+        "priority": "high",
+        "category": "Konten",
+        "source": "manual",
+        "tags": ["afiliasi", "kelengkapan"]
+    },
+    {
+        "id": "notif-system-04",
+        "type": "system",
+        "title": "Backup mingguan siap",
+        "message": "Pencadangan situs otomatis selesai tanpa error.",
+        "time": "2025-11-24T22:38:52.037Z",
+        "status": "read",
+        "priority": "low",
+        "category": "Operasional",
+        "source": "manual",
+        "tags": ["backup", "infra"]
+    },
+    {
+        "id": "notif-comment-05",
+        "type": "comment",
+        "title": "Diskusi trending",
+        "message": "Ada 6 balasan baru pada artikel desain berkelanjutan.",
+        "time": "2025-11-23T11:38:52.037Z",
+        "status": "read",
+        "href": "/blog/desain-berkelanjutan",
+        "priority": "high",
+        "category": "Engagement",
+        "source": "manual",
+        "tags": ["diskusi", "tren"]
+    }
+]

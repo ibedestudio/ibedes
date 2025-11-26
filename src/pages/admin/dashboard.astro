@@ -107,92 +107,10 @@ const formatNotificationType = (value: string) => {
     return "Sistem";
 };
 
-const notifications = [
-    {
-        id: "notif-comment-01",
-        type: "comment",
-        title: "Komentar baru",
-        message: "Rani membalas diskusi di artikel produktivitas.",
-        time: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-        status: "unread",
-        href: "/blog/menumbuhkan-kebiasaan-baca",
-        priority: "high",
-        category: "Engagement",
-        source: "manual",
-        tags: ["komentar", "artikel"],
-    },
-    {
-        id: "notif-like-02",
-        type: "like",
-        title: "Love diterima",
-        message: "Artikel UX Writing mendapat 12 love baru hari ini.",
-        time: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
-        status: "unread",
-        href: "/blog/ux-writing-untuk-pemula",
-        priority: "medium",
-        category: "Engagement",
-        source: "manual",
-        tags: ["reaksi", "artikel"],
-    },
-    {
-        id: "notif-message-03",
-        type: "message",
-        title: "Kotak masuk",
-        message: "Ada pertanyaan baru dari halaman kontak.",
-        time: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-        status: "unread",
-        href: "/admin/messages",
-        priority: "medium",
-        category: "Support",
-        source: "manual",
-        tags: ["pertanyaan", "kontak"],
-    },
-    {
-        id: "notif-system-03",
-        type: "system",
-        title: "Aksi diperlukan",
-        message: "Ada 2 produk afiliasi belum memiliki deskripsi lengkap.",
-        time: new Date(Date.now() - 26 * 60 * 60 * 1000).toISOString(),
-        status: "read",
-        href: "/admin/add-product",
-        priority: "high",
-        category: "Konten",
-        source: "manual",
-        tags: ["afiliasi", "kelengkapan"],
-    },
-    {
-        id: "notif-system-04",
-        type: "system",
-        title: "Backup mingguan siap",
-        message: "Pencadangan situs otomatis selesai tanpa error.",
-        time: new Date(Date.now() - 40 * 60 * 60 * 1000).toISOString(),
-        status: "read",
-        priority: "low",
-        category: "Operasional",
-        source: "manual",
-        tags: ["backup", "infra"],
-    },
-    {
-        id: "notif-comment-05",
-        type: "comment",
-        title: "Diskusi trending",
-        message: "Ada 6 balasan baru pada artikel desain berkelanjutan.",
-        time: new Date(Date.now() - 75 * 60 * 60 * 1000).toISOString(),
-        status: "read",
-        href: "/blog/desain-berkelanjutan",
-        priority: "high",
-        category: "Engagement",
-        source: "manual",
-        tags: ["diskusi", "tren"],
-    },
-];
-
-const unreadNotifications = notifications.filter(
-    (item) => item.status === "unread",
-).length;
-
-const latestNotificationTime =
-    notifications[0]?.time ?? new Date().toISOString();
+// Initial state is now handled client-side
+const notifications: any[] = [];
+const unreadNotifications = 0;
+const latestNotificationTime = new Date().toISOString();
 
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL ?? "";
 const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "";
@@ -436,6 +354,38 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                     </article>
                                 ))
                             }
+                        </div>
+                    </div>
+
+                    <div class="admin-card" data-historical-card>
+                        <div class="admin-card__header">
+                            <div>
+                                <p class="admin-eyebrow">Historis</p>
+                                <h2>Ringkasan Pengunjung</h2>
+                                <p class="admin-card__meta">
+                                    Data dari Google Analytics 4
+                                </p>
+                            </div>
+                            <span
+                                class="admin-chip admin-chip--muted"
+                                data-historical-status
+                            >
+                                Memuat...
+                            </span>
+                        </div>
+                        <div class="admin-metrics" data-historical-metrics>
+                            <div class="admin-metric">
+                                <p>Hari Ini</p>
+                                <strong data-historical-value="daily">--</strong>
+                            </div>
+                            <div class="admin-metric">
+                                <p>Minggu Ini</p>
+                                <strong data-historical-value="weekly">--</strong>
+                            </div>
+                            <div class="admin-metric">
+                                <p>Bulan Ini</p>
+                                <strong data-historical-value="monthly">--</strong>
+                            </div>
                         </div>
                     </div>
 
@@ -1385,6 +1335,25 @@ const previewProducts = affiliateProducts.slice(0, 3);
             "[data-realtime-meta]",
         );
         let realtimeIntervalId: number | null = null;
+
+        const historicalCard = document.querySelector<HTMLElement>(
+            "[data-historical-card]",
+        );
+        const historicalStatus = document.querySelector<HTMLElement>(
+            "[data-historical-status]",
+        );
+        const historicalValues = {
+            daily: document.querySelector<HTMLElement>(
+                '[data-historical-value="daily"]',
+            ),
+            weekly: document.querySelector<HTMLElement>(
+                '[data-historical-value="weekly"]',
+            ),
+            monthly: document.querySelector<HTMLElement>(
+                '[data-historical-value="monthly"]',
+            ),
+        };
+
         const searchInput = document.querySelector<HTMLInputElement>(
             "[data-notification-search]",
         );
@@ -1394,9 +1363,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
         const unreadToggle = document.querySelector<HTMLInputElement>(
             "[data-unread-toggle]",
         );
-        const notificationsData = document.getElementById(
-            "admin-notifications-data",
-        ) as HTMLScriptElement | null;
+        const notificationsData = null; // No longer used
 
         const parseJSON = (value: string | null) => {
             try {
@@ -1466,6 +1433,36 @@ const previewProducts = affiliateProducts.slice(0, 3);
             realtimeIntervalId = window.setInterval(updateRealtimeAnalytics, 30000);
         };
 
+        const updateHistoricalAnalytics = async () => {
+            if (!historicalCard) return;
+            historicalStatus?.setAttribute("data-state", "loading");
+            historicalStatus && (historicalStatus.textContent = "Memuat...");
+
+            try {
+                const response = await fetch("/api/analytics/historical");
+                const payload = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(payload?.error || "Gagal memuat data historis");
+                }
+
+                if (historicalValues.daily)
+                    historicalValues.daily.textContent = payload.daily?.toLocaleString("id-ID") ?? "0";
+                if (historicalValues.weekly)
+                    historicalValues.weekly.textContent = payload.weekly?.toLocaleString("id-ID") ?? "0";
+                if (historicalValues.monthly)
+                    historicalValues.monthly.textContent = payload.monthly?.toLocaleString("id-ID") ?? "0";
+
+                historicalStatus?.setAttribute("data-state", "ok");
+                historicalStatus && (historicalStatus.textContent = "Tersambung");
+            } catch (error) {
+                historicalStatus?.setAttribute("data-state", "error");
+                if (historicalStatus)
+                    historicalStatus.textContent = "Gagal";
+                window.showToast?.(formatErrorMessage(error), { type: "error" });
+            }
+        };
+
         type AdminNotification = {
             id: string;
             type: "comment" | "like" | "message" | "system";
@@ -1480,41 +1477,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
             tags?: string[];
         };
 
-        const parsedNotifications = parseJSON(
-            notificationsData?.textContent ?? "[]",
-        );
-
-        const STORAGE_KEY = "admin-notifications-state";
-
-        const loadStoredNotifications = (): AdminNotification[] | null => {
-            if (typeof window === "undefined") return null;
-            try {
-                const stored = localStorage.getItem(STORAGE_KEY);
-                if (!stored) return null;
-                const parsed = parseJSON(stored);
-                return Array.isArray(parsed) ? parsed : null;
-            } catch (error) {
-                console.warn(
-                    "[Admin] Failed to load stored notifications",
-                    error,
-                );
-                return null;
-            }
-        };
-
-        const baseNotifications: AdminNotification[] = Array.isArray(
-            parsedNotifications,
-        )
-            ? parsedNotifications
-            : [];
-
-        const storedNotifications = loadStoredNotifications();
-
-        const initialNotifications: AdminNotification[] = Array.isArray(
-            storedNotifications,
-        )
-            ? storedNotifications
-            : baseNotifications;
+        const initialNotifications: AdminNotification[] = [];
 
         const supabaseReady =
             notificationContainer?.dataset.supabaseReady === "true";
@@ -1523,25 +1486,10 @@ const previewProducts = affiliateProducts.slice(0, 3);
         const supabaseKey = notificationContainer?.dataset.supabaseKey ?? "";
 
         let notificationState: AdminNotification[] = initialNotifications;
-        const defaultNotifications = [...baseNotifications];
         let filteredNotifications: AdminNotification[] = initialNotifications;
         const selectedNotificationIds = new Set<string>();
         let supabaseClientPromise: Promise<any> | null = null;
         let notificationChannel: any = null;
-
-        const persistNotificationState = (
-            items: AdminNotification[],
-        ): void => {
-            if (typeof window === "undefined") return;
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-            } catch (error) {
-                console.warn(
-                    "[Admin] Failed to persist notifications",
-                    error,
-                );
-            }
-        };
 
         const filters = {
             status: "all" as "all" | "unread" | "read",
@@ -1746,95 +1694,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
             nextState: AdminNotification[],
         ): void => {
             notificationState = nextState;
-            persistNotificationState(notificationState);
             refreshNotifications();
-        };
-
-        const attachSwipeGestures = (
-            article: HTMLElement,
-            main: HTMLElement,
-            actions: HTMLElement,
-        ) => {
-            let startX = 0;
-            let currentX = 0;
-            let isDragging = false;
-            let isOpen = false;
-
-            const actionWidth = () =>
-                Math.min(
-                    Math.max(actions.offsetWidth || 160, 140),
-                    240,
-                );
-
-            const resetTransition = () => {
-                main.style.transition = "transform 180ms ease";
-            };
-
-            const clearTransition = () => {
-                main.style.transition = "none";
-            };
-
-            const closePanel = () => {
-                resetTransition();
-                main.style.transform = "translateX(0)";
-                isOpen = false;
-            };
-
-            const openPanel = () => {
-                resetTransition();
-                main.style.transform = `translateX(-${actionWidth()}px)`;
-                isOpen = true;
-            };
-
-            const handlePointerDown = (event: PointerEvent) => {
-                isDragging = true;
-                startX = event.clientX;
-                currentX = 0;
-                clearTransition();
-                main.setPointerCapture(event.pointerId);
-            };
-
-            const handlePointerMove = (event: PointerEvent) => {
-                if (!isDragging) return;
-                currentX = event.clientX - startX;
-                const limit = actionWidth();
-                const offset = Math.max(-limit, Math.min(0, currentX));
-                main.style.transform = `translateX(${offset}px)`;
-                if (Math.abs(currentX) > 4) {
-                    event.preventDefault();
-                }
-            };
-
-            const handlePointerUp = (event: PointerEvent) => {
-                if (!isDragging) return;
-                isDragging = false;
-                main.releasePointerCapture(event.pointerId);
-                const limit = actionWidth();
-                const shouldOpen = currentX < -limit * 0.35;
-                const shouldClose = currentX > -10;
-                if (shouldClose) {
-                    closePanel();
-                    return;
-                }
-                if (shouldOpen || isOpen) {
-                    openPanel();
-                } else {
-                    closePanel();
-                }
-            };
-
-            main.addEventListener("pointerdown", handlePointerDown);
-            main.addEventListener("pointermove", handlePointerMove);
-            main.addEventListener("pointerup", handlePointerUp);
-            main.addEventListener("pointercancel", handlePointerUp);
-            article.addEventListener("mouseleave", () => {
-                if (!isDragging && isOpen) closePanel();
-            });
-            main.addEventListener("click", () => {
-                if (isOpen) {
-                    closePanel();
-                }
-            });
         };
 
         const renderNotifications = (items: AdminNotification[]) => {
@@ -2103,52 +1963,80 @@ const previewProducts = affiliateProducts.slice(0, 3);
             syncBulkControls();
         };
 
-        const markSelectedAsRead = () => {
+        const markSelectedAsRead = async () => {
             if (!selectedNotificationIds.size) return;
-            const updated = notificationState.map((item) =>
-                selectedNotificationIds.has(item.id)
-                    ? { ...item, status: "read" as const }
-                    : item,
-            );
-            selectedNotificationIds.clear();
-            setNotificationState(updated);
+            const ids = Array.from(selectedNotificationIds);
+            try {
+                const response = await fetch("/api/admin/notifications/mark-read", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ ids }),
+                });
+                if (!response.ok) throw new Error("Gagal menandai notifikasi");
+
+                const updated = notificationState.map((item) =>
+                    ids.includes(item.id) ? { ...item, status: "read" } : item,
+                );
+                selectedNotificationIds.clear();
+                setNotificationState(updated);
+                window.showToast?.("Notifikasi ditandai sebagai dibaca.", { type: "success" });
+            } catch (error) {
+                window.showToast?.(formatErrorMessage(error), { type: "error" });
+            }
         };
 
-        const deleteSelected = () => {
+        const deleteSelected = async () => {
             if (!selectedNotificationIds.size) return;
-            const remaining = notificationState.filter(
-                (item) => !selectedNotificationIds.has(item.id),
-            );
-            selectedNotificationIds.clear();
-            setNotificationState(remaining);
+            const ids = Array.from(selectedNotificationIds);
+            try {
+                const response = await fetch("/api/admin/notifications/delete", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ ids }),
+                });
+                if (!response.ok) throw new Error("Gagal menghapus notifikasi");
+
+                const remaining = notificationState.filter((item) => !ids.includes(item.id));
+                selectedNotificationIds.clear();
+                setNotificationState(remaining);
+                window.showToast?.("Notifikasi berhasil dihapus.", { type: "success" });
+            } catch (error) {
+                window.showToast?.(formatErrorMessage(error), { type: "error" });
+            }
         };
 
-        const markAllAsRead = () => {
+        const markAllAsRead = async () => {
             if (allItemsAreRead()) return;
-            const updated = notificationState.map((item) => ({
-                ...item,
-                status: "read" as const,
-            }));
-            selectedNotificationIds.clear();
-            setNotificationState(updated);
+            const ids = notificationState
+                .filter((item) => item.status !== "read")
+                .map((item) => item.id);
+            try {
+                const response = await fetch("/api/admin/notifications/mark-read", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ ids }),
+                });
+                if (!response.ok) throw new Error("Gagal menandai semua notifikasi");
+
+                const updated = notificationState.map((item) => ({ ...item, status: "read" }));
+                selectedNotificationIds.clear();
+                setNotificationState(updated);
+                window.showToast?.("Semua notifikasi ditandai.", { type: "success" });
+            } catch (error) {
+                window.showToast?.(formatErrorMessage(error), { type: "error" });
+            }
         };
 
         const updateFilterChips = () => {
             filterButtons.forEach((button) => {
-                const type = button.dataset.filterType as
-                    | "status"
-                    | "type"
-                    | "priority";
+                const type = button.dataset.filterType as "status" | "type" | "priority";
                 const value = (button.dataset.filterValue ?? "all") as string;
                 const isActive = (filters as any)[type] === value;
                 button.classList.toggle("is-active", isActive);
             });
         };
 
-        const setFilter = (
-            type: "status" | "type" | "priority",
-            value: string,
-        ) => {
+        const setFilter = (type: "status" | "type" | "priority", value: string) => {
             (filters as any)[type] = value;
             updateFilterChips();
             refreshNotifications();
@@ -2165,188 +2053,22 @@ const previewProducts = affiliateProducts.slice(0, 3);
             selectedNotificationIds.clear();
             notificationContainer
                 ?.querySelectorAll<HTMLInputElement>("[data-selection-checkbox]")
-                .forEach((checkbox) => {
-                    checkbox.checked = false;
-                });
+                .forEach((checkbox) => (checkbox.checked = false));
             updateFilterChips();
             refreshNotifications();
         };
 
-        const resetFeed = () => {
-            selectedNotificationIds.clear();
-            setNotificationState([...defaultNotifications]);
-            resetFilters();
-        };
-
-        const normalizeCommentNotification = (record: any) => {
-            if (!record) return null;
-            const slug = String(record.slug ?? "").replace(/^\/+|\/+$/g, "");
-            return {
-                id: `comment-${record.id ?? record.created_at}`,
-                type: "comment",
-                title: "Komentar baru",
-                message: `${record.name || "Anonim"} mengomentari ${
-                    slug || "artikel"
-                }.`,
-                time: record.created_at ?? new Date().toISOString(),
-                status: "unread" as const,
-                href: slug ? `/blog/${slug}` : undefined,
-                priority: "high" as const,
-                category: "Engagement",
-                source: "supabase",
-                tags: ["komentar", slug || "artikel"],
-            } satisfies AdminNotification;
-        };
-
-        const normalizeLikeNotification = (record: any) => {
-            if (!record) return null;
-            const slug = String(record.slug ?? "").replace(/^\/+|\/+$/g, "");
-            return {
-                id: `like-${record.id ?? record.created_at}`,
-                type: "like",
-                title: "Love baru",
-                message: `Artikel ${slug || "ini"} menerima love baru.`,
-                time: record.created_at ?? new Date().toISOString(),
-                status: "unread" as const,
-                href: slug ? `/blog/${slug}` : undefined,
-                priority: "medium" as const,
-                category: "Engagement",
-                source: "supabase",
-                tags: ["love", slug || "artikel"],
-            } satisfies AdminNotification;
-        };
-
-        const fetchRecentNotifications = async () => {
-            if (!supabaseReady || !supabaseUrl || !supabaseKey) return [];
-            const params = new URLSearchParams({
-                select: "id,name,message,slug,created_at", // comments
-                order: "created_at.desc",
-                limit: "5",
-            });
-            const likeParams = new URLSearchParams({
-                select: "id,slug,created_at",
-                order: "created_at.desc",
-                limit: "5",
-            });
-
-            const [commentsRes, likesRes] = await Promise.all([
-                fetch(
-                    `${supabaseUrl}/rest/v1/article_comments?${params.toString()}`,
-                    { headers: supabaseHeaders() },
-                ),
-                fetch(
-                    `${supabaseUrl}/rest/v1/article_likes?${likeParams.toString()}`,
-                    { headers: supabaseHeaders() },
-                ),
-            ]);
-
-            if (!commentsRes.ok || !likesRes.ok) {
-                throw new Error("Gagal memuat data notifikasi Supabase");
-            }
-
-            const [comments, likes] = await Promise.all([
-                commentsRes.json(),
-                likesRes.json(),
-            ]);
-
-            const items: AdminNotification[] = [];
-            if (Array.isArray(comments)) {
-                comments
-                    .map((item) => normalizeCommentNotification(item))
-                    .filter(Boolean)
-                    .forEach((item) => items.push(item as AdminNotification));
-            }
-            if (Array.isArray(likes)) {
-                likes
-                    .map((item) => normalizeLikeNotification(item))
-                    .filter(Boolean)
-                    .forEach((item) => items.push(item as AdminNotification));
-            }
-
-            return items.sort((a, b) =>
-                new Date(b.time).getTime() - new Date(a.time).getTime(),
-            );
-        };
-
-        const loadSupabaseClient = async () => {
-            if (!supabaseReady || !supabaseUrl || !supabaseKey) return null;
-            if (!supabaseClientPromise) {
-                supabaseClientPromise = import(
-                    "https://esm.sh/@supabase/supabase-js@2.45.2"
-                ).then(({ createClient }) =>
-                    createClient(supabaseUrl, supabaseKey, {
-                        auth: { persistSession: false },
-                    }),
-                );
-            }
-            return supabaseClientPromise;
-        };
-
-        const subscribeRealtimeNotifications = async () => {
-            if (!supabaseReady || notificationChannel) return;
-            const client = await loadSupabaseClient();
-            if (!client) return;
-
-            notificationChannel = client.channel("admin-notifications");
-
-            notificationChannel.on(
-                "postgres_changes",
-                {
-                    event: "INSERT",
-                    schema: "public",
-                    table: "article_comments",
-                },
-                (payload: any) => {
-                    const normalized = normalizeCommentNotification(payload.new);
-                    if (!normalized) return;
-                    const exists = notificationState.some(
-                        (item) => item.id === normalized.id,
-                    );
-                    if (!exists) {
-                        setNotificationState(
-                            [normalized, ...notificationState].slice(0, 15),
-                        );
-                    }
-                },
-            );
-
-            notificationChannel.on(
-                "postgres_changes",
-                {
-                    event: "INSERT",
-                    schema: "public",
-                    table: "article_likes",
-                },
-                (payload: any) => {
-                    const normalized = normalizeLikeNotification(payload.new);
-                    if (!normalized) return;
-                    const exists = notificationState.some(
-                        (item) => item.id === normalized.id,
-                    );
-                    if (!exists) {
-                        setNotificationState(
-                            [normalized, ...notificationState].slice(0, 15),
-                        );
-                    }
-                },
-            );
-
-            notificationChannel.subscribe();
-        };
-
         const bootstrapNotifications = async () => {
             if (!notificationContainer) return;
-            refreshNotifications();
-            if (!supabaseReady) return;
             try {
-                const items = await fetchRecentNotifications();
-                if (items.length) {
-                    setNotificationState(items.slice(0, 15));
-                }
+                const response = await fetch("/api/admin/notifications");
+                if (!response.ok) throw new Error("Gagal memuat notifikasi");
+                const items = await response.json();
+                setNotificationState(items);
             } catch (error) {
-                console.warn("[Admin] Notifikasi Supabase gagal dimuat", error);
+                window.showToast?.(formatErrorMessage(error), { type: "error" });
+                console.warn("[Admin] Gagal memuat notifikasi", error);
             }
-            subscribeRealtimeNotifications();
         };
 
         selectAllCheckbox?.addEventListener("change", (event) => {
@@ -2364,10 +2086,6 @@ const previewProducts = affiliateProducts.slice(0, 3);
 
         markAllButton?.addEventListener("click", () => {
             markAllAsRead();
-        });
-
-        resetFeedButton?.addEventListener("click", () => {
-            resetFeed();
         });
 
         resetFiltersButton?.addEventListener("click", () => {
@@ -2445,6 +2163,10 @@ const previewProducts = affiliateProducts.slice(0, 3);
 
         function switchTab(tabName: string): void {
             setActiveTab(tabName);
+             if (tabName === "analytics") {
+                startRealtimePolling();
+                updateHistoricalAnalytics();
+            }
         }
 
         document.querySelectorAll(TAB_TRIGGER_SELECTOR).forEach((btn) => {
@@ -2452,9 +2174,6 @@ const previewProducts = affiliateProducts.slice(0, 3);
                 const tabName = btn.getAttribute("data-tab");
                 if (tabName) {
                     switchTab(tabName);
-                    if (tabName === "analytics") {
-                        startRealtimePolling();
-                    }
                     window.scrollTo({ top: 0, behavior: "smooth" });
                 }
             });

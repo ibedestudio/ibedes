@@ -16,11 +16,8 @@ description: "Renungan tentang syurūq sebagai transisi dari gelap menuju terang
 pubDate: "2025-11-24"
 featuredImage: "https://images.pexels.com/photos/13710182/pexels-photo-13710182.jpeg"
 affiliateProducts:
+  - "kipas-portable1"
   - "smart-watch-1"
-  - "tripod-kamera-1"
-  - "jas-hujan-sp3"
-  - "jas-hujan-sp2"
-  - "jas-hujan-sp1"
 affiliateContext: "Produk yang bisa membantu perjalanan berani memulai hal baru:"
 ---
 

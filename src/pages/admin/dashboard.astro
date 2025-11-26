@@ -1409,7 +1409,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
 
         const setRealtimeStatus = (
             label: string,
-            state: "loading" | "ok" | "error" | "warning",
+            state: "loading" | "ok" | "error",
         ) => {
             if (realtimeStatus) {
                 realtimeStatus.textContent = label;
@@ -1433,20 +1433,6 @@ const previewProducts = affiliateProducts.slice(0, 3);
                 });
 
                 const payload = await response.json().catch(() => ({}));
-
-                const isUnconfigured =
-                    response.status === 501 || payload?.configured === false;
-
-                if (isUnconfigured) {
-                    setRealtimeStatus("Belum dikonfigurasi", "warning");
-                    if (realtimeMeta) {
-                        realtimeMeta.textContent =
-                            payload?.error ||
-                            "Tambahkan GA4_PROPERTY_ID, GA4_CLIENT_EMAIL, dan GA4_PRIVATE_KEY di environment server.";
-                    }
-                    if (realtimeIntervalId) window.clearInterval(realtimeIntervalId);
-                    return;
-                }
 
                 if (!response.ok) {
                     throw new Error(
@@ -4077,11 +4063,6 @@ const previewProducts = affiliateProducts.slice(0, 3);
             var(--color-danger, #ff6b6b) 80%,
             transparent
         );
-    }
-
-    [data-realtime-status][data-state="warning"] {
-        background: color-mix(in srgb, #ffb546 12%, transparent);
-        color: color-mix(in srgb, #a36100 80%, transparent);
     }
 
     .admin-progress {

@@ -72,7 +72,6 @@ export const GET: APIRoute = async () => {
         return new Response(
             JSON.stringify({
                 error: "Google Analytics belum dikonfigurasi. Tambahkan GA4_PROPERTY_ID, GA4_CLIENT_EMAIL, dan GA4_PRIVATE_KEY di environment server.",
-                configured: false,
             }),
             {
                 status: 501,
@@ -112,7 +111,6 @@ export const GET: APIRoute = async () => {
         return new Response(
             JSON.stringify({
                 activeUsers: Number.isFinite(activeUsers) ? activeUsers : 0,
-                configured: true,
             }),
             {
                 status: 200,
@@ -125,7 +123,7 @@ export const GET: APIRoute = async () => {
     } catch (error) {
         console.error("[GA4] Realtime fetch failed", error);
         const message = error instanceof Error ? error.message : "Terjadi kesalahan";
-        return new Response(JSON.stringify({ error: message, configured: false }), {
+        return new Response(JSON.stringify({ error: message }), {
             status: 500,
             headers: { "Content-Type": "application/json" },
         });

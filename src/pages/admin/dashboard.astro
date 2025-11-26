@@ -905,11 +905,8 @@ const previewProducts = affiliateProducts.slice(0, 3);
         const notificationContainer = document.querySelector<HTMLElement>(
             "[data-admin-notifications]",
         );
-        const unreadCountTargets = Array.from(
-            document.querySelectorAll<HTMLElement>("[data-unread-count]"),
-        );
-        const unreadBadges = Array.from(
-            document.querySelectorAll<HTMLElement>("[data-unread-badge]"),
+        const unreadBadge = document.querySelector<HTMLElement>(
+            "[data-unread-count]",
         );
         const notificationsData = document.getElementById(
             "admin-notifications-data",
@@ -1043,13 +1040,9 @@ const previewProducts = affiliateProducts.slice(0, 3);
             const unreadCount = items.filter(
                 (item) => (item.status ?? "unread") === "unread",
             ).length;
-            unreadCountTargets.forEach((target) => {
-                target.textContent = `${unreadCount} baru`;
-            });
-            unreadBadges.forEach((badge) => {
-                badge.textContent = String(unreadCount);
-                badge.toggleAttribute("hidden", unreadCount === 0);
-            });
+            if (unreadBadge) {
+                unreadBadge.textContent = `${unreadCount} baru`;
+            }
         };
 
         const normalizeCommentNotification = (record: any) => {

@@ -1,0 +1,88 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Section from "../components/common/Section.astro";
+import Breadcrumb from "../components/common/Breadcrumb.astro";
+
+const breadcrumbItems = [
+  { name: "Home", url: "/" },
+  { name: "Privacy Policy", url: "/privacy-policy" },
+];
+
+const sections = [
+  {
+    title: "Data yang Dikumpulkan",
+    items: [
+      "Informasi kontak seperti email yang Anda kirim melalui formulir atau langsung ke saya.",
+      "Data analitik anonim (misalnya halaman yang dikunjungi, perangkat, dan browser) untuk memahami performa konten.",
+      "Newsletter signup yang dikelola pihak ketiga hanya menyimpan alamat email dan preferensi langganan Anda.",
+    ],
+  },
+  {
+    title: "Penggunaan Data",
+    items: [
+      "Menjawab pertanyaan, permintaan kolaborasi, atau kebutuhan dukungan.",
+      "Mengoptimalkan konten dan pengalaman pengguna berdasarkan data agregat.",
+      "Mengirim pembaruan newsletter jika Anda berlangganan (dapat berhenti kapan saja).",
+    ],
+  },
+  {
+    title: "Penyimpanan & Keamanan",
+    items: [
+      "Data disimpan di layanan tepercaya dengan akses terbatas.",
+      "Tidak ada penjualan atau penyewaan data pribadi kepada pihak ketiga.",
+      "Cookie hanya digunakan untuk kebutuhan analitik dan preferensi tampilan.",
+    ],
+  },
+  {
+    title: "Hak Anda",
+    items: [
+      "Meminta penghapusan atau pembaruan data yang Anda kirimkan.",
+      "Berhenti berlangganan newsletter kapan saja melalui tautan di email.",
+      "Menolak pelacakan dengan memblokir cookie analitik di browser Anda.",
+    ],
+  },
+];
+
+const seoTitle = "Privacy Policy | ibedes";
+const seoDescription = "Kebijakan privasi tentang bagaimana ibedes mengumpulkan, menggunakan, dan melindungi data Anda.";
+const seoKeywords = "privacy policy ibedes, kebijakan privasi, perlindungan data";
+---
+
+<Layout
+  title={seoTitle}
+  description={seoDescription}
+  keywords={seoKeywords}
+  canonicalURL="/privacy-policy"
+  breadcrumbs={breadcrumbItems}
+>
+  <Section class="py-10 sm:py-16 space-y-10 sm:space-y-14">
+    <Breadcrumb items={breadcrumbItems} />
+
+    <header class="space-y-4">
+      <p class="text-xs sm:text-sm font-mono uppercase tracking-[0.3em] text-primary">Kebijakan Privasi</p>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-display uppercase tracking-wide">Privacy Policy</h1>
+      <p class="text-base sm:text-lg text-muted-foreground max-w-3xl font-serif leading-relaxed">
+        Transparansi tentang data Anda penting. Halaman ini menjelaskan jenis data yang dikumpulkan, alasan penggunaannya, dan bagaimana Anda dapat mengontrolnya.
+      </p>
+    </header>
+
+    <div class="space-y-6">
+      {sections.map((section) => (
+        <div class="p-6 border-2 border-border rounded-xl bg-card/60 space-y-3">
+          <h2 class="text-xl font-display uppercase tracking-wide">{section.title}</h2>
+          <ul class="list-disc pl-5 space-y-2 text-sm sm:text-base text-muted-foreground font-serif">
+            {section.items.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <div class="p-6 border-2 border-dashed border-border rounded-xl bg-muted/40">
+      <p class="text-sm text-muted-foreground font-serif">
+        Pertanyaan lain seputar privasi? Kirim email ke <a class="text-primary underline" href="mailto:hello@ibedes.xyz">hello@ibedes.xyz</a> dan saya akan membantu.
+      </p>
+    </div>
+  </Section>
+</Layout>

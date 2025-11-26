@@ -33,12 +33,23 @@ export interface BreadcrumbItem {
  * Generate JSON-LD structured data for an article
  */
 export function generateArticleSchema(article: Article, siteUrl: string) {
+    const toAbsoluteUrl = (value?: string) => {
+        if (!value) return undefined;
+
+        try {
+            return new URL(value, siteUrl).href;
+        } catch (error) {
+            console.error("Invalid URL provided to generateArticleSchema", value);
+            return value;
+        }
+    };
+
     return {
         '@context': 'https://schema.org',
         '@type': 'Article',
         headline: article.title,
         description: article.description,
-        image: article.image ? `${siteUrl}${article.image}` : undefined,
+        image: toAbsoluteUrl(article.image),
         datePublished: article.publishedTime,
         dateModified: article.modifiedTime || article.publishedTime,
         author: {
@@ -55,7 +66,7 @@ export function generateArticleSchema(article: Article, siteUrl: string) {
         },
         mainEntityOfPage: {
             '@type': 'WebPage',
-            '@id': article.url,
+            '@id': toAbsoluteUrl(article.url),
         },
         keywords: article.tags?.join(', '),
     };
@@ -109,7 +120,7 @@ export function generateBreadcrumbSchema(items: BreadcrumbItem[], siteUrl: strin
             '@type': 'ListItem',
             position: index + 1,
             name: item.name,
-            item: `${siteUrl}${item.url}`,
+            item: new URL(item.url, siteUrl).href,
         })),
     };
 }

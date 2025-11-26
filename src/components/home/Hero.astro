@@ -4,25 +4,216 @@ import { GLOBAL } from "../../lib/variables";
 import profileImage from "../../assets/ibedes.jpg";
 ---
 
-<div class="flex flex-col items-center sm:flex-row gap-8">
-  <Image
-    src={profileImage}
-    alt={GLOBAL.username}
-    class="rounded-full max-w-40 w-40 h-40 mb-4 z-0 grayscale"
-    width={160}
-    height={160}
-    loading="eager"
-  />
-  <div>
-    <h1
-      class="text-3xl sm:text-4xl font-display font-semibold opsz text-center sm:text-left"
+<div
+  class="relative min-h-[75vh] flex items-center justify-center -mx-4 md:-mx-6 lg:-mx-8 py-6"
+>
+  <!-- Decorative Background Elements -->
+  <div
+    class="absolute inset-0 -z-10 overflow-hidden opacity-30 dark:opacity-20"
+  >
+    <div
+      class="absolute top-20 right-20 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse"
     >
-      {GLOBAL.username}
-    </h1>
-    <h2
-      class="text-center text-xl sm:text-2xl font-mono font-medium sm:text-left"
+    </div>
+    <div
+      class="absolute bottom-20 left-20 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl animate-pulse"
+      style="animation-delay: 1s;"
     >
-      <p set:html={GLOBAL.shortDescription} />
-    </h2>
+    </div>
+  </div>
+
+  <!-- Grid Pattern Overlay -->
+  <div
+    class="absolute inset-0 -z-10 opacity-[0.03] dark:opacity-[0.05]"
+    style="background-image: radial-gradient(circle, currentColor 1px, transparent 1px); background-size: 40px 40px;"
+  >
+  </div>
+
+  <!-- Main Hero Content -->
+  <div
+    class="flex flex-col items-center text-center gap-3 md:gap-5 px-4 relative max-w-4xl mx-auto w-full"
+  >
+    <!-- Profile Image with Decorative Border -->
+    <div class="relative group">
+      <!-- Animated Border -->
+      <div
+        class="absolute -inset-1 bg-gradient-to-r from-primary via-primary/50 to-primary rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"
+      >
+      </div>
+
+      <!-- Image Container -->
+      <div class="relative">
+        <Image
+          src={profileImage}
+          alt={GLOBAL.username}
+          class="rounded-full w-24 h-24 md:w-32 md:h-32 object-cover grayscale hover:grayscale-0 transition-all duration-300 border-4 border-background"
+          width={128}
+          height={128}
+          loading="eager"
+        />
+      </div>
+    </div>
+
+    <!-- Text Content -->
+    <div class="space-y-2 md:space-y-3 max-w-2xl">
+      <!-- Greeting -->
+      <div
+        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border-2 border-border bg-card text-xs font-mono"
+      >
+        <span class="relative flex h-2 w-2">
+          <span
+            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"
+          ></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"
+          ></span>
+        </span>
+        <span>Available for projects</span>
+      </div>
+
+      <!-- Main Heading -->
+      <h1
+        class="text-3xl sm:text-4xl md:text-5xl font-display font-bold tracking-tight"
+      >
+        {GLOBAL.username}
+      </h1>
+
+      <!-- Subtitle with Typing Effect -->
+      <div class="text-base sm:text-lg md:text-xl font-mono text-primary">
+        <span class="inline-block" id="typing-text">Web Developer</span>
+        <span class="animate-pulse">|</span>
+      </div>
+
+      <!-- Description -->
+      <p
+        class="text-xs sm:text-sm md:text-base text-muted-foreground max-w-xl mx-auto leading-relaxed font-serif"
+      >
+        Membangun pengalaman web yang cepat, indah, dan bermakna. Berbagi
+        pengetahuan melalui artikel dan tutorial.
+      </p>
+    </div>
+
+    <!-- CTA Buttons -->
+    <div
+      class="flex flex-col sm:flex-row gap-2 md:gap-3 justify-center pt-2 md:pt-3"
+    >
+      <a
+        href="/blog"
+        class="group px-5 py-2.5 md:px-6 md:py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition-all duration-200 inline-flex items-center justify-center gap-2 no-underline shadow-lg hover:shadow-xl text-sm md:text-base"
+      >
+        <span>Baca Artikel</span>
+        <i
+          class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform text-xs"
+        ></i>
+      </a>
+      <a
+        href="/projects"
+        class="px-5 py-2.5 md:px-6 md:py-3 border-2 border-border bg-card rounded-lg font-semibold hover:border-primary transition-colors inline-flex items-center justify-center gap-2 no-underline text-sm md:text-base"
+      >
+        <i class="fa-solid fa-code text-xs"></i>
+        <span>Lihat Project</span>
+      </a>
+    </div>
+
+    <!-- Social Links -->
+    <div class="flex gap-2 md:gap-3 justify-center pt-2 pb-8">
+      {
+        GLOBAL.githubProfile && (
+          <a
+            href={GLOBAL.githubProfile}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-9 h-9 md:w-10 md:h-10 rounded-full border-2 border-border hover:border-primary hover:bg-primary/10 flex items-center justify-center transition-all no-underline"
+            aria-label="GitHub"
+          >
+            <i class="fa-brands fa-github text-base md:text-lg" />
+          </a>
+        )
+      }
+      {
+        GLOBAL.threadsProfile && (
+          <a
+            href={GLOBAL.threadsProfile}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-9 h-9 md:w-10 md:h-10 rounded-full border-2 border-border hover:border-primary hover:bg-primary/10 flex items-center justify-center transition-all no-underline"
+            aria-label="Threads"
+          >
+            <i class="fa-brands fa-threads text-base md:text-lg" />
+          </a>
+        )
+      }
+      <a
+        href={`mailto:${GLOBAL.contactEmail}`}
+        class="w-9 h-9 md:w-10 md:h-10 rounded-full border-2 border-border hover:border-primary hover:bg-primary/10 flex items-center justify-center transition-all no-underline"
+        aria-label="Email"
+      >
+        <i class="fa-solid fa-envelope text-base md:text-lg"></i>
+      </a>
+      {
+        GLOBAL.contactWhatsApp && (
+          <a
+            href={GLOBAL.contactWhatsApp}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-9 h-9 md:w-10 md:h-10 rounded-full border-2 border-border hover:border-primary hover:bg-primary/10 flex items-center justify-center transition-all no-underline"
+            aria-label="WhatsApp"
+          >
+            <i class="fa-brands fa-whatsapp text-base md:text-lg" />
+          </a>
+        )
+      }
+    </div>
   </div>
 </div>
+
+<!-- Scroll Indicator - Outside hero container -->
+<div class="flex justify-center -mt-4 mb-8 animate-bounce">
+  <div class="flex flex-col items-center gap-1">
+    <span class="text-xs text-muted-foreground font-mono">Scroll</span>
+    <i class="fa-solid fa-chevron-down text-muted-foreground text-base"></i>
+  </div>
+</div>
+
+<script>
+  // Typing effect for subtitle
+  const roles = [
+    "Web Developer",
+    "Content Creator",
+    "Problem Solver",
+    "Lifelong Learner",
+  ];
+  let currentRole = 0;
+  let currentChar = 0;
+  let isDeleting = false;
+  const typingElement = document.getElementById("typing-text");
+
+  function type() {
+    if (!typingElement) return;
+
+    const current = roles[currentRole];
+
+    if (isDeleting) {
+      typingElement.textContent = current.substring(0, currentChar - 1);
+      currentChar--;
+    } else {
+      typingElement.textContent = current.substring(0, currentChar + 1);
+      currentChar++;
+    }
+
+    let typeSpeed = isDeleting ? 50 : 100;
+
+    if (!isDeleting && currentChar === current.length) {
+      typeSpeed = 2000; // Pause at end
+      isDeleting = true;
+    } else if (isDeleting && currentChar === 0) {
+      isDeleting = false;
+      currentRole = (currentRole + 1) % roles.length;
+      typeSpeed = 500; // Pause before next word
+    }
+
+    setTimeout(type, typeSpeed);
+  }
+
+  // Start typing effect
+  setTimeout(type, 1000);
+</script>

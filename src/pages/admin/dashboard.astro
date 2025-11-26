@@ -63,7 +63,8 @@ const stats = {
     totalProducts: affiliateProducts.length,
     totalWords,
     totalReadingTime,
-    averageWordsPerArticle: Math.round(totalWords / (articles.length || 1)) || 0,
+    averageWordsPerArticle:
+        Math.round(totalWords / (articles.length || 1)) || 0,
 };
 
 const articlesWithAffiliates = articles.filter(
@@ -174,7 +175,8 @@ const previewProducts = affiliateProducts.slice(0, 3);
             <div class="admin-header__text">
                 <h1 class="admin-title">Admin Dashboard</h1>
                 <p class="admin-subtitle">
-                    Kelola konten, produk, dan analisis dengan antarmuka yang compact.
+                    Kelola konten, produk, dan analisis dengan antarmuka yang
+                    compact.
                 </p>
             </div>
             <div class="admin-quick-actions" aria-label="Quick actions">
@@ -186,7 +188,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
                             data-accent={action.accent}
                             title={action.description}
                         >
-                            <i class={`fa-solid ${action.icon}`}></i>
+                            <i class={`fa-solid ${action.icon}`} />
                         </a>
                     ))
                 }
@@ -204,13 +206,22 @@ const previewProducts = affiliateProducts.slice(0, 3);
                     {
                         overviewStats.map((stat) => (
                             <article class="admin-stat-card">
-                                <div class="admin-stat-card__icon" aria-hidden="true">
-                                    <i class={stat.icon}></i>
+                                <div
+                                    class="admin-stat-card__icon"
+                                    aria-hidden="true"
+                                >
+                                    <i class={stat.icon} />
                                 </div>
                                 <div>
-                                    <p class="admin-stat-card__label">{stat.label}</p>
-                                    <p class="admin-stat-card__value">{stat.value}</p>
-                                    <p class="admin-stat-card__meta">{stat.meta}</p>
+                                    <p class="admin-stat-card__label">
+                                        {stat.label}
+                                    </p>
+                                    <p class="admin-stat-card__value">
+                                        {stat.value}
+                                    </p>
+                                    <p class="admin-stat-card__meta">
+                                        {stat.meta}
+                                    </p>
                                 </div>
                             </article>
                         ))
@@ -230,7 +241,9 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                 onclick="switchTab('articles')"
                             >
                                 Kelola semua
-                                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                                <i
+                                    class="fa-solid fa-arrow-right"
+                                    aria-hidden="true"></i>
                             </button>
                         </div>
                         <div class="admin-list">
@@ -238,17 +251,31 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                 articles.slice(0, 5).map((article) => (
                                     <article class="admin-list__item">
                                         <div>
-                                            <p class="admin-list__title">{article.title}</p>
+                                            <p class="admin-list__title">
+                                                {article.title}
+                                            </p>
                                             <p class="admin-list__meta">
                                                 {article.date
-                                                    ? new Date(article.date).toLocaleDateString()
+                                                    ? new Date(
+                                                          article.date,
+                                                      ).toLocaleDateString()
                                                     : "Belum ada tanggal"}
-                                                · {article.words} kata · {article.readingTime} menit
+                                                · {article.words} kata ·{" "}
+                                                {article.readingTime} menit
                                             </p>
-                                            {article.affiliateProducts?.length ? (
+                                            {article.affiliateProducts
+                                                ?.length ? (
                                                 <span class="admin-tag">
-                                                    <i class="fa-solid fa-link" aria-hidden="true"></i>
-                                                    {article.affiliateProducts.length} produk
+                                                    <i
+                                                        class="fa-solid fa-link"
+                                                        aria-hidden="true"
+                                                    />
+                                                    {
+                                                        article
+                                                            .affiliateProducts
+                                                            .length
+                                                    }{" "}
+                                                    produk
                                                 </span>
                                             ) : null}
                                         </div>
@@ -259,14 +286,14 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                                 class="icon-button"
                                                 title="Lihat artikel"
                                             >
-                                                <i class="fa-solid fa-eye"></i>
+                                                <i class="fa-solid fa-eye" />
                                             </a>
                                             <a
                                                 href={`/admin/editor?file=${article.filename}`}
                                                 class="icon-button"
                                                 title="Edit artikel"
                                             >
-                                                <i class="fa-solid fa-pen-to-square"></i>
+                                                <i class="fa-solid fa-pen-to-square" />
                                             </a>
                                             <button
                                                 type="button"
@@ -274,7 +301,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                                 data-filename={article.filename}
                                                 title="Hapus artikel"
                                             >
-                                                <i class="fa-solid fa-trash"></i>
+                                                <i class="fa-solid fa-trash" />
                                             </button>
                                         </div>
                                     </article>
@@ -294,22 +321,37 @@ const previewProducts = affiliateProducts.slice(0, 3);
                             </span>
                         </div>
                         <div class="admin-product-list">
-                            {previewProducts.length === 0 && (
-                                <p class="admin-empty">Belum ada produk yang ditautkan.</p>
-                            )}
+                            {
+                                previewProducts.length === 0 && (
+                                    <p class="admin-empty">
+                                        Belum ada produk yang ditautkan.
+                                    </p>
+                                )
+                            }
                             {
                                 previewProducts.map((product) => (
                                     <article class="admin-product">
                                         <div class="admin-product__media">
-                                            <img src={product.image} alt={product.name} loading="lazy" />
+                                            <img
+                                                src={product.image}
+                                                alt={product.name}
+                                                loading="lazy"
+                                            />
                                         </div>
                                         <div class="admin-product__body">
-                                            <p class="admin-product__title">{product.name}</p>
-                                            <p class="admin-product__meta">{product.category ?? "Kategori belum diisi"}</p>
+                                            <p class="admin-product__title">
+                                                {product.name}
+                                            </p>
+                                            <p class="admin-product__meta">
+                                                {product.category ??
+                                                    "Kategori belum diisi"}
+                                            </p>
                                             <p class="admin-product__price">
                                                 {formatRupiah(product.price)}
                                                 {product.discount && (
-                                                    <span class="admin-pill-badge">{product.discount} OFF</span>
+                                                    <span class="admin-pill-badge">
+                                                        {product.discount} OFF
+                                                    </span>
                                                 )}
                                             </p>
                                         </div>
@@ -324,7 +366,9 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                 onclick="switchTab('products')"
                             >
                                 Kelola produk
-                                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                                <i
+                                    class="fa-solid fa-arrow-right"
+                                    aria-hidden="true"></i>
                             </button>
                         </div>
                     </div>
@@ -356,15 +400,21 @@ const previewProducts = affiliateProducts.slice(0, 3);
                             articles.map((article) => (
                                 <article class="admin-record" role="row">
                                     <div class="admin-record__main" role="cell">
-                                        <p class="admin-record__title">{article.title}</p>
-                                        <p class="admin-record__slug">{article.filename}</p>
+                                        <p class="admin-record__title">
+                                            {article.title}
+                                        </p>
+                                        <p class="admin-record__slug">
+                                            {article.filename}
+                                        </p>
                                     </div>
                                     <dl class="admin-record__meta" role="cell">
                                         <div>
                                             <dt>Tanggal</dt>
                                             <dd>
                                                 {article.date
-                                                    ? new Date(article.date).toLocaleDateString()
+                                                    ? new Date(
+                                                          article.date,
+                                                      ).toLocaleDateString()
                                                     : "-"}
                                             </dd>
                                         </div>
@@ -374,7 +424,10 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                         </div>
                                         <div>
                                             <dt>Produk</dt>
-                                            <dd>{article.affiliateProducts?.length ?? 0}</dd>
+                                            <dd>
+                                                {article.affiliateProducts
+                                                    ?.length ?? 0}
+                                            </dd>
                                         </div>
                                     </dl>
                                     <div class="admin-row-actions" role="cell">
@@ -384,14 +437,14 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                             class="icon-button"
                                             title="Lihat artikel"
                                         >
-                                            <i class="fa-solid fa-eye"></i>
+                                            <i class="fa-solid fa-eye" />
                                         </a>
                                         <a
                                             href={`/admin/editor?file=${article.filename}`}
                                             class="icon-button"
                                             title="Edit artikel"
                                         >
-                                            <i class="fa-solid fa-pen-to-square"></i>
+                                            <i class="fa-solid fa-pen-to-square" />
                                         </a>
                                         <button
                                             type="button"
@@ -399,7 +452,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                             data-filename={article.filename}
                                             title="Hapus artikel"
                                         >
-                                            <i class="fa-solid fa-trash"></i>
+                                            <i class="fa-solid fa-trash" />
                                         </button>
                                     </div>
                                 </article>
@@ -432,14 +485,28 @@ const previewProducts = affiliateProducts.slice(0, 3);
                     <div class="admin-records" role="table">
                         {
                             affiliateProducts.map((product) => (
-                                <article class="admin-record admin-record--product" role="row">
+                                <article
+                                    class="admin-record admin-record--product"
+                                    role="row"
+                                >
                                     <div class="admin-record__main" role="cell">
-                                        <div class="admin-product__media admin-product__media--compact" aria-hidden="true">
-                                            <img src={product.image} alt={product.name} loading="lazy" />
+                                        <div
+                                            class="admin-product__media admin-product__media--compact"
+                                            aria-hidden="true"
+                                        >
+                                            <img
+                                                src={product.image}
+                                                alt={product.name}
+                                                loading="lazy"
+                                            />
                                         </div>
                                         <div>
-                                            <p class="admin-record__title">{product.name}</p>
-                                            <p class="admin-record__slug">{product.id}</p>
+                                            <p class="admin-record__title">
+                                                {product.name}
+                                            </p>
+                                            <p class="admin-record__slug">
+                                                {product.id}
+                                            </p>
                                         </div>
                                     </div>
                                     <dl class="admin-record__meta" role="cell">
@@ -449,7 +516,9 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                         </div>
                                         <div>
                                             <dt>Harga</dt>
-                                            <dd>{formatRupiah(product.price)}</dd>
+                                            <dd>
+                                                {formatRupiah(product.price)}
+                                            </dd>
                                         </div>
                                         {product.discount ? (
                                             <div>
@@ -464,7 +533,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                             class="icon-button"
                                             title="Edit produk"
                                         >
-                                            <i class="fa-solid fa-pen-to-square"></i>
+                                            <i class="fa-solid fa-pen-to-square" />
                                         </a>
                                         <button
                                             type="button"
@@ -473,7 +542,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                             data-product-name={product.name}
                                             title="Hapus produk"
                                         >
-                                            <i class="fa-solid fa-trash"></i>
+                                            <i class="fa-solid fa-trash" />
                                         </button>
                                     </div>
                                 </article>
@@ -504,7 +573,9 @@ const previewProducts = affiliateProducts.slice(0, 3);
                             </div>
                             <div class="admin-metric">
                                 <p>Total kata</p>
-                                <strong>{stats.totalWords.toLocaleString()}</strong>
+                                <strong
+                                    >{stats.totalWords.toLocaleString()}</strong
+                                >
                             </div>
                             <div class="admin-metric">
                                 <p>Rata-rata kata / artikel</p>
@@ -528,7 +599,9 @@ const previewProducts = affiliateProducts.slice(0, 3);
                             <div class="admin-progress__item">
                                 <div class="admin-progress__label">
                                     <span>Artikel dengan produk</span>
-                                    <strong>{articlesWithAffiliates.length}</strong>
+                                    <strong
+                                        >{articlesWithAffiliates.length}</strong
+                                    >
                                 </div>
                                 <div class="admin-progress__track">
                                     <span
@@ -537,7 +610,8 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                     ></span>
                                 </div>
                                 <p class="admin-progress__meta">
-                                    {affiliateCoverage}% dari konten sudah memiliki tautan afiliasi.
+                                    {affiliateCoverage}% dari konten sudah
+                                    memiliki tautan afiliasi.
                                 </p>
                             </div>
                             <div class="admin-progress__item">
@@ -552,7 +626,8 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                     ></span>
                                 </div>
                                 <p class="admin-progress__meta">
-                                    Targetkan 2 produk / artikel untuk performa maksimal.
+                                    Targetkan 2 produk / artikel untuk performa
+                                    maksimal.
                                 </p>
                             </div>
                         </div>
@@ -583,7 +658,9 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                     <p>Metadata situs</p>
                                     <span>Edit judul, deskripsi, dan SEO.</span>
                                 </div>
-                                <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                                <i
+                                    class="fa-solid fa-chevron-right"
+                                    aria-hidden="true"></i>
                             </a>
                             <a
                                 href="/admin/upload"
@@ -591,9 +668,12 @@ const previewProducts = affiliateProducts.slice(0, 3);
                             >
                                 <div>
                                     <p>Upload berkas</p>
-                                    <span>Tambahkan aset pendukung konten.</span>
+                                    <span>Tambahkan aset pendukung konten.</span
+                                    >
                                 </div>
-                                <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                                <i
+                                    class="fa-solid fa-chevron-right"
+                                    aria-hidden="true"></i>
                             </a>
                         </div>
                     </div>
@@ -613,9 +693,14 @@ const previewProducts = affiliateProducts.slice(0, 3);
                             >
                                 <div>
                                     <p>Ekspor data</p>
-                                    <span>Backup artikel, produk, dan konfigurasi.</span>
+                                    <span
+                                        >Backup artikel, produk, dan
+                                        konfigurasi.</span
+                                    >
                                 </div>
-                                <i class="fa-solid fa-download" aria-hidden="true"></i>
+                                <i
+                                    class="fa-solid fa-download"
+                                    aria-hidden="true"></i>
                             </button>
                             <button
                                 type="button"
@@ -624,10 +709,32 @@ const previewProducts = affiliateProducts.slice(0, 3);
                             >
                                 <div>
                                     <p>Bersihkan cache</p>
-                                    <span>Segarkan data statis dan regenerasi konten.</span>
+                                    <span
+                                        >Segarkan data statis dan regenerasi
+                                        konten.</span
+                                    >
                                 </div>
-                                <i class="fa-solid fa-broom" aria-hidden="true"></i>
+                                <i class="fa-solid fa-broom" aria-hidden="true"
+                                ></i>
                             </button>
+                            <form
+                                action="/api/auth/logout"
+                                method="POST"
+                                class="w-full"
+                            >
+                                <button
+                                    type="submit"
+                                    class="admin-setting-action admin-setting-action--button text-red-600 dark:text-red-400"
+                                >
+                                    <div>
+                                        <p>Keluar</p>
+                                        <span>Akhiri sesi admin.</span>
+                                    </div>
+                                    <i
+                                        class="fa-solid fa-right-from-bracket"
+                                        aria-hidden="true"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -656,7 +763,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
                     aria-controls={tab.id}
                     title={tab.tooltip}
                 >
-                    <i class={`fa-solid ${tab.icon}`} aria-hidden="true"></i>
+                    <i class={`fa-solid ${tab.icon}`} aria-hidden="true" />
                 </button>
             ))
         }
@@ -694,7 +801,10 @@ const previewProducts = affiliateProducts.slice(0, 3);
                 const isTarget = button.getAttribute("data-tab") === tabName;
                 button.classList.toggle("active", isTarget);
                 if (button.hasAttribute("aria-selected")) {
-                    button.setAttribute("aria-selected", isTarget ? "true" : "false");
+                    button.setAttribute(
+                        "aria-selected",
+                        isTarget ? "true" : "false",
+                    );
                 }
             });
 
@@ -707,9 +817,8 @@ const previewProducts = affiliateProducts.slice(0, 3);
             ) as HTMLElement | null;
             if (!bottomNav) return;
 
-            const triggers = bottomNav.querySelectorAll<HTMLElement>(
-                "[data-tab-trigger]",
-            );
+            const triggers =
+                bottomNav.querySelectorAll<HTMLElement>("[data-tab-trigger]");
 
             let activeIndex = 0;
             triggers.forEach((trigger, index) => {
@@ -718,10 +827,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
                 }
             });
 
-            bottomNav.style.setProperty(
-                "--active-index",
-                String(activeIndex),
-            );
+            bottomNav.style.setProperty("--active-index", String(activeIndex));
         }
 
         function switchTab(tabName: string): void {
@@ -738,10 +844,40 @@ const previewProducts = affiliateProducts.slice(0, 3);
             });
         });
 
-
         function initializeTabs(): void {
             setActiveTab("overview");
         }
+
+        // Hide bottom nav when approaching footer
+        function handleBottomNavVisibility(): void {
+            const bottomNav = document.querySelector(
+                ".admin-bottom-nav",
+            ) as HTMLElement | null;
+            if (!bottomNav) return;
+
+            const scrollPosition = window.scrollY + window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            const threshold = 200; // Hide when within 200px of bottom
+
+            if (scrollPosition >= documentHeight - threshold) {
+                bottomNav.style.opacity = "0";
+                bottomNav.style.pointerEvents = "none";
+            } else {
+                bottomNav.style.opacity = "1";
+                bottomNav.style.pointerEvents = "auto";
+            }
+        }
+
+        // Throttle scroll events for performance
+        let scrollTimeout: number;
+        window.addEventListener("scroll", () => {
+            if (scrollTimeout) {
+                window.cancelAnimationFrame(scrollTimeout);
+            }
+            scrollTimeout = window.requestAnimationFrame(
+                handleBottomNavVisibility,
+            );
+        });
 
         if (document.readyState === "loading") {
             document.addEventListener("DOMContentLoaded", initializeTabs);
@@ -863,16 +999,13 @@ const previewProducts = affiliateProducts.slice(0, 3);
                     button.innerHTML =
                         '<i class="fa-solid fa-spinner fa-spin"></i>';
 
-                    const response = await fetch(
-                        "/api/admin/delete-product",
-                        {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({ id: productId }),
+                    const response = await fetch("/api/admin/delete-product", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
                         },
-                    );
+                        body: JSON.stringify({ id: productId }),
+                    });
 
                     const result = await response.json();
 
@@ -885,9 +1018,12 @@ const previewProducts = affiliateProducts.slice(0, 3);
                         setTimeout(() => window.location.reload(), 1200);
                     } else {
                         if (typeof window.showToast === "function") {
-                            window.showToast(result.error || "Gagal menghapus", {
-                                type: "error",
-                            });
+                            window.showToast(
+                                result.error || "Gagal menghapus",
+                                {
+                                    type: "error",
+                                },
+                            );
                         } else {
                             alert(result.error || "Gagal menghapus produk");
                         }
@@ -921,8 +1057,10 @@ const previewProducts = affiliateProducts.slice(0, 3);
         --admin-font-base: clamp(0.85rem, 1.35vw, 0.95rem);
         --admin-font-lg: clamp(1rem, 1.6vw, 1.2rem);
         --admin-radius: 0.85rem;
-        --admin-border: 1px solid color-mix(in srgb, var(--color-foreground) 12%, transparent);
-        --admin-dashed-border: 1px dashed color-mix(in srgb, var(--color-foreground) 18%, transparent);
+        --admin-border: 1px solid
+            color-mix(in srgb, var(--color-foreground) 12%, transparent);
+        --admin-dashed-border: 1px dashed
+            color-mix(in srgb, var(--color-foreground) 18%, transparent);
         --admin-card-padding: 0.95rem;
     }
 
@@ -976,7 +1114,10 @@ const previewProducts = affiliateProducts.slice(0, 3);
         font-weight: 600;
         padding: 0.35rem 0.85rem;
         border: var(--admin-border);
-        transition: transform 150ms ease, border-color 150ms ease, background-color 150ms ease;
+        transition:
+            transform 150ms ease,
+            border-color 150ms ease,
+            background-color 150ms ease;
     }
 
     .admin-chip i {
@@ -1014,7 +1155,8 @@ const previewProducts = affiliateProducts.slice(0, 3);
         text-decoration: none;
         color: inherit;
         transition: all 150ms ease;
-        border: 1px solid color-mix(in srgb, var(--color-foreground) 15%, transparent);
+        border: 1px solid
+            color-mix(in srgb, var(--color-foreground) 15%, transparent);
     }
 
     .admin-quick-action-icon[data-accent="primary"] {
@@ -1031,7 +1173,8 @@ const previewProducts = affiliateProducts.slice(0, 3);
     .admin-quick-action-icon:hover,
     .admin-quick-action-icon:focus-visible {
         transform: translateY(-1px);
-        box-shadow: 0 3px 8px color-mix(in srgb, var(--color-foreground) 12%, transparent);
+        box-shadow: 0 3px 8px
+            color-mix(in srgb, var(--color-foreground) 12%, transparent);
     }
 
     .admin-bottom-nav {
@@ -1042,13 +1185,18 @@ const previewProducts = affiliateProducts.slice(0, 3);
         width: min(480px, calc(100% - 1.5rem));
         padding: 0.35rem;
         border-radius: var(--admin-radius);
-        background: color-mix(in srgb, var(--color-background) 96%, rgba(0, 0, 0, 0.3));
+        background: color-mix(
+            in srgb,
+            var(--color-background) 96%,
+            rgba(0, 0, 0, 0.3)
+        );
         border: var(--admin-border);
         backdrop-filter: blur(18px);
         display: grid;
         grid-template-columns: repeat(5, 1fr);
         gap: 0.2rem;
         z-index: 25;
+        transition: opacity 300ms ease;
     }
 
     .admin-bottom-nav__item {
@@ -1067,7 +1215,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
     }
 
     .admin-bottom-nav__item::before {
-        content: '';
+        content: "";
         position: absolute;
         inset: 0;
         background: transparent;
@@ -1092,7 +1240,8 @@ const previewProducts = affiliateProducts.slice(0, 3);
 
     .admin-bottom-nav__item.active::before {
         background: color-mix(in srgb, var(--color-primary) 15%, transparent);
-        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 35%, transparent);
+        box-shadow: inset 0 0 0 1px
+            color-mix(in srgb, var(--color-primary) 35%, transparent);
     }
 
     .admin-bottom-nav__indicator {
@@ -1104,11 +1253,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
         border-radius: 999px;
         background: var(--color-primary);
         transform: translateX(
-            calc(
-                var(--active-index, 0) *
-                    (100% - 0.7rem) /
-                    var(--nav-count, 5)
-            )
+            calc(var(--active-index, 0) * (100% - 0.7rem) / var(--nav-count, 5))
         );
         transition: transform 220ms ease;
         pointer-events: none;
@@ -1192,7 +1337,8 @@ const previewProducts = affiliateProducts.slice(0, 3);
 
     .admin-card__footer {
         padding-top: 0.45rem;
-        border-top: 1px dashed color-mix(in srgb, var(--color-foreground) 15%, transparent);
+        border-top: 1px dashed
+            color-mix(in srgb, var(--color-foreground) 15%, transparent);
     }
 
     .admin-card__header h2 {
@@ -1217,7 +1363,11 @@ const previewProducts = affiliateProducts.slice(0, 3);
         grid-template-columns: auto 1fr;
         gap: 0.65rem;
         align-items: center;
-        background: color-mix(in srgb, var(--color-background) 93%, transparent);
+        background: color-mix(
+            in srgb,
+            var(--color-background) 93%,
+            transparent
+        );
         transition: transform 150ms ease;
     }
 
@@ -1275,7 +1425,11 @@ const previewProducts = affiliateProducts.slice(0, 3);
     }
 
     .admin-list__item:hover {
-        border-color: color-mix(in srgb, var(--color-foreground) 20%, transparent);
+        border-color: color-mix(
+            in srgb,
+            var(--color-foreground) 20%,
+            transparent
+        );
     }
 
     @media (min-width: 640px) {
@@ -1328,12 +1482,16 @@ const previewProducts = affiliateProducts.slice(0, 3);
         width: 2.1rem;
         height: 2.1rem;
         border-radius: 0.7rem;
-        border: 1px solid color-mix(in srgb, var(--color-foreground) 15%, transparent);
+        border: 1px solid
+            color-mix(in srgb, var(--color-foreground) 15%, transparent);
         display: grid;
         place-items: center;
         background: transparent;
         font-size: 0.9rem;
-        transition: background-color 150ms ease, border-color 150ms ease, transform 120ms ease;
+        transition:
+            background-color 150ms ease,
+            border-color 150ms ease,
+            transform 120ms ease;
     }
 
     .icon-button:hover,
@@ -1409,7 +1567,8 @@ const previewProducts = affiliateProducts.slice(0, 3);
         font-size: var(--admin-font-xs);
         padding: 0.1rem 0.45rem;
         border-radius: 999px;
-        border: 1px solid color-mix(in srgb, var(--color-foreground) 15%, transparent);
+        border: 1px solid
+            color-mix(in srgb, var(--color-foreground) 15%, transparent);
         margin-left: 0.5rem;
     }
 
@@ -1442,12 +1601,20 @@ const previewProducts = affiliateProducts.slice(0, 3);
         padding: 0.8rem;
         border-radius: var(--admin-radius);
         border: var(--admin-border);
-        background: color-mix(in srgb, var(--color-background) 93%, transparent);
+        background: color-mix(
+            in srgb,
+            var(--color-background) 93%,
+            transparent
+        );
         transition: border-color 150ms ease;
     }
 
     .admin-record:hover {
-        border-color: color-mix(in srgb, var(--color-foreground) 20%, transparent);
+        border-color: color-mix(
+            in srgb,
+            var(--color-foreground) 20%,
+            transparent
+        );
     }
 
     @media (min-width: 768px) {
@@ -1513,7 +1680,9 @@ const previewProducts = affiliateProducts.slice(0, 3);
         text-decoration: none;
         color: inherit;
         background: transparent;
-        transition: border-color 150ms ease, transform 150ms ease;
+        transition:
+            border-color 150ms ease,
+            transform 150ms ease;
     }
 
     .admin-setting-action span {
@@ -1580,7 +1749,11 @@ const previewProducts = affiliateProducts.slice(0, 3);
         width: 100%;
         height: 0.5rem;
         border-radius: 999px;
-        background: color-mix(in srgb, var(--color-foreground) 10%, transparent);
+        background: color-mix(
+            in srgb,
+            var(--color-foreground) 10%,
+            transparent
+        );
         overflow: hidden;
         margin: 0.4rem 0;
     }
@@ -1589,7 +1762,15 @@ const previewProducts = affiliateProducts.slice(0, 3);
         display: block;
         height: 100%;
         border-radius: inherit;
-        background: linear-gradient(90deg, var(--color-primary), color-mix(in srgb, var(--color-primary) 80%, var(--color-foreground)));
+        background: linear-gradient(
+            90deg,
+            var(--color-primary),
+            color-mix(
+                in srgb,
+                var(--color-primary) 80%,
+                var(--color-foreground)
+            )
+        );
     }
 
     .admin-progress__meta {
@@ -1611,5 +1792,4 @@ const previewProducts = affiliateProducts.slice(0, 3);
     .admin-row-actions .icon-button {
         flex: none;
     }
-
 </style>

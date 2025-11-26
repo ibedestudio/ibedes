@@ -1,0 +1,121 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+// If already logged in, redirect to dashboard
+if (Astro.cookies.has("admin_session")) {
+    return Astro.redirect("/admin/dashboard");
+}
+---
+
+<Layout title="Admin Login">
+    <div class="min-h-screen flex items-center justify-center bg-muted/20 px-4">
+        <div class="w-full max-w-md">
+            <div
+                class="bg-background border-[3px] border-black/60 dark:border-white/70 rounded-xl overflow-hidden shadow-lg"
+            >
+                <div class="p-8">
+                    <div class="text-center mb-8">
+                        <h1
+                            class="text-3xl font-display uppercase tracking-wider mb-2"
+                        >
+                            Admin Access
+                        </h1>
+                        <p class="text-muted-foreground font-serif italic">
+                            Please enter your credentials
+                        </p>
+                    </div>
+
+                    <form id="login-form" class="space-y-6">
+                        <div>
+                            <label
+                                for="username"
+                                class="block text-sm font-bold font-mono mb-2"
+                                >Username</label
+                            >
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                required
+                                class="w-full px-4 py-2 bg-background border-2 border-black/20 dark:border-white/20 rounded-lg focus:border-primary focus:outline-none transition-colors font-mono"
+                                placeholder="Enter username"
+                            />
+                        </div>
+
+                        <div>
+                            <label
+                                for="password"
+                                class="block text-sm font-bold font-mono mb-2"
+                                >Password</label
+                            >
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                required
+                                class="w-full px-4 py-2 bg-background border-2 border-black/20 dark:border-white/20 rounded-lg focus:border-primary focus:outline-none transition-colors font-mono"
+                                placeholder="Enter password"
+                            />
+                        </div>
+
+                        <div
+                            id="error-message"
+                            class="hidden text-red-500 text-sm font-bold text-center bg-red-100 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800"
+                        >
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="w-full py-3 bg-primary text-primary-foreground font-bold uppercase tracking-wide rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+                        >
+                            <span>Login</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<script>
+    const form = document.getElementById("login-form");
+    const errorMessage = document.getElementById("error-message");
+
+    form?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // Reset error
+        if (errorMessage) errorMessage.classList.add("hidden");
+
+        const formData = new FormData(e.target as HTMLFormElement);
+        const data = Object.fromEntries(formData);
+
+        try {
+            const response = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                window.location.href = "/admin/dashboard";
+            } else {
+                if (errorMessage) {
+                    errorMessage.textContent = result.error || "Login failed";
+                    errorMessage.classList.remove("hidden");
+                }
+            }
+        } catch (error) {
+            if (errorMessage) {
+                errorMessage.textContent =
+                    "An error occurred. Please try again.";
+                errorMessage.classList.remove("hidden");
+            }
+        }
+    });
+</script>

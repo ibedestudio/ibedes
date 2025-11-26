@@ -5,197 +5,649 @@ import { GLOBAL } from "../lib/variables";
 
 const breadcrumbItems = [
     { name: "Home", url: "/" },
-    { name: "Documentation", url: "/docs" },
+    { name: "Dokumentasi", url: "/docs" },
 ];
 
-const docSections = [
-    {
-        title: "Getting Started",
-        icon: "fa-solid fa-flag-checkered",
-        items: [
-            {
-                title: "Introduction",
-                description:
-                    "Overview of the ibedes project structure and goals.",
-                link: "#",
-            },
-            {
-                title: "Installation",
-                description: "How to set up the project locally.",
-                link: "#",
-            },
-            {
-                title: "Project Structure",
-                description: "Understanding the file organization.",
-                link: "#",
-            },
-        ],
-    },
-    {
-        title: "Core Concepts",
-        icon: "fa-solid fa-atom",
-        items: [
-            {
-                title: "Design System",
-                description: "Colors, typography, and core UI principles.",
-                link: "/design-system",
-                badge: "New",
-            },
-            {
-                title: "Routing",
-                description: "How pages and navigation work.",
-                link: "#",
-            },
-            {
-                title: "Data Fetching",
-                description: "Handling API requests and content loading.",
-                link: "#",
-            },
-        ],
-    },
-    {
-        title: "Features",
-        icon: "fa-solid fa-wand-magic-sparkles",
-        items: [
-            {
-                title: "Blog System",
-                description:
-                    "Markdown-based blogging with categories and tags.",
-                link: "/blog",
-            },
-            {
-                title: "Projects Portfolio",
-                description: "Showcasing work and case studies.",
-                link: "/projects",
-            },
-            {
-                title: "Dark Mode",
-                description: "Built-in theme switching capability.",
-                link: "#",
-            },
-        ],
-    },
-    {
-        title: "Reference",
-        icon: "fa-solid fa-book-bookmark",
-        items: [
-            {
-                title: "Changelog",
-                description: "History of changes and updates.",
-                link: "/changelog",
-            },
-            {
-                title: "API Reference",
-                description: "Backend API endpoints and usage.",
-                link: "#",
-            },
-        ],
-    },
-];
+const seoTitle = "Dokumentasi Lengkap - Panduan Sistem & Deployment | Ibedes";
+const seoDescription =
+    "Panduan lengkap untuk memahami arsitektur sistem, manajemen blog, deployment Netlify, dan admin panel ibedes. Tutorial step-by-step untuk developer.";
 ---
 
-<Layout
-    title="Documentation | ibedes"
-    description="Comprehensive documentation for the ibedes platform."
->
-    <div class="container mx-auto px-4 py-12 space-y-12">
-        <!-- Header Section -->
-        <div class="space-y-6 max-w-4xl">
+<Layout title={seoTitle} description={seoDescription} type="website">
+    <div
+        class="container mx-auto px-4 py-8 md:py-12 space-y-12 md:space-y-16 max-w-5xl"
+    >
+        <!-- Header -->
+        <div class="space-y-4 md:space-y-6">
             <Breadcrumb items={breadcrumbItems} />
-
-            <div class="space-y-4">
+            <div class="space-y-3 md:space-y-4">
                 <h1
                     class="text-2xl sm:text-3xl md:text-5xl font-display uppercase tracking-wider break-words"
                 >
-                    Documentation
+                    Dokumentasi
                 </h1>
                 <p
-                    class="text-xl text-muted-foreground font-serif leading-relaxed max-w-2xl"
+                    class="text-base md:text-xl text-muted-foreground font-serif leading-relaxed"
                 >
-                    Everything you need to know about building and maintaining
-                    the ibedes platform. Guides, references, and design
-                    patterns.
+                    Panduan lengkap untuk mengelola dan mengembangkan platform
+                    ibedes.
                 </p>
             </div>
         </div>
 
-        <!-- Search / Quick Actions (Placeholder) -->
-        <div
-            class="p-6 rounded-2xl border-2 border-dashed border-border bg-muted/30 flex flex-col sm:flex-row items-center justify-between gap-4"
-        >
-            <div class="flex items-center gap-3 text-muted-foreground">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <span class="font-mono text-sm"
-                    >Search documentation... (Coming Soon)</span
-                >
+        <!-- Quick Links -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <a
+                href="#system-architecture"
+                class="p-4 rounded-lg border-2 border-border bg-card hover:border-primary/50 transition-colors no-underline"
+            >
+                <i class="fa-solid fa-server text-xl md:text-2xl mb-2 block"
+                ></i>
+                <h3 class="font-bold mb-1 text-sm md:text-base">
+                    Arsitektur Sistem
+                </h3>
+                <p class="text-xs md:text-sm text-muted-foreground">
+                    Tech stack & infrastruktur
+                </p>
+            </a>
+            <a
+                href="#blog-usage"
+                class="p-4 rounded-lg border-2 border-border bg-card hover:border-primary/50 transition-colors no-underline"
+            >
+                <i class="fa-solid fa-newspaper text-xl md:text-2xl mb-2 block"
+                ></i>
+                <h3 class="font-bold mb-1 text-sm md:text-base">
+                    Manajemen Blog
+                </h3>
+                <p class="text-xs md:text-sm text-muted-foreground">
+                    Membuat & mengedit artikel
+                </p>
+            </a>
+            <a
+                href="#deployment"
+                class="p-4 rounded-lg border-2 border-border bg-card hover:border-primary/50 transition-colors no-underline"
+            >
+                <i class="fa-solid fa-rocket text-xl md:text-2xl mb-2 block"
+                ></i>
+                <h3 class="font-bold mb-1 text-sm md:text-base">Deployment</h3>
+                <p class="text-xs md:text-sm text-muted-foreground">
+                    Deploy ke Netlify
+                </p>
+            </a>
+        </div>
+
+        <!-- System Architecture -->
+        <section id="system-architecture" class="space-y-6">
+            <div class="border-b-2 border-border pb-4">
+                <h2 class="text-2xl md:text-3xl font-display break-words">
+                    Arsitektur Sistem
+                </h2>
             </div>
-            <div class="flex gap-2">
+
+            <div class="space-y-6 md:space-y-8">
+                <!-- Tech Stack -->
+                <div class="space-y-4">
+                    <h3 class="text-xl md:text-2xl font-serif font-bold">
+                        Tech Stack
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div
+                            class="p-4 rounded-lg bg-muted/30 border-2 border-border"
+                        >
+                            <h4
+                                class="font-bold mb-2 flex items-center gap-2 text-sm md:text-base"
+                            >
+                                <i class="fa-solid fa-code"></i> Framework
+                            </h4>
+                            <p class="text-sm text-muted-foreground mb-2">
+                                <strong>Astro 5.16</strong> - Static Site Generator
+                                dengan SSR
+                            </p>
+                            <p class="text-xs text-muted-foreground">
+                                Dipilih untuk performa tinggi dan fleksibilitas
+                                multi-framework.
+                            </p>
+                        </div>
+
+                        <div
+                            class="p-4 rounded-lg bg-muted/30 border-2 border-border"
+                        >
+                            <h4
+                                class="font-bold mb-2 flex items-center gap-2 text-sm md:text-base"
+                            >
+                                <i class="fa-solid fa-paintbrush"></i> Styling
+                            </h4>
+                            <p class="text-sm text-muted-foreground mb-2">
+                                <strong>Tailwind CSS 4.0</strong> - Utility-first
+                                CSS
+                            </p>
+                            <p class="text-xs text-muted-foreground">
+                                Design system kustom dengan estetika
+                                retro-gaming.
+                            </p>
+                        </div>
+
+                        <div
+                            class="p-4 rounded-lg bg-muted/30 border-2 border-border"
+                        >
+                            <h4
+                                class="font-bold mb-2 flex items-center gap-2 text-sm md:text-base"
+                            >
+                                <i class="fa-solid fa-database"></i> Konten
+                            </h4>
+                            <p class="text-sm text-muted-foreground mb-2">
+                                <strong>Markdown + JSON</strong> - File-based CMS
+                            </p>
+                            <p class="text-xs text-muted-foreground">
+                                Artikel dalam .md, produk dalam JSON, dikelola
+                                via GitHub.
+                            </p>
+                        </div>
+
+                        <div
+                            class="p-4 rounded-lg bg-muted/30 border-2 border-border"
+                        >
+                            <h4
+                                class="font-bold mb-2 flex items-center gap-2 text-sm md:text-base"
+                            >
+                                <i class="fa-solid fa-server"></i> Hosting
+                            </h4>
+                            <p class="text-sm text-muted-foreground mb-2">
+                                <strong>Netlify</strong> - Platform deployment serverless
+                            </p>
+                            <p class="text-xs text-muted-foreground">
+                                Auto-deploy dari GitHub dengan edge functions.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- How It Works -->
+                <div class="space-y-4">
+                    <h3 class="text-xl md:text-2xl font-serif font-bold">
+                        Cara Kerja
+                    </h3>
+                    <div
+                        class="p-4 md:p-6 rounded-lg bg-muted/20 border-2 border-dashed border-border overflow-x-auto"
+                    >
+                        <div
+                            class="space-y-3 md:space-y-4 font-mono text-xs md:text-sm min-w-[280px]"
+                        >
+                            <div class="flex items-start gap-3">
+                                <span
+                                    class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs md:text-sm shrink-0"
+                                    >1</span
+                                >
+                                <p class="pt-0.5 md:pt-1">
+                                    <strong>Admin Panel</strong> → Edit konten via
+                                    interface web di <code
+                                        class="px-2 py-1 bg-muted rounded text-xs"
+                                        >/admin</code
+                                    >
+                                </p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span
+                                    class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs md:text-sm shrink-0"
+                                    >2</span
+                                >
+                                <p class="pt-0.5 md:pt-1">
+                                    <strong>GitHub API</strong> → Perubahan di-commit
+                                    ke repository otomatis
+                                </p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span
+                                    class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs md:text-sm shrink-0"
+                                    >3</span
+                                >
+                                <p class="pt-0.5 md:pt-1">
+                                    <strong>Netlify</strong> → Deteksi perubahan
+                                    dan trigger build
+                                </p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span
+                                    class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs md:text-sm shrink-0"
+                                    >4</span
+                                >
+                                <p class="pt-0.5 md:pt-1">
+                                    <strong>Build</strong> → Astro generate HTML
+                                    statis + server functions
+                                </p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <span
+                                    class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs md:text-sm shrink-0"
+                                    >5</span
+                                >
+                                <p class="pt-0.5 md:pt-1">
+                                    <strong>Deploy</strong> → Website live dalam
+                                    ~2 menit
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Structure -->
+                <div class="space-y-4">
+                    <h3 class="text-xl md:text-2xl font-serif font-bold">
+                        Struktur Project
+                    </h3>
+                    <div
+                        class="p-4 rounded-lg bg-muted/20 border-2 border-border overflow-x-auto"
+                    >
+                        <pre
+                            class="text-[10px] md:text-xs font-mono"><code>ibedes/
+├── src/
+│   ├── components/       # Komponen UI reusable
+│   ├── layouts/          # Layout halaman
+│   ├── pages/            # Routes & halaman
+│   │   ├── blog/         # Artikel blog (.md)
+│   │   ├── admin/        # Panel admin
+│   │   └── api/          # API endpoints
+│   ├── styles/           # Global CSS
+│   ├── lib/              # Utilities & helpers
+│   └── data/             # Data JSON (produk, dll)
+├── public/               # Aset statis
+├── astro.config.mjs      # Konfigurasi Astro
+├── netlify.toml          # Pengaturan Netlify
+└── package.json          # Dependencies</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blog Management -->
+        <section id="blog-usage" class="space-y-6">
+            <div class="border-b-2 border-border pb-4">
+                <h2 class="text-2xl md:text-3xl font-display break-words">
+                    Manajemen Blog
+                </h2>
+            </div>
+
+            <div class="space-y-6 md:space-y-8">
+                <!-- Creating Articles -->
+                <div class="space-y-4">
+                    <h3 class="text-xl md:text-2xl font-serif font-bold">
+                        Membuat Artikel Baru
+                    </h3>
+
+                    <div class="space-y-3">
+                        <div class="flex items-start gap-2 md:gap-3">
+                            <span
+                                class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shrink-0 mt-0.5"
+                                >1</span
+                            >
+                            <div class="flex-1 min-w-0">
+                                <p class="font-bold text-sm md:text-base">
+                                    Akses Editor
+                                </p>
+                                <p
+                                    class="text-xs md:text-sm text-muted-foreground break-words"
+                                >
+                                    Buka <code
+                                        class="px-1.5 py-0.5 bg-muted rounded text-xs"
+                                        >/admin/editor</code
+                                    > atau klik "New Article" di dashboard.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-2 md:gap-3">
+                            <span
+                                class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shrink-0 mt-0.5"
+                                >2</span
+                            >
+                            <div class="flex-1 min-w-0">
+                                <p class="font-bold text-sm md:text-base">
+                                    Isi Metadata
+                                </p>
+                                <ul
+                                    class="text-xs md:text-sm text-muted-foreground list-disc list-inside ml-2 md:ml-4 space-y-1 mt-1"
+                                >
+                                    <li class="break-words">
+                                        <strong>Filename:</strong> Gunakan lowercase
+                                        dengan hyphen
+                                    </li>
+                                    <li>
+                                        <strong>Title:</strong> Judul artikel
+                                    </li>
+                                    <li>
+                                        <strong>Description:</strong> Ringkasan SEO
+                                        (150-160 karakter)
+                                    </li>
+                                    <li>
+                                        <strong>Date:</strong> Tanggal publikasi
+                                    </li>
+                                    <li>
+                                        <strong>Featured Image:</strong> Gambar hero
+                                        (opsional)
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-2 md:gap-3">
+                            <span
+                                class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shrink-0 mt-0.5"
+                                >3</span
+                            >
+                            <div class="flex-1 min-w-0">
+                                <p class="font-bold text-sm md:text-base">
+                                    Tulis Konten
+                                </p>
+                                <p
+                                    class="text-xs md:text-sm text-muted-foreground"
+                                >
+                                    Gunakan sintaks Markdown di editor.
+                                    Mendukung heading, list, link, gambar, code
+                                    block.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-2 md:gap-3">
+                            <span
+                                class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shrink-0 mt-0.5"
+                                >4</span
+                            >
+                            <div class="flex-1 min-w-0">
+                                <p class="font-bold text-sm md:text-base">
+                                    Hubungkan Produk Afiliasi (Opsional)
+                                </p>
+                                <p
+                                    class="text-xs md:text-sm text-muted-foreground"
+                                >
+                                    Pilih produk relevan dari sidebar untuk
+                                    ditampilkan di artikel.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-2 md:gap-3">
+                            <span
+                                class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shrink-0 mt-0.5"
+                                >5</span
+                            >
+                            <div class="flex-1 min-w-0">
+                                <p class="font-bold text-sm md:text-base">
+                                    Simpan & Publikasi
+                                </p>
+                                <p
+                                    class="text-xs md:text-sm text-muted-foreground"
+                                >
+                                    Klik "Simpan" untuk commit ke GitHub.
+                                    Perubahan live dalam ~2 menit.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Markdown Guide -->
+                <div class="space-y-4">
+                    <h3 class="text-xl md:text-2xl font-serif font-bold">
+                        Referensi Markdown
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div
+                            class="p-3 md:p-4 rounded-lg bg-muted/20 border-2 border-border overflow-x-auto"
+                        >
+                            <h4 class="font-bold mb-2 text-sm md:text-base">
+                                Heading
+                            </h4>
+                            <pre
+                                class="text-[10px] md:text-xs font-mono"><code># Heading 1
+## Heading 2
+### Heading 3</code></pre>
+                        </div>
+
+                        <div
+                            class="p-3 md:p-4 rounded-lg bg-muted/20 border-2 border-border overflow-x-auto"
+                        >
+                            <h4 class="font-bold mb-2 text-sm md:text-base">
+                                Penekanan
+                            </h4>
+                            <pre
+                                class="text-[10px] md:text-xs font-mono"><code>**teks tebal**
+*teks miring*
+~~coret~~</code></pre>
+                        </div>
+
+                        <div
+                            class="p-3 md:p-4 rounded-lg bg-muted/20 border-2 border-border overflow-x-auto"
+                        >
+                            <h4 class="font-bold mb-2 text-sm md:text-base">
+                                List
+                            </h4>
+                            <pre
+                                class="text-[10px] md:text-xs font-mono"><code>- Item tidak berurut
+- Item lainnya
+
+1. Item berurut
+2. Item lainnya</code></pre>
+                        </div>
+
+                        <div
+                            class="p-3 md:p-4 rounded-lg bg-muted/20 border-2 border-border overflow-x-auto"
+                        >
+                            <h4 class="font-bold mb-2 text-sm md:text-base">
+                                Link & Gambar
+                            </h4>
+                            <pre
+                                class="text-[10px] md:text-xs font-mono"><code>[Teks link](https://url.com)
+![Alt text](gambar.jpg)</code></pre>
+                        </div>
+
+                        <div
+                            class="p-3 md:p-4 rounded-lg bg-muted/20 border-2 border-border md:col-span-2 overflow-x-auto"
+                        >
+                            <h4 class="font-bold mb-2 text-sm md:text-base">
+                                Code Block
+                            </h4>
+                            <pre
+                                class="text-[10px] md:text-xs font-mono"><code>```javascript
+const hello = "world";
+console.log(hello);
+```</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Deployment -->
+        <section id="deployment" class="space-y-6">
+            <div class="border-b-2 border-border pb-4">
+                <h2 class="text-2xl md:text-3xl font-display break-words">
+                    Deployment
+                </h2>
+            </div>
+
+            <div class="space-y-6 md:space-y-8">
+                <!-- Netlify Setup -->
+                <div class="space-y-4">
+                    <h3 class="text-xl md:text-2xl font-serif font-bold">
+                        Konfigurasi Netlify
+                    </h3>
+                    <div
+                        class="p-4 rounded-lg bg-muted/20 border-2 border-border space-y-2 md:space-y-3"
+                    >
+                        <p class="text-xs md:text-sm break-words">
+                            <strong>Build Command:</strong>
+                            <code class="px-2 py-0.5 bg-muted rounded text-xs"
+                                >npm run build</code
+                            >
+                        </p>
+                        <p class="text-xs md:text-sm">
+                            <strong>Publish Directory:</strong>
+                            <code class="px-2 py-0.5 bg-muted rounded text-xs"
+                                >dist</code
+                            >
+                        </p>
+                        <p class="text-xs md:text-sm">
+                            <strong>Node Version:</strong>
+                            <code class="px-2 py-0.5 bg-muted rounded text-xs"
+                                >18+</code
+                            >
+                        </p>
+                        <p class="text-xs md:text-sm">
+                            <strong>Functions:</strong> Enabled (untuk admin API
+                            endpoints)
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Environment Variables -->
+                <div class="space-y-4">
+                    <h3 class="text-xl md:text-2xl font-serif font-bold">
+                        Environment Variables
+                    </h3>
+                    <div
+                        class="p-4 rounded-lg bg-muted/20 border-2 border-border"
+                    >
+                        <div
+                            class="space-y-2 text-xs md:text-sm font-mono break-words"
+                        >
+                            <p>
+                                <code class="text-xs">GITHUB_TOKEN</code> - Personal
+                                access token untuk GitHub API
+                            </p>
+                            <p>
+                                <code class="text-xs">GITHUB_OWNER</code> - Username
+                                pemilik repository
+                            </p>
+                            <p>
+                                <code class="text-xs">GITHUB_REPO</code> - Nama repository
+                            </p>
+                            <p>
+                                <code class="text-xs">ADMIN_USER</code> - Username
+                                admin panel
+                            </p>
+                            <p>
+                                <code class="text-xs">ADMIN_PASSWORD</code> - Password
+                                admin panel
+                            </p>
+                        </div>
+                        <p class="text-xs text-muted-foreground mt-3">
+                            Set di Netlify Dashboard → Site Settings →
+                            Environment Variables
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Deployment Process -->
+                <div class="space-y-4">
+                    <h3 class="text-xl md:text-2xl font-serif font-bold">
+                        Workflow Deployment
+                    </h3>
+                    <div class="space-y-3">
+                        <div
+                            class="p-3 rounded-lg bg-muted/20 border-l-4 border-primary"
+                        >
+                            <p class="font-bold text-xs md:text-sm">
+                                Automatic Deployment
+                            </p>
+                            <p class="text-xs text-muted-foreground">
+                                Setiap push ke branch <code
+                                    class="px-1 bg-muted rounded">main</code
+                                > memicu build baru di Netlify.
+                            </p>
+                        </div>
+
+                        <div
+                            class="p-3 rounded-lg bg-muted/20 border-l-4 border-primary"
+                        >
+                            <p class="font-bold text-xs md:text-sm">
+                                Build Time
+                            </p>
+                            <p class="text-xs text-muted-foreground">
+                                Biasanya 1-2 menit untuk rebuild seluruh
+                                website.
+                            </p>
+                        </div>
+
+                        <div
+                            class="p-3 rounded-lg bg-muted/20 border-l-4 border-primary"
+                        >
+                            <p class="font-bold text-xs md:text-sm">
+                                Preview Deployments
+                            </p>
+                            <p class="text-xs text-muted-foreground">
+                                Pull request mendapat URL preview unik untuk
+                                testing.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Additional Resources -->
+        <section class="space-y-6">
+            <div class="border-b-2 border-border pb-4">
+                <h2 class="text-2xl md:text-3xl font-display break-words">
+                    Resource Tambahan
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <a
+                    href="/design-system"
+                    class="p-4 rounded-lg border-2 border-border bg-card hover:border-primary/50 transition-colors no-underline"
+                >
+                    <h3 class="font-bold mb-2 text-sm md:text-base">
+                        Design System
+                    </h3>
+                    <p class="text-xs md:text-sm text-muted-foreground">
+                        Warna, tipografi, spacing, dan library komponen
+                    </p>
+                </a>
+
+                <a
+                    href="/changelog"
+                    class="p-4 rounded-lg border-2 border-border bg-card hover:border-primary/50 transition-colors no-underline"
+                >
+                    <h3 class="font-bold mb-2 text-sm md:text-base">
+                        Changelog
+                    </h3>
+                    <p class="text-xs md:text-sm text-muted-foreground">
+                        Riwayat versi dan update fitur
+                    </p>
+                </a>
+
                 <a
                     href="https://github.com/ibedestudio/ibedes"
                     target="_blank"
-                    class="cta-button cta-button--secondary text-xs py-2 px-4"
+                    rel="noopener noreferrer"
+                    class="p-4 rounded-lg border-2 border-border bg-card hover:border-primary/50 transition-colors no-underline"
                 >
-                    <i class="fa-brands fa-github mr-2"></i> GitHub
+                    <h3
+                        class="font-bold mb-2 flex items-center gap-2 text-sm md:text-base"
+                    >
+                        <i class="fa-brands fa-github"></i> GitHub Repository
+                    </h3>
+                    <p class="text-xs md:text-sm text-muted-foreground">
+                        Lihat source code dan kontribusi
+                    </p>
                 </a>
-            </div>
-        </div>
 
-        <!-- Documentation Grid -->
-        <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
-            {
-                docSections.map((section) => (
-                    <section class="space-y-6">
-                        <div class="flex items-center gap-3 pb-2 border-b border-border">
-                            <div class="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
-                                <i class={`${section.icon} text-xl`} />
-                            </div>
-                            <h2 class="text-2xl font-display">
-                                {section.title}
-                            </h2>
-                        </div>
-
-                        <div class="grid gap-4">
-                            {section.items.map((item) => (
-                                <a
-                                    href={item.link}
-                                    class="group block p-5 rounded-xl border border-border bg-card hover:border-primary/50 hover:shadow-md transition-all duration-200"
-                                >
-                                    <div class="flex justify-between items-start mb-2">
-                                        <h3 class="font-bold font-serif text-lg group-hover:text-primary transition-colors">
-                                            {item.title}
-                                        </h3>
-                                        {item.badge && (
-                                            <span class="px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-primary text-primary-foreground rounded-full">
-                                                {item.badge}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <p class="text-sm text-muted-foreground leading-relaxed">
-                                        {item.description}
-                                    </p>
-                                </a>
-                            ))}
-                        </div>
-                    </section>
-                ))
-            }
-        </div>
-
-        <!-- Help / Support -->
-        <section
-            class="mt-16 pt-12 border-t border-border text-center space-y-6"
-        >
-            <h2 class="text-2xl font-display">Need more help?</h2>
-            <p class="text-muted-foreground">
-                Can't find what you're looking for? Reach out to the team.
-            </p>
-            <div class="flex justify-center gap-4">
                 <a
                     href={GLOBAL.contactWhatsApp}
                     target="_blank"
-                    class="cta-button cta-button--primary"
+                    rel="noopener noreferrer"
+                    class="p-4 rounded-lg border-2 border-border bg-card hover:border-primary/50 transition-colors no-underline"
                 >
-                    Contact Support
+                    <h3
+                        class="font-bold mb-2 flex items-center gap-2 text-sm md:text-base"
+                    >
+                        <i class="fa-brands fa-whatsapp"></i> Dapatkan Bantuan
+                    </h3>
+                    <p class="text-xs md:text-sm text-muted-foreground">
+                        Hubungi untuk pertanyaan dan support
+                    </p>
                 </a>
             </div>
         </section>

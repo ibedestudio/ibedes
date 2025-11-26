@@ -7,6 +7,10 @@ interface Props {
     image?: string;
     canonicalURL?: string | URL;
     type?: "website" | "article";
+    keywords?: string;
+    author?: string;
+    publishedTime?: string;
+    modifiedTime?: string;
 }
 
 const {
@@ -15,11 +19,17 @@ const {
     image = "/og-image.png",
     canonicalURL = new URL(Astro.url.pathname, Astro.site),
     type = "website",
+    keywords,
+    author = GLOBAL.username,
+    publishedTime,
+    modifiedTime,
 } = Astro.props;
 
 const siteName = "Ibedes";
-const twitterHandle = "@ibedes";
+const twitterHandle = "@bellamujiaa";
+const locale = "id_ID";
 
+// Enhanced schema with more SEO data
 const schema = {
     "@context": "https://schema.org",
     "@type": type === "article" ? "BlogPosting" : "WebSite",
@@ -29,7 +39,7 @@ const schema = {
     url: Astro.url.href,
     author: {
         "@type": "Person",
-        name: GLOBAL.username,
+        name: author,
         url: Astro.site,
     },
     publisher: {
@@ -40,6 +50,23 @@ const schema = {
             url: new URL("/favicon.svg", Astro.url).href,
         },
     },
+    ...(publishedTime && { datePublished: publishedTime }),
+    ...(modifiedTime && { dateModified: modifiedTime }),
+    inLanguage: "id-ID",
+};
+
+// Breadcrumb schema for better navigation
+const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+        {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: Astro.site?.href,
+        },
+    ],
 };
 ---
 
@@ -57,6 +84,9 @@ const schema = {
 <title>{title}</title>
 <meta name="title" content={title} />
 <meta name="description" content={description} />
+{keywords && <meta name="keywords" content={keywords} />}
+<meta name="author" content={author} />
+<meta name="language" content="Indonesian" />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content={type} />
@@ -65,6 +95,17 @@ const schema = {
 <meta property="og:description" content={description} />
 <meta property="og:image" content={new URL(image, Astro.url)} />
 <meta property="og:site_name" content={siteName} />
+<meta property="og:locale" content={locale} />
+{
+    publishedTime && (
+        <meta property="article:published_time" content={publishedTime} />
+    )
+}
+{
+    modifiedTime && (
+        <meta property="article:modified_time" content={modifiedTime} />
+    )
+}
 
 <!-- Twitter -->
 <meta property="twitter:card" content="summary_large_image" />
@@ -73,9 +114,26 @@ const schema = {
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={new URL(image, Astro.url)} />
 {twitterHandle && <meta property="twitter:creator" content={twitterHandle} />}
+<meta property="twitter:site" content={twitterHandle} />
 
 <!-- Robots -->
-<meta name="robots" content="index, follow" />
+<meta
+    name="robots"
+    content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+/>
+<meta name="googlebot" content="index, follow" />
 
-<!-- JSON-LD -->
+<!-- Additional SEO -->
+<meta name="theme-color" content="#10b981" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="black-translucent"
+/>
+
+<!-- JSON-LD Schemas -->
 <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+<script
+    type="application/ld+json"
+    set:html={JSON.stringify(breadcrumbSchema)}
+/>

@@ -4,8 +4,8 @@ export const GLOBAL = {
   // Site metadata
   username: "ibedes",
   rootUrl: "https://ibedes.xyz",
-  shortDescription: "Retro-Inspired Theme &<br /> Built for Astro",
-  longDescription: "Zaggonaut is a retro-inspired theme for Astro, built using TypeScript, TailwindCSS, and Astro.",
+  shortDescription: "Web Developer &<br /> Content Creator",
+  longDescription: "Platform personal untuk berbagi artikel, tutorial web development, dan showcase project. Dibangun dengan Astro, TypeScript, dan Tailwind CSS untuk performa optimal.",
 
   // Social media links
   githubProfile: "https://github.com/ibedestudio",
@@ -21,14 +21,14 @@ export const GLOBAL = {
   noProjects: "No featured projects yet.",
 
   // Blog metadata
-  blogTitle: "My Thoughts & Takes",
-  blogShortDescription: "Practical wisdom, unfiltered thoughts, and hot takes.",
-  blogLongDescription: "Web development, tech trends, and the occasional programming mishap.",
+  blogTitle: "Artikel & Tulisan",
+  blogShortDescription: "Refleksi, tutorial, dan insight tentang web development dan kehidupan.",
+  blogLongDescription: "Kumpulan artikel tentang web development, teknologi, dan refleksi kehidupan. Dari tutorial coding hingga pemikiran filosofis.",
 
   // Project metadata
-  projectTitle: "Projects and Code",
-  projectShortDescription: "A list of my web development projects and developer tools.",
-  projectLongDescription: "All of my projects, including both frontend and full-stack applications.",
+  projectTitle: "Projects & Portfolio",
+  projectShortDescription: "Showcase project web development dan developer tools yang pernah dibuat.",
+  projectLongDescription: "Koleksi project frontend dan full-stack, dari website personal hingga aplikasi web kompleks.",
 
   // Profile image
   profileImage: "ibedes.jpg",
@@ -42,6 +42,7 @@ export const GLOBAL = {
   },
   footerMenu: {
     projects: "/projects",
+    about: "/about",
     docs: "/docs",
   },
 

@@ -1,0 +1,345 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Section from "../components/common/Section.astro";
+import Breadcrumb from "../components/common/Breadcrumb.astro";
+import { Image } from "astro:assets";
+import { GLOBAL } from "../lib/variables";
+import profileImage from "../assets/ibedes.jpg";
+
+const breadcrumbItems = [
+    { name: "Home", url: "/" },
+    { name: "About", url: "/about" },
+];
+
+const skills = [
+    { name: "Astro", icon: "fa-solid fa-rocket", level: 90 },
+    { name: "TypeScript", icon: "fa-brands fa-js", level: 85 },
+    { name: "React", icon: "fa-brands fa-react", level: 80 },
+    { name: "Tailwind CSS", icon: "fa-solid fa-paintbrush", level: 95 },
+    { name: "Node.js", icon: "fa-brands fa-node-js", level: 75 },
+    { name: "Git", icon: "fa-brands fa-git-alt", level: 85 },
+];
+
+const timeline = [
+    {
+        year: "2025",
+        title: "Full-Stack Developer",
+        description: "Building modern web applications with Astro and TypeScript",
+    },
+    {
+        year: "2024",
+        title: "Content Creator",
+        description: "Sharing knowledge through articles and tutorials",
+    },
+    {
+        year: "2023",
+        title: "Web Developer",
+        description: "Started journey in web development",
+    },
+];
+
+const values = [
+    {
+        icon: "fa-solid fa-lightbulb",
+        title: "Innovation",
+        description: "Selalu mencari cara baru untuk memecahkan masalah",
+    },
+    {
+        icon: "fa-solid fa-heart",
+        title: "Passion",
+        description: "Cinta pada coding dan berbagi pengetahuan",
+    },
+    {
+        icon: "fa-solid fa-users",
+        title: "Community",
+        description: "Percaya pada kekuatan kolaborasi dan komunitas",
+    },
+    {
+        icon: "fa-solid fa-graduation-cap",
+        title: "Learning",
+        description: "Lifelong learner yang selalu berkembang",
+    },
+];
+
+const seoTitle = "About - Tentang Ibedes | Web Developer & Content Creator";
+const seoDescription =
+    "Kenali lebih dekat Ibedes, seorang web developer dan content creator yang passionate tentang teknologi, coding, dan berbagi pengetahuan melalui artikel dan tutorial.";
+const seoKeywords =
+    "about ibedes, web developer indonesia, content creator, astro developer, typescript developer, portfolio developer";
+---
+
+<Layout
+    title={seoTitle}
+    description={seoDescription}
+    keywords={seoKeywords}
+    type="website"
+>
+    <Section class="py-8 md:py-12">
+        <div class="max-w-4xl mx-auto space-y-12 md:space-y-16">
+            <!-- Breadcrumb -->
+            <Breadcrumb items={breadcrumbItems} />
+
+            <!-- Hero Section -->
+            <div class="text-center space-y-6">
+                <div class="relative inline-block">
+                    <div
+                        class="absolute -inset-1 bg-gradient-to-r from-primary via-primary/50 to-primary rounded-full blur opacity-75 animate-pulse"
+                    >
+                    </div>
+                    <Image
+                        src={profileImage}
+                        alt={GLOBAL.username}
+                        class="relative rounded-full w-32 h-32 md:w-40 md:h-40 object-cover border-4 border-background"
+                        width={160}
+                        height={160}
+                    />
+                </div>
+
+                <div class="space-y-4">
+                    <h1
+                        class="text-4xl sm:text-5xl md:text-6xl font-display font-bold"
+                    >
+                        About Me
+                    </h1>
+                    <p
+                        class="text-xl md:text-2xl text-primary font-mono font-semibold"
+                    >
+                        Web Developer & Content Creator
+                    </p>
+                </div>
+            </div>
+
+            <!-- Introduction -->
+            <div
+                class="prose prose-lg dark:prose-invert max-w-none font-serif"
+            >
+                <p class="text-lg md:text-xl leading-relaxed">
+                    Halo! Saya <strong>Ibedes</strong>, seorang web developer
+                    yang passionate tentang membangun pengalaman web yang cepat,
+                    indah, dan bermakna. Saya percaya bahwa teknologi harus
+                    melayani manusia, bukan sebaliknya.
+                </p>
+                <p class="text-base md:text-lg leading-relaxed">
+                    Melalui website ini, saya berbagi pengetahuan, pengalaman,
+                    dan refleksi tentang web development, teknologi, dan
+                    kehidupan. Dari tutorial coding hingga pemikiran filosofis,
+                    semua ditulis dengan harapan bisa memberikan nilai bagi
+                    pembaca.
+                </p>
+            </div>
+
+            <!-- Values -->
+            <div class="space-y-6">
+                <h2
+                    class="text-3xl md:text-4xl font-display font-bold text-center"
+                >
+                    Core Values
+                </h2>
+                <div class="grid sm:grid-cols-2 gap-6">
+                    {
+                        values.map((value) => (
+                            <div class="p-6 border-2 border-border rounded-lg bg-card hover:border-primary transition-colors">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                                        <i
+                                            class={`${value.icon} text-primary text-xl`}
+                                        />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h3 class="text-xl font-bold mb-2">
+                                            {value.title}
+                                        </h3>
+                                        <p class="text-muted-foreground text-sm">
+                                            {value.description}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="space-y-6">
+                <h2
+                    class="text-3xl md:text-4xl font-display font-bold text-center"
+                >
+                    Skills & Expertise
+                </h2>
+                <div class="space-y-4">
+                    {
+                        skills.map((skill) => (
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <i
+                                            class={`${skill.icon} text-primary text-lg`}
+                                        />
+                                        <span class="font-semibold">
+                                            {skill.name}
+                                        </span>
+                                    </div>
+                                    <span class="text-sm text-muted-foreground font-mono">
+                                        {skill.level}%
+                                    </span>
+                                </div>
+                                <div class="h-2 bg-muted rounded-full overflow-hidden">
+                                    <div
+                                        class="h-full bg-primary rounded-full transition-all duration-1000 ease-out"
+                                        style={`width: ${skill.level}%`}
+                                    />
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="space-y-6">
+                <h2
+                    class="text-3xl md:text-4xl font-display font-bold text-center"
+                >
+                    Journey
+                </h2>
+                <div class="relative">
+                    <!-- Timeline Line -->
+                    <div
+                        class="hidden md:block absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary to-primary/30"
+                    >
+                    </div>
+
+                    <div class="space-y-8">
+                        {
+                            timeline.map((item, index) => (
+                                <div class="relative md:pl-20">
+                                    <!-- Timeline Dot -->
+                                    <div class="hidden md:block absolute left-6 top-6 w-5 h-5 rounded-full bg-primary border-4 border-background shadow-lg" />
+
+                                    <div class="p-6 border-2 border-border rounded-lg bg-card hover:border-primary transition-colors">
+                                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                                            <h3 class="text-xl font-bold">
+                                                {item.title}
+                                            </h3>
+                                            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-mono w-fit">
+                                                <i class="fa-solid fa-calendar text-xs" />
+                                                {item.year}
+                                            </span>
+                                        </div>
+                                        <p class="text-muted-foreground">
+                                            {item.description}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tech Stack -->
+            <div class="space-y-6">
+                <h2
+                    class="text-3xl md:text-4xl font-display font-bold text-center"
+                >
+                    Tech Stack
+                </h2>
+                <div
+                    class="p-6 md:p-8 border-2 border-border rounded-lg bg-card"
+                >
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="font-bold mb-2 text-sm uppercase tracking-wide text-muted-foreground">
+                                Frontend
+                            </h3>
+                            <div class="flex flex-wrap gap-2">
+                                {
+                                    [
+                                        "Astro",
+                                        "React",
+                                        "TypeScript",
+                                        "Tailwind CSS",
+                                        "HTML5",
+                                        "CSS3",
+                                    ].map((tech) => (
+                                        <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-mono">
+                                            {tech}
+                                        </span>
+                                    ))
+                                }
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold mb-2 text-sm uppercase tracking-wide text-muted-foreground">
+                                Backend
+                            </h3>
+                            <div class="flex flex-wrap gap-2">
+                                {
+                                    [
+                                        "Node.js",
+                                        "Supabase",
+                                        "Netlify Functions",
+                                    ].map((tech) => (
+                                        <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-mono">
+                                            {tech}
+                                        </span>
+                                    ))
+                                }
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold mb-2 text-sm uppercase tracking-wide text-muted-foreground">
+                                Tools & Others
+                            </h3>
+                            <div class="flex flex-wrap gap-2">
+                                {
+                                    [
+                                        "Git",
+                                        "GitHub",
+                                        "VS Code",
+                                        "Figma",
+                                        "Markdown",
+                                    ].map((tech) => (
+                                        <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-mono">
+                                            {tech}
+                                        </span>
+                                    ))
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="zag-bg rounded-xl p-8 md:p-12 text-center space-y-6">
+                <h2 class="text-3xl md:text-4xl font-display font-bold">
+                    Let's Work Together
+                </h2>
+                <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
+                    Punya project menarik atau ingin berkolaborasi? Saya selalu
+                    terbuka untuk diskusi dan kesempatan baru.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a
+                        href={GLOBAL.contactWhatsApp}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="px-8 py-4 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2 no-underline"
+                    >
+                        <i class="fa-brands fa-whatsapp"></i>
+                        <span>WhatsApp</span>
+                    </a>
+                    <a
+                        href={`mailto:${GLOBAL.contactEmail}`}
+                        class="px-8 py-4 border-2 border-border bg-card rounded-lg font-semibold hover:border-primary transition-colors inline-flex items-center justify-center gap-2 no-underline"
+                    >
+                        <i class="fa-solid fa-envelope"></i>
+                        <span>Email</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </Section>
+</Layout>

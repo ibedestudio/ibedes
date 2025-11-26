@@ -1,0 +1,101 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Section from "../components/common/Section.astro";
+import Breadcrumb from "../components/common/Breadcrumb.astro";
+import { GLOBAL } from "../lib/variables";
+import profileImage from "../assets/ibedes.jpg";
+import { Image } from "astro:assets";
+
+const breadcrumbItems = [
+  { name: "Home", url: "/" },
+  { name: "Tentang Saya", url: "/tentang-saya" },
+];
+
+const highlights = [
+  {
+    title: "Developer",
+    icon: "fa-solid fa-code",
+    description: "Membangun front-end performa tinggi dengan Astro, React, dan TypeScript.",
+  },
+  {
+    title: "Creator",
+    icon: "fa-solid fa-pen-nib",
+    description: "Berbagi insight melalui artikel, newsletter, dan live coding.",
+  },
+  {
+    title: "Collaborator",
+    icon: "fa-solid fa-users",
+    description: "Terbuka untuk proyek, konsultasi teknis, dan kolaborasi komunitas.",
+  },
+];
+
+const seoTitle = "Tentang Saya | Kenali Ibedes";
+const seoDescription =
+  "Profil singkat Ibedes sebagai web developer dan content creator. Pelajari fokus, nilai, dan bagaimana saya bisa membantu proyek digital Anda.";
+const seoKeywords = "tentang ibedes, profil web developer, astro typescript, creator indonesia";
+---
+
+<Layout
+  title={seoTitle}
+  description={seoDescription}
+  keywords={seoKeywords}
+  canonicalURL="/tentang-saya"
+  breadcrumbs={breadcrumbItems}
+>
+  <Section class="py-10 sm:py-16 space-y-10 sm:space-y-14">
+    <Breadcrumb items={breadcrumbItems} />
+
+    <div class="flex flex-col items-center text-center gap-6">
+      <div class="relative">
+        <div class="absolute inset-0 blur-2xl bg-primary/20 rounded-full scale-125" aria-hidden="true" />
+        <Image
+          src={profileImage}
+          alt={`Foto ${GLOBAL.username}`}
+          class="relative rounded-full w-28 h-28 sm:w-32 sm:h-32 object-cover border-4 border-background"
+          width={160}
+          height={160}
+        />
+      </div>
+      <div class="space-y-3">
+        <p class="text-xs sm:text-sm font-mono uppercase tracking-[0.3em] text-primary">Halo, saya</p>
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-display uppercase tracking-wide">{GLOBAL.username}</h1>
+        <p class="text-base sm:text-lg text-muted-foreground max-w-2xl font-serif">
+          Web developer dan content creator yang fokus menghadirkan pengalaman web yang cepat, estetis, dan manusiawi.
+        </p>
+      </div>
+    </div>
+
+    <div class="grid gap-6 sm:gap-8 md:grid-cols-3">
+      {highlights.map((item) => (
+        <div class="p-6 border-2 border-border rounded-xl bg-card/70 shadow-sm">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+              <i class={`${item.icon} text-lg`} />
+            </span>
+            <h2 class="text-lg font-display uppercase tracking-wide">{item.title}</h2>
+          </div>
+          <p class="text-sm text-muted-foreground leading-relaxed font-serif">{item.description}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="space-y-4 p-6 border-2 border-dashed border-border rounded-xl bg-muted/40">
+      <h2 class="text-xl font-display uppercase tracking-wide">Visi &amp; Cara Kerja</h2>
+      <p class="text-sm sm:text-base text-muted-foreground font-serif leading-relaxed">
+        Saya percaya pengalaman terbaik hadir dari kombinasi desain yang intentional, aksesibilitas, dan performa tinggi. Setiap proyek saya mulai dengan memahami kebutuhan pengguna, lalu memilih teknologi minimal yang menyelesaikan masalah tanpa menambah beban.
+      </p>
+      <p class="text-sm sm:text-base text-muted-foreground font-serif leading-relaxed">
+        Di luar coding, saya aktif berbagi melalui blog, newsletter, dan mentoring komunitas. Misi saya sederhana: membuat dunia web lebih ramah, cepat, dan menyenangkan untuk semua orang.
+      </p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 border-2 border-primary rounded-xl bg-primary/5">
+      <div class="space-y-1 text-center sm:text-left">
+        <p class="text-xs font-mono uppercase tracking-[0.3em] text-primary">Butuh partner?</p>
+        <p class="text-lg sm:text-xl font-display uppercase">Ayo ngobrol tentang proyekmu</p>
+        <p class="text-sm text-muted-foreground font-serif">Kirim pesan singkat dan ceritakan tantanganmu.</p>
+      </div>
+      <a class="cta-button cta-button--primary" href="/contact">Hubungi Saya</a>
+    </div>
+  </Section>
+</Layout>

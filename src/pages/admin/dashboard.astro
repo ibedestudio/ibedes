@@ -87,6 +87,43 @@ const averageProductsPerArticle = stats.totalArticles
       )
     : 0;
 
+const notifications = [
+    {
+        id: "notif-comment-01",
+        type: "comment",
+        title: "Komentar baru",
+        message:
+            "Rina menanggapi " +
+            "\"Memulai dengan Berani\" dan meminta contoh kasus tambahan.",
+        time: "12 menit lalu",
+        status: "unread",
+        href: "/blog/memulai-dengan-berani",
+    },
+    {
+        id: "notif-message-02",
+        type: "message",
+        title: "Pesan kontak",
+        message:
+            "Andre mengirim brief podcast dan menanyakan slot rekaman pekan depan.",
+        time: "1 jam lalu",
+        status: "unread",
+        href: "/contact",
+    },
+    {
+        id: "notif-system-03",
+        type: "system",
+        title: "Aksi diperlukan",
+        message: "Ada 2 produk afiliasi belum memiliki deskripsi lengkap.",
+        time: "3 jam lalu",
+        status: "read",
+        href: "/admin/add-product",
+    },
+];
+
+const unreadNotifications = notifications.filter(
+    (item) => item.status === "unread",
+).length;
+
 const mobileQuickActions = [
     {
         icon: "fa-plus",
@@ -371,6 +408,75 @@ const previewProducts = affiliateProducts.slice(0, 3);
                                     aria-hidden="true"></i>
                             </button>
                         </div>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card__header">
+                        <div>
+                            <p class="admin-eyebrow">Notifikasi</p>
+                            <h2>Aktivitas terbaru</h2>
+                        </div>
+                        <span class="admin-chip admin-chip--muted">
+                            {unreadNotifications} baru
+                        </span>
+                    </div>
+                    <div class="admin-notifications">
+                        {
+                            notifications.map((item) => (
+                                <article
+                                    class="admin-notification"
+                                    data-status={item.status}
+                                >
+                                    <div
+                                        class="admin-notification__icon"
+                                        data-type={item.type}
+                                        aria-hidden="true"
+                                    >
+                                        <i
+                                            class={`fa-solid ${
+                                                item.type === "comment"
+                                                    ? "fa-comment-dots"
+                                                    : item.type === "message"
+                                                      ? "fa-inbox"
+                                                      : "fa-bell"
+                                            }`}
+                                        />
+                                    </div>
+                                    <div class="admin-notification__content">
+                                        <p class="admin-notification__title">
+                                            {item.title}
+                                        </p>
+                                        <p class="admin-notification__meta">
+                                            {item.time}
+                                        </p>
+                                        <p class="admin-notification__text">
+                                            {item.message}
+                                        </p>
+                                    </div>
+                                    <div class="admin-notification__actions">
+                                        {item.status === "unread" ? (
+                                            <span
+                                                class="admin-dot"
+                                                aria-label="Notifikasi baru"
+                                            ></span>
+                                        ) : null}
+                                        {item.href ? (
+                                            <a
+                                                class="admin-link-button"
+                                                href={item.href}
+                                            >
+                                                Lihat
+                                                <i
+                                                    class="fa-solid fa-arrow-right"
+                                                    aria-hidden="true"
+                                                ></i>
+                                            </a>
+                                        ) : null}
+                                    </div>
+                                </article>
+                            ))
+                        }
                     </div>
                 </div>
             </section>
@@ -1450,6 +1556,111 @@ const previewProducts = affiliateProducts.slice(0, 3);
         font-size: var(--admin-font-sm);
         color: color-mix(in srgb, var(--color-foreground) 65%, transparent);
         margin: 0;
+    }
+
+    .admin-notifications {
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+    }
+
+    .admin-notification {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 0.65rem;
+        align-items: start;
+        border: var(--admin-border);
+        border-radius: var(--admin-radius);
+        padding: 0.75rem;
+        background: color-mix(in srgb, var(--color-background) 94%, transparent);
+    }
+
+    @media (max-width: 640px) {
+        .admin-notification {
+            grid-template-columns: auto 1fr;
+        }
+
+        .admin-notification__actions {
+            grid-column: 1 / -1;
+            justify-content: space-between;
+        }
+    }
+
+    .admin-notification__icon {
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.75rem;
+        display: grid;
+        place-items: center;
+        background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+        color: var(--color-primary);
+        font-size: 1rem;
+    }
+
+    .admin-notification__icon[data-type="message"] {
+        background: color-mix(in srgb, var(--color-foreground) 10%, transparent);
+        color: color-mix(in srgb, var(--color-foreground) 75%, transparent);
+    }
+
+    .admin-notification__icon[data-type="system"] {
+        background: color-mix(in srgb, var(--color-warning, #f6c744) 18%, transparent);
+        color: color-mix(in srgb, var(--color-warning, #f6c744) 80%, transparent);
+    }
+
+    .admin-notification__content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+    }
+
+    .admin-notification__title {
+        font-size: var(--admin-font-base);
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .admin-notification__meta {
+        margin: 0;
+        font-size: var(--admin-font-xs);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--color-foreground) 55%, transparent);
+    }
+
+    .admin-notification__text {
+        margin: 0;
+        font-size: var(--admin-font-sm);
+        color: color-mix(in srgb, var(--color-foreground) 70%, transparent);
+        line-height: 1.5;
+    }
+
+    .admin-notification__actions {
+        display: flex;
+        gap: 0.45rem;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    .admin-notification[data-status="unread"] {
+        border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+        box-shadow: 0 6px 18px -14px color-mix(
+                in srgb,
+                var(--color-primary) 35%,
+                transparent
+            );
+    }
+
+    .admin-dot {
+        width: 0.65rem;
+        height: 0.65rem;
+        border-radius: 50%;
+        background: var(--color-primary);
+        display: inline-flex;
+        box-shadow: 0 0 0 4px color-mix(
+                in srgb,
+                var(--color-primary) 20%,
+                transparent
+            );
     }
 
     .admin-tag {

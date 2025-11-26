@@ -21,7 +21,7 @@ import {
   getAffiliateByArticle,
   getAffiliateProductsByIds,
 } from "../lib/affiliates";
-import { generateArticleSchema, generateSocialMeta } from "../lib/seo";
+import { generateArticleSchema } from "../lib/seo";
 import TableOfContents from "../components/TableOfContents.astro";
 import RelatedArticles from "../components/RelatedArticles.astro";
 import CodeCopy from "../components/CodeCopy.astro";
@@ -37,6 +37,7 @@ const articleDate = processArticleDate(frontmatter.timestamp);
 const sourceUrl = frontmatter.filename
   ? generateSourceUrl(frontmatter.filename, "blog")
   : "";
+const canonicalUrl = `${GLOBAL.rootUrl}${frontmatter.url ?? sourceUrl}`;
 
 // Breadcrumb items
 const breadcrumbItems = [
@@ -46,6 +47,10 @@ const breadcrumbItems = [
 ];
 
 // Generate Article structured data
+const featuredImageUrl = frontmatter.featuredImage
+  ? new URL(frontmatter.featuredImage, GLOBAL.rootUrl).href
+  : undefined;
+
 const articleSchema = generateArticleSchema(
   {
     title: frontmatter.title,
@@ -53,7 +58,8 @@ const articleSchema = generateArticleSchema(
     publishedTime: frontmatter.timestamp,
     author: GLOBAL.username,
     tags: frontmatter.tags,
-    url: frontmatter.url ?? sourceUrl,
+    url: canonicalUrl,
+    image: featuredImageUrl,
   },
   GLOBAL.rootUrl,
 );
@@ -62,13 +68,7 @@ const articleSchema = generateArticleSchema(
 const ogImageUrl = frontmatter.filename
   ? `${GLOBAL.rootUrl}/og/${frontmatter.filename}.svg`
   : `${GLOBAL.rootUrl}/og/default.svg`;
-const socialMeta = generateSocialMeta(
-  frontmatter.title,
-  frontmatter.description,
-  ogImageUrl,
-  `${GLOBAL.rootUrl}${frontmatter.url ?? sourceUrl}`,
-  "article",
-);
+const seoImage = featuredImageUrl ?? ogImageUrl;
 
 // Get affiliate products for this article
 let affiliateProducts: any[] = [];
@@ -93,18 +93,16 @@ if (frontmatter.affiliateProducts && frontmatter.affiliateProducts.length > 0) {
 const affiliateContext = frontmatter.affiliateContext;
 ---
 
-<Layout
-  title={`${frontmatter.title} • ${GLOBAL.username}`}
-  description={frontmatter.description}
-  image={`${GLOBAL.rootUrl}/${GLOBAL.profileImage}`}
-  type="article"
->
-  <!-- Social Meta Tags in Head -->
-  {
-    Object.entries(socialMeta).map(([property, content]) => (
-      <meta property={property} content={content} slot="head" />
-    ))
-  }
+  <Layout
+    title={`${frontmatter.title} • ${GLOBAL.username}`}
+    description={frontmatter.description}
+    image={seoImage}
+    imageAlt={frontmatter.featuredImageAlt || frontmatter.title}
+    type="article"
+    canonicalURL={canonicalUrl}
+    breadcrumbs={breadcrumbItems}
+    keywords={frontmatter.tags?.join(", ")}
+  >
 
   <Section class="pt-8 !max-w-6xl">
     <div class="grid grid-cols-1 lg:grid-cols-[1fr_250px] gap-12 relative">

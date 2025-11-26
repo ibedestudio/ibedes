@@ -12,21 +12,38 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
+  imageAlt?: string;
   type?: "website" | "article";
+  canonicalURL?: string | URL;
+  breadcrumbs?: { name: string; url: string }[];
+  keywords?: string;
 }
 
 const {
   title = "Ibedes - Creative Developer",
   description = "Portfolio dan blog personal Ibedes. Berbagi cerita tentang web development, teknologi, dan pengalaman belajar.",
   image,
+  imageAlt,
   type,
+  canonicalURL,
+  breadcrumbs,
+  keywords,
 } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="id">
   <head>
-    <SEO title={title} description={description} image={image} type={type} />
+    <SEO
+      title={title}
+      description={description}
+      image={image}
+      imageAlt={imageAlt}
+      type={type}
+      canonicalURL={canonicalURL}
+      breadcrumbs={breadcrumbs}
+      keywords={keywords}
+    />
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-TQ2GF3GCCX"

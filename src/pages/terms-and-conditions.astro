@@ -1,0 +1,72 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Section from "../components/common/Section.astro";
+import Breadcrumb from "../components/common/Breadcrumb.astro";
+
+const breadcrumbItems = [
+  { name: "Home", url: "/" },
+  { name: "Terms & Conditions", url: "/terms-and-conditions" },
+];
+
+const terms = [
+  {
+    title: "Penggunaan Konten",
+    detail:
+      "Konten dapat digunakan untuk tujuan pribadi atau edukasi dengan mencantumkan atribusi. Dilarang menyalin mentah untuk tujuan komersial tanpa izin tertulis.",
+  },
+  {
+    title: "Keterbatasan Layanan",
+    detail:
+      "Materi yang dibagikan bukan merupakan nasihat profesional atau kontrak kerja. Gunakan sesuai konteks dan lakukan verifikasi tambahan sebelum menerapkan.",
+  },
+  {
+    title: "Interaksi & Komunikasi",
+    detail:
+      "Dengan menghubungi saya, Anda setuju untuk tidak mengirim spam, materi yang melanggar hukum, atau konten ofensif. Pesan tidak akan dibagikan ke pihak lain tanpa izin Anda.",
+  },
+  {
+    title: "Perubahan Ketentuan",
+    detail:
+      "Ketentuan ini dapat diperbarui sewaktu-waktu. Versi terbaru akan dipublikasikan di halaman ini dengan tanggal perubahan.",
+  },
+];
+
+const seoTitle = "Terms & Conditions | ibedes";
+const seoDescription = "Ketentuan penggunaan situs, konten, dan interaksi dengan ibedes.";
+const seoKeywords = "terms and conditions ibedes, syarat ketentuan, penggunaan situs";
+---
+
+<Layout
+  title={seoTitle}
+  description={seoDescription}
+  keywords={seoKeywords}
+  canonicalURL="/terms-and-conditions"
+  breadcrumbs={breadcrumbItems}
+>
+  <Section class="py-10 sm:py-16 space-y-10 sm:space-y-14">
+    <Breadcrumb items={breadcrumbItems} />
+
+    <header class="space-y-4">
+      <p class="text-xs sm:text-sm font-mono uppercase tracking-[0.3em] text-primary">Syarat & Ketentuan</p>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-display uppercase tracking-wide">Terms & Conditions</h1>
+      <p class="text-base sm:text-lg text-muted-foreground max-w-3xl font-serif leading-relaxed">
+        Ketentuan berikut mengatur penggunaan situs ibedes dan interaksi dengan saya. Dengan mengakses situs ini, Anda menyetujui syarat di bawah.
+      </p>
+    </header>
+
+    <div class="space-y-6">
+      {terms.map((term) => (
+        <div class="p-6 border-2 border-border rounded-xl bg-card/60 space-y-2">
+          <h2 class="text-xl font-display uppercase tracking-wide">{term.title}</h2>
+          <p class="text-sm sm:text-base text-muted-foreground font-serif leading-relaxed">{term.detail}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="p-6 border-2 border-dashed border-border rounded-xl bg-muted/40">
+      <p class="text-sm text-muted-foreground font-serif leading-relaxed">
+        Jika Anda memiliki pertanyaan mengenai ketentuan ini, silakan hubungi saya melalui halaman <a class="text-primary underline" href="/contact">Kontak</a>.
+      </p>
+    </div>
+  </Section>
+</Layout>

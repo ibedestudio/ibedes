@@ -1,12 +1,21 @@
 ---
-import { featuredArticles, featuredProjects } from "../lib/featured";
+import { featuredArticles } from "../lib/featured";
 import { GLOBAL } from "../lib/variables";
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/home/Hero.astro";
 import Section from "../components/common/Section.astro";
-import FeaturedProjects from "../components/home/FeaturedProjects.astro";
 import FeaturedArticles from "../components/home/FeaturedArticles.astro";
 import SubscribeCard from "../components/SubscribeCard.astro";
+import AffiliateProducts from "../components/AffiliateProducts.astro";
+import { loadAffiliateProducts } from "../lib/affiliates";
+
+const allAffiliateProducts = await loadAffiliateProducts();
+const verifiedAffiliateProducts = allAffiliateProducts.filter((product) => product.verified);
+const homepageAffiliateProducts = (verifiedAffiliateProducts.length
+  ? verifiedAffiliateProducts
+  : allAffiliateProducts
+).slice(0, 6);
+const homepageFeaturedArticles = featuredArticles.slice(0, 6);
 ---
 
 <Layout
@@ -16,10 +25,14 @@ import SubscribeCard from "../components/SubscribeCard.astro";
 >
   <Hero />
   <Section>
-    <FeaturedProjects featuredProjects={featuredProjects} />
+    <AffiliateProducts
+      products={homepageAffiliateProducts}
+      title="Rekomendasi Produk Affiliate"
+      context="Pilihan produk terkurasi yang sering kupakai. Klik untuk dukung konten lewat tautan resmi."
+    />
   </Section>
   <Section>
-    <FeaturedArticles featuredArticles={featuredArticles} />
+    <FeaturedArticles featuredArticles={homepageFeaturedArticles} />
     <div class="mt-12">
       <SubscribeCard />
     </div>

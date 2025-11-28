@@ -50,7 +50,7 @@ import ThemeToggle from "./ThemeToggle.astro";
         ))
       }
     </div>
-    <div class="hidden sm:flex gap-4 justify-between px-4 sm:px-0 items-center">
+    <div class="flex gap-4 justify-between px-4 sm:px-0 items-center">
       <div class="relative" data-notification-wrapper>
         <button
           class="relative flex items-center justify-center w-11 h-11 rounded-full zag-border-b zag-bg hover:-translate-y-1 zag-transition"
@@ -65,6 +65,30 @@ import ThemeToggle from "./ThemeToggle.astro";
             3
           </span>
         </button>
+
+        <div
+          class="hidden absolute right-0 mt-3 w-72 rounded-xl zag-border-b zag-bg shadow-lg overflow-hidden"
+          data-notification-panel
+        >
+          <div class="px-4 py-3 border-b border-neutral-200 dark:border-neutral-800">
+            <p class="font-semibold zag-text">Notifikasi</p>
+            <p class="text-sm zag-text-muted">Klik item untuk menandai sudah dibaca</p>
+          </div>
+          <ul class="max-h-80 overflow-y-auto divide-y divide-neutral-200 dark:divide-neutral-800">
+            <li class="p-4 hover:-translate-y-0.5 zag-transition cursor-pointer" data-notification-item>
+              <p class="zag-text font-medium">Ada komentar baru di postinganmu</p>
+              <p class="text-sm zag-text-muted">2 menit yang lalu</p>
+            </li>
+            <li class="p-4 hover:-translate-y-0.5 zag-transition cursor-pointer" data-notification-item>
+              <p class="zag-text font-medium">Teman baru mengikuti kamu</p>
+              <p class="text-sm zag-text-muted">1 jam yang lalu</p>
+            </li>
+            <li class="p-4 hover:-translate-y-0.5 zag-transition cursor-pointer" data-notification-item>
+              <p class="zag-text font-medium">Pengingat acara besok pagi</p>
+              <p class="text-sm zag-text-muted">Kemarin</p>
+            </li>
+          </ul>
+        </div>
       </div>
 
       {
@@ -112,18 +136,26 @@ import ThemeToggle from "./ThemeToggle.astro";
   const nav = document.querySelector("[data-nav]");
   let isOpen = false;
   let isNotificationOpen = false;
+  let toastTimeout: number | undefined;
 
-  const notificationButtons = document.querySelectorAll(
-    "[data-notification-button]"
-  );
+  const notificationButton = document.querySelector("[data-notification-button]");
   const notificationPanel = document.querySelector("[data-notification-panel]");
-  const notificationBadges = document.querySelectorAll(
-    "[data-notification-badge]"
-  );
+  const notificationBadge = document.querySelector("[data-notification-badge]");
   const notificationItems = document.querySelectorAll("[data-notification-item]");
-  const notificationWrappers = document.querySelectorAll(
-    "[data-notification-wrapper]"
-  );
+  const notificationWrapper = document.querySelector("[data-notification-wrapper]");
+
+  const toast = document.createElement("div");
+  toast.className =
+    "fixed bottom-6 right-6 w-72 rounded-xl zag-border-b zag-bg shadow-lg px-4 py-3 flex gap-3 items-start opacity-0 pointer-events-none zag-transition translate-y-2";
+  toast.setAttribute("role", "status");
+  toast.innerHTML = `
+    <i class="fa-solid fa-bell text-lg zag-text mt-1" aria-hidden="true"></i>
+    <div>
+      <p class="zag-text font-semibold">Notifikasi terbaru</p>
+      <p class="zag-text-muted text-sm">Klik lonceng untuk melihat detail.</p>
+    </div>
+  `;
+  document.body.appendChild(toast);
 
   function updateNavState() {
     const isMobile = window.matchMedia("(max-width: 640px)").matches;
@@ -152,24 +184,42 @@ import ThemeToggle from "./ThemeToggle.astro";
     notificationPanel?.classList.toggle("hidden", !isNotificationOpen);
   }
 
+  function closeNotificationPanel() {
+    notificationPanel?.classList.add("hidden");
+    isNotificationOpen = false;
+  }
+
+  function toggleNotification() {
+    isNotificationOpen = !isNotificationOpen;
+    notificationPanel?.classList.toggle("hidden", !isNotificationOpen);
+    showToast();
+  }
+
+  function showToast() {
+    toast.classList.remove("opacity-0", "translate-y-2");
+    toast.classList.add("pointer-events-auto");
+    clearTimeout(toastTimeout);
+    toastTimeout = window.setTimeout(() => {
+      toast.classList.add("opacity-0", "translate-y-2");
+      toast.classList.remove("pointer-events-auto");
+    }, 2500);
+  }
+
   function handleNotificationClick(event: MouseEvent) {
-    const isInsideWrapper = Array.from(notificationWrappers).some((wrapper) =>
-      wrapper.contains(event.target as Node)
-    );
-    if (!isInsideWrapper) closeNotificationPanel();
+    if (!notificationWrapper?.contains(event.target as Node)) {
+      closeNotificationPanel();
+    }
   }
 
   function markNotificationsAsRead(event: Event) {
     const target = event.currentTarget as HTMLElement | null;
     if (!target) return;
     target.classList.add("bg-neutral-100", "dark:bg-neutral-900");
-    notificationBadges.forEach((badge) => badge.classList.add("hidden"));
+    notificationBadge?.classList.add("hidden");
   }
 
-  menuToggle?.addEventListener("click", toggleNav);
-  notificationButtons.forEach((btn) =>
-    btn.addEventListener("click", toggleNotification)
-  );
+  button?.addEventListener("click", toggleNav);
+  notificationButton?.addEventListener("click", toggleNotification);
   notificationItems.forEach((item) =>
     item.addEventListener("click", markNotificationsAsRead)
   );

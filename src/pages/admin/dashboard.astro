@@ -1224,7 +1224,10 @@ const previewProducts = affiliateProducts.slice(0, 3);
 
                 const meta = document.createElement("p");
                 meta.className = "admin-notification__meta";
-                meta.textContent = formatRelativeTime(item.time);
+                meta.innerHTML = `
+                    <i class="fa-regular fa-clock" aria-hidden="true"></i>
+                    ${formatRelativeTime(item.time)}
+                `;
 
                 titles.appendChild(title);
                 titles.appendChild(meta);
@@ -1245,12 +1248,43 @@ const previewProducts = affiliateProducts.slice(0, 3);
                     labels.appendChild(badge);
                 }
 
+                if (item.priority) {
+                    const priority = document.createElement("span");
+                    priority.className = "admin-notification__priority";
+                    priority.dataset.priority = item.priority;
+                    priority.textContent = `Prioritas ${item.priority}`;
+                    labels.appendChild(priority);
+                }
+
+                if (item.category) {
+                    const category = document.createElement("span");
+                    category.className = "admin-notification__category";
+                    category.textContent = item.category;
+                    labels.appendChild(category);
+                }
+
                 top.appendChild(titles);
                 top.appendChild(labels);
 
                 const text = document.createElement("p");
                 text.className = "admin-notification__text";
                 text.textContent = item.message;
+
+                let tagList: HTMLDivElement | null = null;
+                if (Array.isArray(item.tags) && item.tags.length) {
+                    tagList = document.createElement("div");
+                    tagList.className = "admin-notification__tags";
+
+                    item.tags.forEach((tag) => {
+                        const tagItem = document.createElement("span");
+                        tagItem.className = "admin-notification__tag";
+                        tagItem.innerHTML = `
+                            <i class="fa-solid fa-hashtag" aria-hidden="true"></i>
+                            ${tag}
+                        `;
+                        tagList?.appendChild(tagItem);
+                    });
+                }
 
                 const footer = document.createElement("div");
                 footer.className = "admin-notification__footer";
@@ -1287,6 +1321,9 @@ const previewProducts = affiliateProducts.slice(0, 3);
 
                 content.appendChild(top);
                 content.appendChild(text);
+                if (tagList) {
+                    content.appendChild(tagList);
+                }
                 content.appendChild(footer);
 
                 main.appendChild(icon);
@@ -1775,6 +1812,8 @@ const previewProducts = affiliateProducts.slice(0, 3);
         border-radius: var(--admin-radius);
         background: color-mix(in srgb, var(--color-card) 92%, transparent);
         border: var(--admin-border);
+        position: relative;
+        overflow: hidden;
     }
 
     @media (min-width: 768px) {
@@ -1785,12 +1824,35 @@ const previewProducts = affiliateProducts.slice(0, 3);
         }
     }
 
+    @media (max-width: 767px) {
+        .admin-header {
+            padding-top: calc(var(--admin-card-padding) + 1.5rem);
+        }
+
+        .admin-header__actions {
+            position: absolute;
+            top: 0.65rem;
+            right: 0.65rem;
+            background: color-mix(in srgb, var(--color-background) 90%, transparent);
+            padding: 0.35rem 0.5rem;
+            border-radius: 999px;
+            box-shadow: 0 12px 30px -22px
+                color-mix(in srgb, var(--color-foreground) 40%, transparent);
+        }
+    }
+
     .admin-title {
         font-family: var(--font-display);
         font-size: clamp(1.15rem, 2vw, 1.45rem);
         letter-spacing: 0.04em;
         margin: 0;
         text-transform: uppercase;
+    }
+
+    @media (max-width: 767px) {
+        .admin-header__text {
+            padding-right: 5.5rem;
+        }
     }
 
     .admin-subtitle {
@@ -2473,16 +2535,62 @@ const previewProducts = affiliateProducts.slice(0, 3);
 
     .admin-notification {
         position: relative;
-        border: var(--admin-border);
+        border: 1px solid color-mix(
+            in srgb,
+            var(--color-foreground) 16%,
+            transparent
+        );
         border-radius: var(--admin-radius);
-        background: color-mix(in srgb, var(--color-background) 96%, transparent);
+        background: linear-gradient(
+                135deg,
+                color-mix(in srgb, var(--color-background) 98%, transparent),
+                color-mix(in srgb, var(--color-card, var(--color-background)) 92%, transparent)
+            ),
+            color-mix(in srgb, var(--color-background) 94%, transparent);
         overflow: hidden;
         min-height: 100%;
-        box-shadow: 0 12px 36px -28px color-mix(
+        box-shadow: 0 16px 46px -32px color-mix(
                 in srgb,
-                var(--color-foreground) 35%,
+                var(--color-foreground) 40%,
                 transparent
             );
+        isolation: isolate;
+    }
+
+    .admin-notification::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+            circle at 12% 20%,
+            color-mix(in srgb, var(--color-primary) 12%, transparent),
+            transparent 40%
+        );
+        opacity: 0.7;
+        z-index: -1;
+        pointer-events: none;
+        transition: opacity 180ms ease;
+    }
+
+    .admin-notification[data-type="like"]::before {
+        background: radial-gradient(
+            circle at 15% 18%,
+            color-mix(in srgb, #ff6b9a 20%, transparent),
+            transparent 42%
+        );
+    }
+
+    .admin-notification[data-type="comment"]::before {
+        background: radial-gradient(
+            circle at 15% 18%,
+            color-mix(in srgb, #4b9cff 22%, transparent),
+            transparent 42%
+        );
+    }
+
+    .admin-notification:hover::before,
+    .admin-notification:focus-within::before {
+        opacity: 1;
     }
 
     .admin-notification__swipe {
@@ -2494,9 +2602,10 @@ const previewProducts = affiliateProducts.slice(0, 3);
         grid-template-columns: auto 1fr;
         gap: 0.65rem;
         align-items: start;
-        padding: 0.7rem 0.75rem;
+        padding: 0.8rem 0.85rem;
         transition: transform 180ms ease;
         touch-action: pan-y;
+        background: color-mix(in srgb, var(--color-background) 85%, transparent);
     }
 
     .admin-notification__swipe-actions {
@@ -2539,24 +2648,39 @@ const previewProducts = affiliateProducts.slice(0, 3);
     }
 
     .admin-notification__icon {
-        width: 2.25rem;
-        height: 2.25rem;
-        border-radius: 0.75rem;
+        width: 2.35rem;
+        height: 2.35rem;
+        border-radius: 0.85rem;
         display: grid;
         place-items: center;
-        background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+        background: color-mix(in srgb, var(--color-primary) 16%, transparent);
         color: var(--color-primary);
-        font-size: 1rem;
+        font-size: 1.05rem;
+        box-shadow: 0 10px 28px -18px
+            color-mix(in srgb, var(--color-primary) 65%, transparent);
+    }
+
+    .admin-notification__icon[data-type="comment"] {
+        background: linear-gradient(135deg, #e2efff, #d4e8ff);
+        color: #2d7fff;
+        box-shadow: 0 12px 26px -20px rgba(45, 127, 255, 0.55);
+    }
+
+    .admin-notification__icon[data-type="like"] {
+        background: linear-gradient(135deg, #ffe1ed, #ffd2e5);
+        color: #ff3b6b;
+        box-shadow: 0 12px 26px -20px rgba(255, 59, 107, 0.58);
     }
 
     .admin-notification__icon[data-type="message"] {
-        background: color-mix(in srgb, var(--color-foreground) 10%, transparent);
+        background: linear-gradient(135deg, #f3f3f7, #e6e7ee);
         color: color-mix(in srgb, var(--color-foreground) 75%, transparent);
     }
 
     .admin-notification__icon[data-type="system"] {
-        background: color-mix(in srgb, var(--color-warning, #f6c744) 18%, transparent);
-        color: color-mix(in srgb, var(--color-warning, #f6c744) 80%, transparent);
+        background: linear-gradient(135deg, #fff2d9, #ffe4ac);
+        color: color-mix(in srgb, var(--color-warning, #f6c744) 82%, transparent);
+        box-shadow: 0 12px 26px -20px rgba(246, 199, 68, 0.55);
     }
 
     .admin-notification__content {
@@ -2655,6 +2779,13 @@ const previewProducts = affiliateProducts.slice(0, 3);
         letter-spacing: 0.08em;
         text-transform: uppercase;
         color: color-mix(in srgb, var(--color-foreground) 55%, transparent);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .admin-notification__meta i {
+        color: color-mix(in srgb, var(--color-foreground) 60%, transparent);
     }
 
     .admin-notification__text {

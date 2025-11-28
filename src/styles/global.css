@@ -109,6 +109,24 @@
     text-underline-offset: var(--zag-offset);
   }
 
+  /* Ensure interactive elements have comfortable touch targets */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.5rem 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .touch-target--icon {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.5rem;
+    border-radius: 9999px;
+  }
+
   .opsz {
     font-variation-settings: "opsz" 72;
   }

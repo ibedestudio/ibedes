@@ -26,40 +26,40 @@ const allLinks = [
             {GLOBAL.username}
           </h2>
           <div class="flex gap-4">
-            {
-              GLOBAL.githubProfile && (
-                <a
-                  href={GLOBAL.githubProfile}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-xl hover:text-primary transition-colors"
-                  aria-label="GitHub"
-                >
-                  <i class="fa-brands fa-github" />
-                </a>
-              )
-            }
-            {
-              GLOBAL.threadsProfile && (
-                <a
-                  href={GLOBAL.threadsProfile}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-xl hover:text-primary transition-colors"
-                  aria-label="Threads"
-                >
-                  <i class="fa-brands fa-threads" />
-                </a>
-              )
-            }
-            <a
-              href={`mailto:${GLOBAL.contactEmail}`}
-              class="text-xl hover:text-primary transition-colors"
-              aria-label="Email"
-            >
-              <i class="fa-solid fa-envelope"></i>
-            </a>
-          </div>
+          {
+            GLOBAL.githubProfile && (
+              <a
+                href={GLOBAL.githubProfile}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="touch-target--icon text-xl hover:text-primary transition-colors"
+                aria-label="GitHub"
+              >
+                <i class="fa-brands fa-github" />
+              </a>
+            )
+          }
+          {
+            GLOBAL.threadsProfile && (
+              <a
+                href={GLOBAL.threadsProfile}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="touch-target--icon text-xl hover:text-primary transition-colors"
+                aria-label="Threads"
+              >
+                <i class="fa-brands fa-threads" />
+              </a>
+            )
+          }
+          <a
+            href={`mailto:${GLOBAL.contactEmail}`}
+            class="touch-target--icon text-xl hover:text-primary transition-colors"
+            aria-label="Email"
+          >
+            <i class="fa-solid fa-envelope"></i>
+          </a>
+        </div>
         </div>
 
         <!-- Navigation Links -->
@@ -68,7 +68,7 @@ const allLinks = [
             allLinks.map(([name, url]) => (
               <Anchor
                 url={url}
-                class="text-muted-foreground hover:text-foreground transition-colors no-underline uppercase tracking-wide"
+                class="touch-target text-muted-foreground hover:text-foreground transition-colors no-underline uppercase tracking-wide"
               >
                 {name}
               </Anchor>

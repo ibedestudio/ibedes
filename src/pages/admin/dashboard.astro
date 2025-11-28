@@ -953,6 +953,19 @@ const previewProducts = affiliateProducts.slice(0, 3);
             updatedAt?: string;
         };
 
+        type ClickItem = {
+            id?: string;
+            slug?: string;
+            title?: string;
+            name?: string;
+            clicks: number;
+        };
+
+        type ClickBreakdown = {
+            articles: ClickItem[];
+            products: ClickItem[];
+        };
+
         const ensureNumber = (value: any): number => {
             const numeric = Number(value);
             return Number.isFinite(numeric) ? numeric : 0;
@@ -1007,6 +1020,40 @@ const previewProducts = affiliateProducts.slice(0, 3);
             };
         };
 
+        const normalizeClickItems = (items: any[]): ClickItem[] => {
+            if (!Array.isArray(items)) return [];
+
+            return items.map((item, index) => {
+                const clicks = ensureNumber(
+                    item?.clicks ??
+                        item?.click_count ??
+                        item?.clickCount ??
+                        item?.metrics?.clicks ??
+                        item?.analytics?.clicks ??
+                        0,
+                );
+
+                return {
+                    id:
+                        (item?.id ?? item?.slug ?? item?.url ?? index)?.toString() ??
+                        String(index),
+                    slug: item?.slug,
+                    title: item?.title ?? item?.name ?? item?.slug,
+                    name: item?.name ?? item?.title ?? item?.slug,
+                    clicks,
+                };
+            });
+        };
+
+        const normalizeClickBreakdown = (payload: any): ClickBreakdown => {
+            const source = payload?.breakdown ?? payload?.data?.breakdown ?? payload;
+
+            return {
+                articles: normalizeClickItems(source?.articles ?? payload?.articles),
+                products: normalizeClickItems(source?.products ?? payload?.products),
+            };
+        };
+
         const parseAnalyticsResponse = async (response: Response) => {
             const contentType = response.headers.get("content-type") ?? "";
             const bodyText = await response.text();
@@ -1024,10 +1071,47 @@ const previewProducts = affiliateProducts.slice(0, 3);
             }
         };
 
-        const renderClickMetrics = (totals: ClickTotals) => {
+        const renderClickMetrics = (
+            totals: ClickTotals,
+            breakdown: ClickBreakdown,
+        ) => {
             if (!clickMetricsContainer) return;
 
             const formatValue = (value: number) => ensureNumber(value).toLocaleString();
+
+            const renderList = (items: ClickItem[], empty: string) => {
+                if (!items.length)
+                    return `
+                        <div class="admin-empty-state admin-empty-state--inline">
+                            <p>${empty}</p>
+                        </div>
+                    `;
+
+                return `
+                    <div class="admin-list">
+                        ${items
+                            .map(
+                                (item) => `
+                                    <article class="admin-list__item">
+                                        <div>
+                                            <p class="admin-list__title">${
+                                                item.name || item.title || item.slug ||
+                                                item.id || "Tanpa nama"
+                                            }</p>
+                                            <p class="admin-list__meta">${formatValue(
+                                                item.clicks,
+                                            )} klik</p>
+                                        </div>
+                                        <span class="admin-chip admin-chip--ghost">${
+                                            item.id || item.slug || "Item"
+                                        }</span>
+                                    </article>
+                                `,
+                            )
+                            .join("")}
+                    </div>
+                `;
+            };
 
             clickMetricsContainer.innerHTML = `
                 <div class="admin-analytics-grid">
@@ -1051,6 +1135,38 @@ const previewProducts = affiliateProducts.slice(0, 3);
                         <strong>${formatValue(totals.links)}</strong>
                         <span>Navigation & eksternal</span>
                     </article>
+                </div>
+                <div class="admin-click-breakdown">
+                    <section class="admin-breakdown-panel">
+                        <div class="admin-breakdown-panel__header">
+                            <div>
+                                <p class="admin-eyebrow">Artikel</p>
+                                <h3>Klik per artikel</h3>
+                            </div>
+                            <span class="admin-chip admin-chip--muted">${
+                                breakdown.articles.length
+                            } item</span>
+                        </div>
+                        ${renderList(
+                            breakdown.articles,
+                            "Belum ada data klik artikel. Tambahkan field `clicks` pada frontmatter.",
+                        )}
+                    </section>
+                    <section class="admin-breakdown-panel">
+                        <div class="admin-breakdown-panel__header">
+                            <div>
+                                <p class="admin-eyebrow">Produk</p>
+                                <h3>Klik per produk</h3>
+                            </div>
+                            <span class="admin-chip admin-chip--muted">${
+                                breakdown.products.length
+                            } item</span>
+                        </div>
+                        ${renderList(
+                            breakdown.products,
+                            "Belum ada data klik produk. Tambahkan kolom `clicks` di data produk.",
+                        )}
+                    </section>
                 </div>
             `;
         };
@@ -1085,7 +1201,8 @@ const previewProducts = affiliateProducts.slice(0, 3);
                 }
 
                 const totals = normalizeClickTotals(result);
-                renderClickMetrics(totals);
+                const breakdown = normalizeClickBreakdown(result);
+                renderClickMetrics(totals, breakdown);
 
                 const timestamp = totals.updatedAt
                     ? new Date(totals.updatedAt)
@@ -3367,6 +3484,44 @@ const previewProducts = affiliateProducts.slice(0, 3);
 
     .admin-analytics-stat[data-tone="muted"] {
         border-color: color-mix(in srgb, var(--color-foreground) 15%, transparent);
+    }
+
+    .admin-click-breakdown {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 0.9rem;
+        margin-top: 0.8rem;
+    }
+
+    .admin-breakdown-panel {
+        border: var(--admin-border);
+        border-radius: var(--admin-radius);
+        padding: 0.9rem;
+        background: color-mix(
+            in srgb,
+            var(--color-background) 95%,
+            transparent
+        );
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+
+    .admin-breakdown-panel__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.65rem;
+        flex-wrap: wrap;
+    }
+
+    .admin-breakdown-panel__header h3 {
+        margin: 0.15rem 0 0;
+        font-size: var(--admin-font-base);
+    }
+
+    .admin-breakdown-panel .admin-list {
+        gap: 0.55rem;
     }
 
     .admin-live-indicator {

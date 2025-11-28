@@ -12,11 +12,11 @@ import profileImage from "../../assets/ibedes.jpg";
     class="absolute inset-0 -z-10 overflow-hidden opacity-30 dark:opacity-20"
   >
     <div
-      class="absolute top-20 right-20 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse"
+      class="absolute top-16 right-6 md:top-20 md:right-20 w-48 h-48 md:w-96 md:h-96 bg-primary/20 rounded-full blur-2xl motion-safe:animate-pulse hidden sm:block"
     >
     </div>
     <div
-      class="absolute bottom-20 left-20 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl animate-pulse"
+      class="absolute bottom-8 left-6 md:bottom-20 md:left-20 w-56 h-56 md:w-[500px] md:h-[500px] bg-primary/10 rounded-full blur-2xl motion-safe:animate-pulse hidden sm:block"
       style="animation-delay: 1s;"
     >
     </div>
@@ -37,7 +37,7 @@ import profileImage from "../../assets/ibedes.jpg";
     <div class="relative group">
       <!-- Animated Border -->
       <div
-        class="absolute -inset-1 bg-gradient-to-r from-primary via-primary/50 to-primary rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"
+        class="absolute -inset-1 bg-gradient-to-r from-primary via-primary/50 to-primary rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 motion-safe:animate-pulse"
       >
       </div>
 
@@ -62,7 +62,7 @@ import profileImage from "../../assets/ibedes.jpg";
       >
         <span class="relative flex h-2 w-2">
           <span
-            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"
+            class="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"
           ></span>
           <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"
           ></span>
@@ -80,7 +80,7 @@ import profileImage from "../../assets/ibedes.jpg";
       <!-- Subtitle with Typing Effect -->
       <div class="text-base sm:text-lg md:text-xl font-mono text-primary">
         <span class="inline-block" id="typing-text">Web Developer</span>
-        <span class="animate-pulse">|</span>
+        <span class="motion-safe:animate-pulse">|</span>
       </div>
 
       <!-- Description -->
@@ -167,7 +167,7 @@ import profileImage from "../../assets/ibedes.jpg";
 </div>
 
 <!-- Scroll Indicator - Outside hero container -->
-<div class="flex justify-center -mt-4 mb-8 animate-bounce">
+<div class="flex justify-center -mt-4 mb-8 motion-safe:animate-bounce">
   <div class="flex flex-col items-center gap-1">
     <span class="text-xs text-muted-foreground font-mono">Scroll</span>
     <i class="fa-solid fa-chevron-down text-muted-foreground text-base"></i>
@@ -187,8 +187,15 @@ import profileImage from "../../assets/ibedes.jpg";
   let isDeleting = false;
   const typingElement = document.getElementById("typing-text");
 
+  const shouldReduceMotion = () =>
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+    window.matchMedia("(max-width: 768px)").matches;
+
   function type() {
-    if (!typingElement) return;
+    if (!typingElement || shouldReduceMotion()) {
+      typingElement.textContent = roles[0];
+      return;
+    }
 
     const current = roles[currentRole];
 
@@ -214,6 +221,8 @@ import profileImage from "../../assets/ibedes.jpg";
     setTimeout(type, typeSpeed);
   }
 
-  // Start typing effect
-  setTimeout(type, 1000);
+  if (!shouldReduceMotion()) {
+    // Start typing effect
+    setTimeout(type, 800);
+  }
 </script>

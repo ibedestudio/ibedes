@@ -39,6 +39,7 @@ export const GLOBAL = {
     blog: "/blog",
     swag: "/swag",
     services: "/services",
+    affiliate: "/affiliate",
   },
   footerMenu: {
     projects: "/projects",
@@ -49,6 +50,7 @@ export const GLOBAL = {
     "privacy policy": "/privacy-policy",
     disclaimer: "/disclaimer",
     "terms & conditions": "/terms-and-conditions",
+    "produk affiliate": "/affiliate",
   },
 
   contactEmail: "ibedestudio@gmail.com",

@@ -4,16 +4,42 @@ import Anchor from "./common/Anchor.astro";
 import ThemeToggle from "./ThemeToggle.astro";
 ---
 
-<header class="zag-bg zag-border-b zag-transition sticky top-0 w-full z-10">
+<header class="zag-bg zag-border-b zag-transition sticky top-0 w-full z-20">
   <div
-    class="zag-bg zag-transition sm:hidden relative z-50 py-4 flex items-center"
+    class="zag-bg zag-transition sm:hidden relative z-50 px-4 py-4 flex items-center justify-between"
   >
-    <button class="px-4" aria-label="Toggle navigation menu">
+    <button
+      class="px-2"
+      aria-label="Toggle navigation menu"
+      aria-expanded="false"
+      data-menu-toggle
+    >
       <i class="fa-solid fa-bars text-3xl zag-text zag-transition"></i>
     </button>
+
+    <div class="flex items-center gap-3">
+      <div class="relative" data-notification-wrapper>
+        <button
+          class="relative flex items-center justify-center w-11 h-11 rounded-full zag-border-b zag-bg hover:-translate-y-1 zag-transition"
+          aria-label="Buka notifikasi"
+          data-notification-button
+        >
+          <i class="fa-regular fa-bell text-2xl zag-text" aria-hidden="true"></i>
+          <span
+            class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold rounded-full px-1.5 py-0.5"
+            data-notification-badge
+          >
+            3
+          </span>
+        </button>
+      </div>
+      <ThemeToggle />
+    </div>
   </div>
+
   <nav
-    class="zag-bg zag-border-b zag-transition fixed sm:relative inset-x-0 top-0 h-auto sm:px-4 flex justify-between flex-col gap-8 py-4 text-xl sm:flex-row max-w-2xl mx-auto sm:pt-4 sm:border-none"
+    class="zag-bg zag-border-b zag-transition fixed sm:relative inset-x-0 top-0 h-auto sm:px-4 flex justify-between flex-col gap-8 py-4 text-xl sm:flex-row max-w-2xl mx-auto sm:pt-4 sm:border-none transform -translate-y-full sm:translate-y-0"
+    data-nav
   >
     <div
       class="flex flex-col font-mono font-medium gap-4 sm:flex-row px-4 sm:px-0 mt-16 sm:mt-0"
@@ -79,11 +105,35 @@ import ThemeToggle from "./ThemeToggle.astro";
       <ThemeToggle />
     </div>
   </nav>
+
+  <div
+    class="hidden fixed right-4 sm:right-6 top-20 sm:top-16 w-72 sm:w-80 rounded-xl zag-border-b zag-bg shadow-lg overflow-hidden"
+    data-notification-panel
+  >
+    <div class="px-4 py-3 border-b border-neutral-200 dark:border-neutral-800">
+      <p class="font-semibold zag-text">Notifikasi</p>
+      <p class="text-sm zag-text-muted">Klik item untuk menandai sudah dibaca</p>
+    </div>
+    <ul class="max-h-80 overflow-y-auto divide-y divide-neutral-200 dark:divide-neutral-800">
+      <li class="p-4 hover:-translate-y-0.5 zag-transition cursor-pointer" data-notification-item>
+        <p class="zag-text font-medium">Ada komentar baru di postinganmu</p>
+        <p class="text-sm zag-text-muted">2 menit yang lalu</p>
+      </li>
+      <li class="p-4 hover:-translate-y-0.5 zag-transition cursor-pointer" data-notification-item>
+        <p class="zag-text font-medium">Teman baru mengikuti kamu</p>
+        <p class="text-sm zag-text-muted">1 jam yang lalu</p>
+      </li>
+      <li class="p-4 hover:-translate-y-0.5 zag-transition cursor-pointer" data-notification-item>
+        <p class="zag-text font-medium">Pengingat acara besok pagi</p>
+        <p class="text-sm zag-text-muted">Kemarin</p>
+      </li>
+    </ul>
+  </div>
 </header>
 
 <script>
-  const button = document.querySelector("button");
-  const nav = document.querySelector("nav");
+  const menuToggle = document.querySelector("[data-menu-toggle]");
+  const nav = document.querySelector("[data-nav]");
   let isOpen = false;
   let isNotificationOpen = false;
   let toastTimeout: number | undefined;
@@ -109,10 +159,11 @@ import ThemeToggle from "./ThemeToggle.astro";
 
   function updateNavState() {
     const isMobile = window.matchMedia("(max-width: 640px)").matches;
+    if (!nav) return;
     if (isMobile) {
-      nav!.style.transform = isOpen ? "translateY(0)" : "translateY(-100%)";
+      nav.style.transform = isOpen ? "translateY(0)" : "translateY(-100%)";
     } else {
-      nav!.style.transform = "translateY(0)";
+      nav.style.transform = "translateY(0)";
       isOpen = false;
     }
   }
@@ -120,6 +171,17 @@ import ThemeToggle from "./ThemeToggle.astro";
   function toggleNav() {
     isOpen = !isOpen;
     updateNavState();
+    menuToggle?.setAttribute("aria-expanded", String(isOpen));
+  }
+
+  function closeNotificationPanel() {
+    notificationPanel?.classList.add("hidden");
+    isNotificationOpen = false;
+  }
+
+  function toggleNotification() {
+    isNotificationOpen = !isNotificationOpen;
+    notificationPanel?.classList.toggle("hidden", !isNotificationOpen);
   }
 
   function closeNotificationPanel() {

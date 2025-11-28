@@ -663,6 +663,28 @@ const previewProducts = affiliateProducts.slice(0, 3);
                         <div class="admin-card__header">
                             <div>
                                 <p class="admin-eyebrow">Analitik</p>
+                                <h2>Agregasi klik</h2>
+                                <p class="admin-card__meta">
+                                    Memantau total klik affiliate dan tautan.
+                                </p>
+                            </div>
+                            <div class="admin-live-indicator" data-click-status>
+                                <span class="admin-dot" aria-hidden="true"></span>
+                                <span>Live</span>
+                            </div>
+                        </div>
+                        <div class="admin-analytics-grid" data-click-metrics>
+                            <div class="admin-empty-state admin-empty-state--inline">
+                                <p>Menyiapkan data klik...</p>
+                            </div>
+                        </div>
+                        <p class="admin-card__meta" data-click-error hidden></p>
+                    </div>
+
+                    <div class="admin-card">
+                        <div class="admin-card__header">
+                            <div>
+                                <p class="admin-eyebrow">Analitik</p>
                                 <h2>Performa konten</h2>
                             </div>
                         </div>
@@ -884,6 +906,9 @@ const previewProducts = affiliateProducts.slice(0, 3);
         const TAB_TRIGGER_SELECTOR = "[data-tab-trigger]";
         const TAB_PANE_SELECTOR = ".tab-pane";
 
+        const CLICK_AGGREGATE_ENDPOINT = "/api/admin/analytics/clicks";
+        const CLICK_REFRESH_INTERVAL = 12000;
+
         const notificationContainer = document.querySelector<HTMLElement>(
             "[data-admin-notifications]",
         );
@@ -896,7 +921,17 @@ const previewProducts = affiliateProducts.slice(0, 3);
         const resetFeedButton = document.querySelector<HTMLButtonElement>(
             "[data-reset-feed]",
         );
+        const clickMetricsContainer = document.querySelector<HTMLElement>(
+            "[data-click-metrics]",
+        );
+        const clickStatusLabel = document.querySelector<HTMLElement>(
+            "[data-click-status]",
+        );
+        const clickErrorLabel = document.querySelector<HTMLElement>(
+            "[data-click-error]",
+        );
         let realtimeIntervalId: number | null = null;
+        let clickFetchController: AbortController | null = null;
         const notificationsData = document.getElementById(
             "admin-notifications-data",
         ) as HTMLScriptElement | null;
@@ -910,8 +945,180 @@ const previewProducts = affiliateProducts.slice(0, 3);
             }
         };
 
+        type ClickTotals = {
+            total: number;
+            articles: number;
+            products: number;
+            links: number;
+            updatedAt?: string;
+        };
+
+        const ensureNumber = (value: any): number => {
+            const numeric = Number(value);
+            return Number.isFinite(numeric) ? numeric : 0;
+        };
+
+        const normalizeClickTotals = (payload: any): ClickTotals => {
+            const source =
+                payload?.totals ??
+                payload?.data?.totals ??
+                payload?.data ??
+                payload ?? {};
+
+            const articleClicks = ensureNumber(
+                source?.articles ??
+                    source?.article ??
+                    source?.articleClicks ??
+                    source?.article_clicks ??
+                    source?.articlesClicks,
+            );
+            const productClicks = ensureNumber(
+                source?.products ??
+                    source?.product ??
+                    source?.productClicks ??
+                    source?.product_clicks ??
+                    source?.productsClicks,
+            );
+            const linkClicks = ensureNumber(
+                source?.links ??
+                    source?.link ??
+                    source?.other ??
+                    source?.linkClicks ??
+                    source?.link_clicks,
+            );
+            const totalClicks = ensureNumber(
+                source?.total ??
+                    source?.all ??
+                    source?.totalClicks ??
+                    source?.total_clicks ??
+                    articleClicks + productClicks + linkClicks,
+            );
+
+            return {
+                total: totalClicks || articleClicks + productClicks + linkClicks,
+                articles: articleClicks,
+                products: productClicks,
+                links: linkClicks,
+                updatedAt:
+                    payload?.updatedAt ??
+                    payload?.timestamp ??
+                    payload?.lastUpdated ??
+                    payload?.data?.updatedAt,
+            };
+        };
+
+        const renderClickMetrics = (totals: ClickTotals) => {
+            if (!clickMetricsContainer) return;
+
+            const formatValue = (value: number) => ensureNumber(value).toLocaleString();
+
+            clickMetricsContainer.innerHTML = `
+                <div class="admin-analytics-grid">
+                    <article class="admin-analytics-stat" data-tone="primary">
+                        <p>Total klik</p>
+                        <strong>${formatValue(totals.total)}</strong>
+                        <span>Semua interaksi tautan</span>
+                    </article>
+                    <article class="admin-analytics-stat" data-tone="success">
+                        <p>Artikel</p>
+                        <strong>${formatValue(totals.articles)}</strong>
+                        <span>Rangkuman klik artikel</span>
+                    </article>
+                    <article class="admin-analytics-stat" data-tone="warning">
+                        <p>Produk</p>
+                        <strong>${formatValue(totals.products)}</strong>
+                        <span>Affiliate & CTA produk</span>
+                    </article>
+                    <article class="admin-analytics-stat" data-tone="muted">
+                        <p>Link lain</p>
+                        <strong>${formatValue(totals.links)}</strong>
+                        <span>Navigation & eksternal</span>
+                    </article>
+                </div>
+            `;
+        };
+
+        const setClickStatus = (message: string, isError = false) => {
+            if (!clickStatusLabel) return;
+            clickStatusLabel.textContent = message;
+            clickStatusLabel.dataset.state = isError ? "error" : "live";
+            clickStatusLabel.classList.toggle("is-error", isError);
+        };
+
+        const fetchClickAnalytics = async () => {
+            if (!clickMetricsContainer) return;
+            clickMetricsContainer.dataset.state = "loading";
+            clickErrorLabel?.setAttribute("hidden", "true");
+            clickFetchController?.abort();
+            clickFetchController = new AbortController();
+
+            try {
+                const response = await fetch(CLICK_AGGREGATE_ENDPOINT, {
+                    headers: { Accept: "application/json" },
+                    credentials: "include",
+                    signal: clickFetchController.signal,
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        result?.error || "Gagal memuat data klik. Coba lagi.",
+                    );
+                }
+
+                const totals = normalizeClickTotals(result);
+                renderClickMetrics(totals);
+
+                const timestamp = totals.updatedAt
+                    ? new Date(totals.updatedAt)
+                    : new Date();
+                setClickStatus(
+                    `Live · diperbarui ${timestamp.toLocaleTimeString(undefined, {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    })}`,
+                );
+            } catch (error) {
+                if (error instanceof DOMException && error.name === "AbortError") {
+                    return;
+                }
+
+                const message =
+                    error instanceof Error
+                        ? error.message
+                        : "Tidak dapat memuat agregasi klik.";
+
+                clickMetricsContainer.innerHTML = `
+                    <div class="admin-empty-state admin-empty-state--inline">
+                        <p>${message}</p>
+                    </div>
+                `;
+
+                if (clickErrorLabel) {
+                    clickErrorLabel.textContent = `${message} Terhubung ulang otomatis.`;
+                    clickErrorLabel.removeAttribute("hidden");
+                }
+                setClickStatus("Offline", true);
+            } finally {
+                clickMetricsContainer.dataset.state = "ready";
+            }
+        };
+
         const startRealtimePolling = () => {
-            return;
+            if (!clickMetricsContainer) return;
+
+            if (realtimeIntervalId) {
+                window.clearInterval(realtimeIntervalId);
+            }
+
+            fetchClickAnalytics();
+
+            realtimeIntervalId = window.setInterval(() => {
+                if (document.visibilityState === "visible") {
+                    fetchClickAnalytics();
+                }
+            }, CLICK_REFRESH_INTERVAL);
         };
 
         type AdminNotification = {
@@ -1537,6 +1744,12 @@ const previewProducts = affiliateProducts.slice(0, 3);
                     window.scrollTo({ top: 0, behavior: "smooth" });
                 }
             });
+        });
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") {
+                fetchClickAnalytics();
+            }
         });
 
         function initializeTabs(): void {
@@ -3086,6 +3299,82 @@ const previewProducts = affiliateProducts.slice(0, 3);
     .admin-metric strong {
         font-size: clamp(1.05rem, 1.9vw, 1.25rem);
         font-family: var(--font-display);
+    }
+
+    .admin-analytics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.8rem;
+    }
+
+    .admin-analytics-stat {
+        border: var(--admin-border);
+        border-radius: var(--admin-radius);
+        padding: 0.85rem;
+        background: color-mix(in srgb, var(--color-background) 96%, transparent);
+        display: grid;
+        gap: 0.2rem;
+    }
+
+    .admin-analytics-stat p {
+        font-size: var(--admin-font-xs);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: color-mix(in srgb, var(--color-foreground) 60%, transparent);
+    }
+
+    .admin-analytics-stat strong {
+        font-family: var(--font-display);
+        font-size: clamp(1.3rem, 2.4vw, 1.6rem);
+    }
+
+    .admin-analytics-stat span {
+        font-size: var(--admin-font-sm);
+        color: color-mix(in srgb, var(--color-foreground) 65%, transparent);
+    }
+
+    .admin-analytics-stat[data-tone="primary"] {
+        border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
+        background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    }
+
+    .admin-analytics-stat[data-tone="success"] {
+        border-color: color-mix(in srgb, #3cb371 35%, transparent);
+        background: color-mix(in srgb, #3cb371 12%, transparent);
+    }
+
+    .admin-analytics-stat[data-tone="warning"] {
+        border-color: color-mix(in srgb, #f4a261 35%, transparent);
+        background: color-mix(in srgb, #f4a261 12%, transparent);
+    }
+
+    .admin-analytics-stat[data-tone="muted"] {
+        border-color: color-mix(in srgb, var(--color-foreground) 15%, transparent);
+    }
+
+    .admin-live-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.6rem;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+        color: var(--color-primary);
+        font-size: var(--admin-font-sm);
+        font-family: var(--font-mono);
+    }
+
+    .admin-live-indicator.is-error {
+        background: color-mix(in srgb, var(--color-danger, #ff6b6b) 15%, transparent);
+        color: color-mix(in srgb, var(--color-danger, #ff6b6b) 90%, transparent);
+    }
+
+    .admin-live-indicator .admin-dot {
+        width: 10px;
+        height: 10px;
+        box-shadow: 0 0 0 0.35rem
+            color-mix(in srgb, currentColor 18%, transparent);
+        animation: pulse-ring 1.8s ease-in-out infinite;
     }
 
     .admin-realtime {

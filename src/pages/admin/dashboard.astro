@@ -437,6 +437,69 @@ const previewProducts = affiliateProducts.slice(0, 3);
                             <span>Segarkan</span>
                         </button>
                     </div>
+                    <div class="admin-notifications__summary" aria-live="polite">
+                        <div class="admin-notifications__pill admin-notifications__pill--accent">
+                            <div class="admin-notifications__pill-icon admin-notifications__pill-icon--success">
+                                <i class="fa-solid fa-bell" aria-hidden="true"></i>
+                            </div>
+                            <div class="admin-notifications__pill-body">
+                                <p class="admin-notifications__pill-label">Total notifikasi</p>
+                                <p
+                                    class="admin-notifications__pill-value"
+                                    data-total-count
+                                >
+                                    0 notifikasi
+                                </p>
+                            </div>
+                        </div>
+                        <div class="admin-notifications__pill">
+                            <div class="admin-notifications__pill-icon">
+                                <i class="fa-solid fa-inbox" aria-hidden="true"></i>
+                            </div>
+                            <div class="admin-notifications__pill-body">
+                                <p class="admin-notifications__pill-label">Status</p>
+                                <p
+                                    class="admin-notifications__pill-value"
+                                    data-unread-count
+                                >
+                                    Tidak ada yang tertunda
+                                </p>
+                            </div>
+                        </div>
+                        <div class="admin-notifications__pill">
+                            <div class="admin-notifications__pill-icon admin-notifications__pill-icon--warning">
+                                <i class="fa-solid fa-signal" aria-hidden="true"></i>
+                            </div>
+                            <div class="admin-notifications__pill-body">
+                                <p class="admin-notifications__pill-label">Prioritas</p>
+                                <p
+                                    class="admin-notifications__pill-value"
+                                    data-priority-count
+                                >
+                                    Belum ada label prioritas
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="admin-notifications__controls">
+                        <label class="admin-checkbox">
+                            <input type="checkbox" data-filter-unread />
+                            Hanya tampilkan yang belum dibaca
+                        </label>
+                        <div class="admin-notifications__control-actions admin-notifications__control-actions--simple">
+                            <button
+                                type="button"
+                                class="admin-chip admin-chip--ghost"
+                                data-mark-all-read
+                            >
+                                <i class="fa-solid fa-check-double"></i>
+                                <span>Tandai selesai</span>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="admin-notifications__meta" data-meta-summary>
+                        Menampilkan semua notifikasi tanpa filter apa pun.
+                    </p>
                     <div
                         class="admin-notifications"
                         data-admin-notifications
@@ -896,6 +959,24 @@ const previewProducts = affiliateProducts.slice(0, 3);
         const resetFeedButton = document.querySelector<HTMLButtonElement>(
             "[data-reset-feed]",
         );
+        const totalCountElement = document.querySelector<HTMLElement>(
+            "[data-total-count]",
+        );
+        const unreadCountElement = document.querySelector<HTMLElement>(
+            "[data-unread-count]",
+        );
+        const priorityCountElement = document.querySelector<HTMLElement>(
+            "[data-priority-count]",
+        );
+        const filterUnreadCheckbox = document.querySelector<HTMLInputElement>(
+            "[data-filter-unread]",
+        );
+        const metaSummaryElement = document.querySelector<HTMLElement>(
+            "[data-meta-summary]",
+        );
+        const markAllReadButton = document.querySelector<HTMLButtonElement>(
+            "[data-mark-all-read]",
+        );
         let realtimeIntervalId: number | null = null;
         const notificationsData = document.getElementById(
             "admin-notifications-data",
@@ -935,7 +1016,13 @@ const previewProducts = affiliateProducts.slice(0, 3);
         const STORAGE_KEY = "admin-notifications-state";
 
         const loadStoredNotifications = (): AdminNotification[] | null => {
-            return null;
+            try {
+                const cached = localStorage.getItem(STORAGE_KEY);
+                return cached ? JSON.parse(cached) : null;
+            } catch (error) {
+                console.warn("[Admin] Gagal memuat cache notifikasi", error);
+                return null;
+            }
         };
 
         const baseNotifications: AdminNotification[] = Array.isArray(
@@ -967,7 +1054,13 @@ const previewProducts = affiliateProducts.slice(0, 3);
 
         const persistNotificationState = (
             items: AdminNotification[],
-        ): void => {};
+        ): void => {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+            } catch (error) {
+                console.warn("[Admin] Gagal menyimpan notifikasi", error);
+            }
+        };
 
         const filters = {
             status: "all" as "all" | "unread" | "read",
@@ -989,7 +1082,26 @@ const previewProducts = affiliateProducts.slice(0, 3);
         };
 
         const buildFilterSummary = () => {
-            return "semua";
+            const summary: string[] = [];
+            if (filters.onlyUnread || filters.status === "unread") {
+                summary.push("belum dibaca");
+            } else if (filters.status === "read") {
+                summary.push("sudah dibaca");
+            }
+
+            if (filters.type !== "all") {
+                summary.push(`tipe ${formatNotificationTypeLabel(filters.type)}`);
+            }
+
+            if (filters.priority !== "all") {
+                summary.push(formatPriorityLabel(filters.priority));
+            }
+
+            if (filters.query.trim()) {
+                summary.push(`mencari “${filters.query.trim()}”`);
+            }
+
+            return summary.length ? summary.join(" • ") : "semua";
         };
 
         const formatRelativeTime = (value: string) => {
@@ -1039,17 +1151,84 @@ const previewProducts = affiliateProducts.slice(0, 3);
             }
         };
 
-        const updateTotalCount = (total: number) => {};
+        const updateTotalCount = (total: number) => {
+            if (!totalCountElement) return;
+            totalCountElement.textContent =
+                total === 0 ? "Tidak ada notifikasi" : `${total} notifikasi`;
+        };
 
-        const updatePriorityCount = (items: AdminNotification[]) => {};
+        const updateUnreadSummary = (unreadCount: number) => {
+            if (!unreadCountElement) return;
+            unreadCountElement.textContent =
+                unreadCount === 0
+                    ? "Tidak ada yang tertunda"
+                    : `${unreadCount} belum dibaca`;
+        };
+
+        const updatePriorityCount = (items: AdminNotification[]) => {
+            if (!priorityCountElement) return;
+            if (!items.length) {
+                priorityCountElement.textContent = "Belum ada label prioritas";
+                return;
+            }
+
+            const high = items.filter((item) => item.priority === "high").length;
+            const medium = items.filter(
+                (item) => (item.priority ?? "medium") === "medium",
+            ).length;
+            const low = items.filter((item) => item.priority === "low").length;
+
+            priorityCountElement.textContent = `${high} tinggi • ${medium} sedang • ${low} rendah`;
+        };
 
         const updateMetaSummary = (
             allItems: AdminNotification[],
             visibleItems: AdminNotification[],
-        ) => {};
+        ) => {
+            if (!metaSummaryElement) return;
+            if (!allItems.length) {
+                metaSummaryElement.textContent = "Belum ada aktivitas untuk dirangkum.";
+                return;
+            }
+
+            const latest = formatRelativeTime(allItems[0]?.time);
+            const unread = allItems.filter(
+                (item) => (item.status ?? "unread") === "unread",
+            ).length;
+            const filterSummary = buildFilterSummary();
+
+            metaSummaryElement.textContent = `${visibleItems.length} dari ${allItems.length} notifikasi tampil • ${unread} belum dibaca • Filter: ${filterSummary} • Aktivitas terakhir ${latest}`;
+        };
 
         const applyFilters = (items: AdminNotification[]) => {
-            return items;
+            let result = [...items];
+            if (filters.status !== "all") {
+                result = result.filter(
+                    (item) => (item.status ?? "unread") === filters.status,
+                );
+            }
+
+            if (filters.type !== "all") {
+                result = result.filter((item) => item.type === filters.type);
+            }
+
+            if (filters.priority !== "all") {
+                result = result.filter((item) => (item.priority ?? "medium") === filters.priority);
+            }
+
+            if (filters.query.trim()) {
+                const query = filters.query.toLowerCase();
+                result = result.filter((item) => {
+                    const haystack = `${item.title} ${item.message}`.toLowerCase();
+                    return haystack.includes(query);
+                });
+            }
+
+            if (filters.onlyUnread) {
+                result = result.filter((item) => (item.status ?? "unread") === "unread");
+            }
+
+            return result;
         };
 
         const allItemsAreRead = () =>
@@ -1067,11 +1246,27 @@ const previewProducts = affiliateProducts.slice(0, 3);
                 (item) => (item.status ?? "unread") === "unread",
             ).length;
             updateUnreadIndicators(unreadCount);
+            updateUnreadSummary(unreadCount);
             updateTotalCount(base.length);
             updatePriorityCount(base);
             updateMetaSummary(base, filteredNotifications);
             syncBulkControls();
         };
+
+        filterUnreadCheckbox?.addEventListener("change", (event) => {
+            const target = event.target as HTMLInputElement;
+            filters.onlyUnread = target.checked;
+            refreshNotifications();
+        });
+
+        markAllReadButton?.addEventListener("click", () => {
+            if (!notificationState.length) return;
+            const nextState = notificationState.map((item) => ({
+                ...item,
+                status: "read",
+            }));
+            setNotificationState(nextState);
+        });
 
         const setNotificationState = (
             nextState: AdminNotification[],

@@ -1007,6 +1007,23 @@ const previewProducts = affiliateProducts.slice(0, 3);
             };
         };
 
+        const parseAnalyticsResponse = async (response: Response) => {
+            const contentType = response.headers.get("content-type") ?? "";
+            const bodyText = await response.text();
+
+            if (!contentType.includes("application/json")) {
+                throw new Error(
+                    "Respon analitik tidak valid. Pastikan endpoint mengembalikan JSON.",
+                );
+            }
+
+            try {
+                return JSON.parse(bodyText);
+            } catch (error) {
+                throw new Error("Data analitik tidak dapat dibaca.");
+            }
+        };
+
         const renderClickMetrics = (totals: ClickTotals) => {
             if (!clickMetricsContainer) return;
 
@@ -1059,7 +1076,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
                     signal: clickFetchController.signal,
                 });
 
-                const result = await response.json();
+                const result = await parseAnalyticsResponse(response);
 
                 if (!response.ok) {
                     throw new Error(

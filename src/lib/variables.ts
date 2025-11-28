@@ -39,6 +39,7 @@ export const GLOBAL = {
     blog: "/blog",
     swag: "/swag",
     services: "/services",
+    affiliate: "/affiliate",
   },
   footerMenu: {
     projects: "/projects",

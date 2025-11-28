@@ -1,0 +1,216 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Section from "../components/common/Section.astro";
+import Breadcrumb from "../components/common/Breadcrumb.astro";
+import { GLOBAL } from "../lib/variables";
+
+const breadcrumbItems = [
+  { name: "Home", url: "/" },
+  { name: "Affiliate", url: "/affiliate" },
+];
+
+const seoTitle = "Program Affiliate Ibedes Studio | Komisi untuk Kreator & Partner";
+const seoDescription =
+  "Dapatkan komisi dari setiap klien yang berhasil kamu referensikan ke Ibedes Studio. Program affiliate untuk kreator, komunitas, dan partner bisnis.";
+const seoKeywords =
+  "affiliate ibedes, program referral ibedes, komisi affiliate web developer, partner digital agency";
+
+const benefits = [
+  {
+    title: "Komisi Kompetitif",
+    description: "Dapatkan persentase komisi untuk setiap proyek yang berhasil berjalan dari referensimu.",
+    icon: "fa-solid fa-coins",
+  },
+  {
+    title: "Materi Siap Pakai",
+    description: "Kami siapkan deck, studi kasus, dan copy untuk memudahkanmu menjelaskan layanan.",
+    icon: "fa-solid fa-briefcase",
+  },
+  {
+    title: "Proses Transparan",
+    description: "Tracking lead, status deal, hingga pencairan komisi dicatat dan diinfokan berkala.",
+    icon: "fa-solid fa-chart-line",
+  },
+];
+
+const steps = [
+  {
+    title: "Daftar & Kenalan",
+    description: "Isi formulir singkat, ceritakan audiens atau komunitasmu, dan pilih layanan yang ingin ditawarkan.",
+    icon: "fa-solid fa-handshake",
+  },
+  {
+    title: "Bagikan Penawaran",
+    description: "Gunakan link atau materi promosi yang kami sediakan. Kamu juga bisa mengenalkan langsung ke tim.",
+    icon: "fa-solid fa-bullhorn",
+  },
+  {
+    title: "Terima Komisi",
+    description: "Komisi dibayarkan setelah proyek dimulai. Semua progress bisa kamu pantau secara rutin.",
+    icon: "fa-solid fa-gift",
+  },
+];
+
+const tierDetails = [
+  {
+    label: "Web & Landing Page",
+    reward: "5%-12% per deal",
+    note: "Komisi tergantung kompleksitas proyek dan nilai kontrak.",
+  },
+  {
+    label: "Strategi & Sosial Media",
+    reward: "10%-15% per deal",
+    note: "Untuk paket retainer atau kampanye berdurasi minimal satu bulan.",
+  },
+  {
+    label: "KOL & Influencer",
+    reward: "Fee per match",
+    note: "Fee khusus untuk tiap kolaborasi yang berhasil dihubungkan ke brand.",
+  },
+];
+
+const whatsappLink = GLOBAL.contactWhatsApp ?? "https://wa.link/b1hzai";
+const contactEmail = GLOBAL.contactEmail ?? "ibedestudio@gmail.com";
+---
+
+<Layout
+  title={seoTitle}
+  description={seoDescription}
+  keywords={seoKeywords}
+  type="website"
+>
+  <Section class="py-10 md:py-14">
+    <div class="max-w-5xl mx-auto space-y-10">
+      <Breadcrumb items={breadcrumbItems} />
+
+      <div class="space-y-4 text-center">
+        <p class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold">
+          <i class="fa-solid fa-star" aria-hidden="true"></i>
+          Program Affiliate
+        </p>
+        <h1 class="text-4xl sm:text-5xl font-display font-bold leading-tight">
+          Ajak klien ke Ibedes Studio, dapatkan komisi.
+        </h1>
+        <p class="text-lg sm:text-xl max-w-3xl mx-auto zag-muted">
+          Untuk kreator, komunitas, agensi, atau siapa pun yang sering ditanya rekomendasi developer.
+          Kami pastikan proses jelas, layanan rapi, dan kamu mendapat apresiasi setimpal.
+        </p>
+        <div class="flex flex-wrap justify-center gap-3">
+          <a
+            href={whatsappLink}
+            class="cta-button cta-button--primary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Daftar via WhatsApp
+          </a>
+          <a
+            href={`mailto:${contactEmail}?subject=Affiliate%20Ibedes%20Studio`}
+            class="cta-button cta-button--secondary"
+          >
+            Tanyakan Detail
+          </a>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <Section class="py-12 md:py-16 zag-border-t">
+    <div class="max-w-5xl mx-auto space-y-8">
+      <div class="space-y-3 text-center">
+        <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">Keuntungan</p>
+        <h2 class="text-3xl font-display">Didesain supaya kamu nyaman mereferensikan</h2>
+        <p class="text-base sm:text-lg max-w-3xl mx-auto zag-muted">
+          Kami ingin jadi partner yang bisa diandalkan. Kamu fokus membagikan penawaran, kami tangani eksekusi dan laporan perkembangan.
+        </p>
+      </div>
+
+      <div class="grid gap-5 md:grid-cols-3">
+        {
+          benefits.map((item) => (
+            <article class="rounded-2xl border border-dashed border-black/15 dark:border-white/25 p-5 space-y-3">
+              <div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xl">
+                <i class={item.icon} aria-hidden="true"></i>
+              </div>
+              <h3 class="text-xl font-display">{item.title}</h3>
+              <p class="text-sm leading-relaxed zag-muted">{item.description}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </Section>
+
+  <Section class="py-12 md:py-16 zag-border-t">
+    <div class="max-w-5xl mx-auto space-y-10">
+      <div class="space-y-2 text-center">
+        <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">Alur Singkat</p>
+        <h2 class="text-3xl font-display">3 langkah sampai komisi cair</h2>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-3">
+        {
+          steps.map((step, index) => (
+            <div class="rounded-2xl border border-black/15 dark:border-white/25 p-5 space-y-3 bg-card/60">
+              <p class="text-sm font-semibold text-primary">Langkah {index + 1}</p>
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                  <i class={step.icon} aria-hidden="true"></i>
+                </span>
+                <h3 class="text-lg font-display">{step.title}</h3>
+              </div>
+              <p class="text-sm leading-relaxed zag-muted">{step.description}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </Section>
+
+  <Section class="py-12 md:py-16 zag-border-t">
+    <div class="max-w-5xl mx-auto space-y-8">
+      <div class="space-y-2 text-center">
+        <p class="font-display text-xs uppercase tracking-[0.35em] zag-muted">Skema Komisi</p>
+        <h2 class="text-3xl font-display">Transparan dari awal</h2>
+        <p class="text-base zag-muted max-w-3xl mx-auto">
+          Kami terbuka untuk menyesuaikan skema dengan niche audiensmu. Detail final tetap akan tertulis dalam surat kerja sama.
+        </p>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-3">
+        {
+          tierDetails.map((tier) => (
+            <div class="rounded-2xl border border-black/15 dark:border-white/25 p-5 space-y-3">
+              <h3 class="text-xl font-display">{tier.label}</h3>
+              <p class="text-lg font-semibold text-primary">{tier.reward}</p>
+              <p class="text-sm zag-muted leading-relaxed">{tier.note}</p>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="rounded-2xl border border-dashed border-primary/50 p-6 space-y-3 bg-primary/5 text-center">
+        <h3 class="text-2xl font-display">Butuh skema khusus?</h3>
+        <p class="text-base zag-muted max-w-3xl mx-auto">
+          Kami terbuka untuk kolaborasi jangka panjang, bundling dengan layanan lain, atau kerja sama konten. Ceritakan kebutuhanmu, tim akan menyiapkan opsi terbaik.
+        </p>
+        <div class="flex flex-wrap justify-center gap-3">
+          <a
+            href={whatsappLink}
+            class="cta-button cta-button--primary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Chat dengan Tim
+          </a>
+          <a
+            href={`mailto:${contactEmail}?subject=Skema%20Affiliate%20Khusus`}
+            class="cta-button cta-button--secondary"
+          >
+            Kirim Brief
+          </a>
+        </div>
+      </div>
+    </div>
+  </Section>
+</Layout>

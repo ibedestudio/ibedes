@@ -1,0 +1,752 @@
+---
+interface Tab {
+    id: string;
+    icon: string;
+    tooltip: string;
+    href?: string;
+}
+
+interface Props {
+    tabs: Tab[];
+    activeTab: string;
+    class?: string;
+}
+
+const { tabs, activeTab, class: className = "" } = Astro.props;
+---
+
+<nav 
+    class={`admin-responsive-nav ${className}`}
+    role="tablist" 
+    aria-label="Navigasi admin dashboard"
+    data-admin-nav
+>
+    <!-- Desktop Sidebar Toggle Button -->
+    <button 
+        class="admin-nav-toggle desktop-only" 
+        type="button" 
+        aria-label="Toggle sidebar"
+        data-nav-toggle
+    >
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+    </button>
+
+    <!-- Desktop Sidebar -->
+    <aside class="admin-sidebar desktop-only" data-sidebar>
+        <div class="admin-sidebar__header">
+            <h2 class="admin-sidebar__title">Admin Panel</h2>
+            <button 
+                class="admin-sidebar__close" 
+                type="button" 
+                aria-label="Close sidebar"
+                data-sidebar-close
+            >
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+        </div>
+        
+        <div class="admin-sidebar__content">
+            <ul class="admin-sidebar__list" role="tablist">
+                {tabs.map((tab) => (
+                    <li class="admin-sidebar__item">
+                        <button
+                            type="button"
+                            class={`admin-sidebar__button ${
+                                tab.id === activeTab ? 'active' : ''
+                            }`}
+                            data-tab={tab.id}
+                            data-tab-trigger
+                            role="tab"
+                            aria-selected={tab.id === activeTab}
+                            aria-controls={tab.id}
+                            title={tab.tooltip}
+                        >
+                            <i class={`fa-solid ${tab.icon}`} aria-hidden="true"></i>
+                            <span class="admin-sidebar__label">{tab.tooltip}</span>
+                        </button>
+                    </li>
+                ))}
+            </ul>
+        </div>
+
+        <div class="admin-sidebar__footer">
+            <div class="admin-sidebar__user">
+                <div class="admin-sidebar__avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="admin-sidebar__user-info">
+                    <p class="admin-sidebar__user-name">Admin User</p>
+                    <p class="admin-sidebar__user-role">Administrator</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="admin-bottom-nav mobile-only" data-bottom-nav>
+        <div class="admin-bottom-nav__scroll-container" data-scroll-container>
+            <div class="admin-bottom-nav__wrapper" style={`--nav-count: ${tabs.length}; --active-index: ${tabs.findIndex(tab => tab.id === activeTab)};`}>
+                {tabs.map((tab, index) => (
+                    <button
+                        type="button"
+                        class={`admin-bottom-nav__item ${
+                            tab.id === activeTab ? 'active' : ''
+                        }`}
+                        data-tab={tab.id}
+                        data-tab-trigger
+                        data-index={index}
+                        role="tab"
+                        aria-selected={tab.id === activeTab}
+                        aria-controls={tab.id}
+                        title={tab.tooltip}
+                    >
+                        <i class={`fa-solid ${tab.icon}`} aria-hidden="true"></i>
+                        <span class="admin-bottom-nav__label">{tab.tooltip}</span>
+                    </button>
+                ))}
+                <span class="admin-bottom-nav__indicator" aria-hidden="true"></span>
+            </div>
+        </div>
+        
+        <!-- Mobile Slide Indicator -->
+        <div class="admin-bottom-nav__slide-indicator" data-slide-indicator>
+            <div class="admin-bottom-nav__slide-dot active" data-slide-dot="0"></div>
+            {Array.from({ length: Math.ceil(tabs.length / 4) - 1 }, (_, i) => (
+                <div class="admin-bottom-nav__slide-dot" data-slide-dot={i + 1}></div>
+            ))}
+        </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div class="admin-nav-overlay mobile-only" data-nav-overlay hidden></div>
+</nav>
+
+<style>
+    .admin-responsive-nav {
+        position: relative;
+        z-index: 50;
+    }
+
+    /* Desktop Sidebar Styles */
+    .admin-sidebar {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 280px;
+        height: 100vh;
+        background: color-mix(in srgb, var(--color-background) 95%, transparent);
+        border-right: 1px solid color-mix(in srgb, var(--color-foreground) 12%, transparent);
+        backdrop-filter: blur(18px);
+        display: flex;
+        flex-direction: column;
+        transition: left 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 60;
+    }
+
+    .admin-sidebar--open {
+        left: 0;
+    }
+
+    .admin-sidebar__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.5rem 1.25rem 1rem;
+        border-bottom: 1px solid color-mix(in srgb, var(--color-foreground) 8%, transparent);
+    }
+
+    .admin-sidebar__title {
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .admin-sidebar__close {
+        width: 2rem;
+        height: 2rem;
+        border: none;
+        border-radius: 0.5rem;
+        background: transparent;
+        color: color-mix(in srgb, var(--color-foreground) 70%, transparent);
+        cursor: pointer;
+        transition: all 150ms ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .admin-sidebar__close:hover {
+        background: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+        color: var(--color-foreground);
+    }
+
+    .admin-sidebar__content {
+        flex: 1;
+        padding: 1rem 0;
+        overflow-y: auto;
+    }
+
+    .admin-sidebar__list {
+        list-style: none;
+        margin: 0;
+        padding: 0 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .admin-sidebar__item {
+        margin: 0;
+    }
+
+    .admin-sidebar__button {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.875rem 1rem;
+        border: none;
+        border-radius: 0.75rem;
+        background: transparent;
+        color: color-mix(in srgb, var(--color-foreground) 70%, transparent);
+        cursor: pointer;
+        transition: all 150ms ease;
+        text-align: left;
+        font-size: 0.95rem;
+    }
+
+    .admin-sidebar__button:hover {
+        background: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+        color: var(--color-foreground);
+    }
+
+    .admin-sidebar__button.active {
+        background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+        color: var(--color-primary);
+        font-weight: 600;
+    }
+
+    .admin-sidebar__button i {
+        width: 1.25rem;
+        text-align: center;
+        font-size: 1rem;
+    }
+
+    .admin-sidebar__label {
+        flex: 1;
+    }
+
+    .admin-sidebar__footer {
+        padding: 1rem;
+        border-top: 1px solid color-mix(in srgb, var(--color-foreground) 8%, transparent);
+    }
+
+    .admin-sidebar__user {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        border-radius: 0.75rem;
+        background: color-mix(in srgb, var(--color-foreground) 6%, transparent);
+    }
+
+    .admin-sidebar__avatar {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+        color: var(--color-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+
+    .admin-sidebar__user-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .admin-sidebar__user-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin: 0 0 0.1rem 0;
+        color: var(--color-foreground);
+    }
+
+    .admin-sidebar__user-role {
+        font-size: 0.75rem;
+        color: color-mix(in srgb, var(--color-foreground) 60%, transparent);
+        margin: 0;
+    }
+
+    /* Toggle Button */
+    .admin-nav-toggle {
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        width: 2.75rem;
+        height: 2.75rem;
+        border: 1px solid color-mix(in srgb, var(--color-foreground) 15%, transparent);
+        border-radius: 0.75rem;
+        background: color-mix(in srgb, var(--color-background) 92%, transparent);
+        backdrop-filter: blur(18px);
+        color: color-mix(in srgb, var(--color-foreground) 70%, transparent);
+        cursor: pointer;
+        transition: all 150ms ease;
+        z-index: 55;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .admin-nav-toggle:hover {
+        background: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+        color: var(--color-foreground);
+        transform: translateY(-1px);
+    }
+
+    /* Mobile Bottom Navigation */
+    .admin-bottom-nav {
+        position: fixed;
+        bottom: 0.75rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(480px, calc(100% - 1.5rem));
+        z-index: 45;
+    }
+
+    .admin-bottom-nav__scroll-container {
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+        padding-bottom: 0.25rem;
+    }
+
+    .admin-bottom-nav__scroll-container::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+    }
+
+    .admin-bottom-nav__wrapper {
+        position: relative;
+        padding: 0.4rem;
+        border-radius: 1rem;
+        background: color-mix(in srgb, var(--color-background) 92%, transparent);
+        border: 1px solid color-mix(in srgb, var(--color-foreground) 12%, transparent);
+        backdrop-filter: blur(18px);
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.25rem;
+        min-width: max-content;
+        overflow: visible;
+    }
+
+    .admin-bottom-nav__item {
+        border: none;
+        border-radius: 0.75rem;
+        background: transparent;
+        color: color-mix(in srgb, var(--color-foreground) 70%, transparent);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 0.5rem;
+        aspect-ratio: 1;
+        transition: all 150ms ease;
+        position: relative;
+        overflow: hidden;
+        min-height: 3.5rem;
+        cursor: pointer;
+    }
+
+    .admin-bottom-nav__item::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: transparent;
+        border-radius: inherit;
+        transition: all 150ms ease;
+    }
+
+    .admin-bottom-nav__item:hover::before {
+        background: color-mix(in srgb, var(--color-foreground) 8%, transparent);
+    }
+
+    .admin-bottom-nav__item i {
+        font-size: 1rem;
+        position: relative;
+        z-index: 1;
+        margin-bottom: 0.25rem;
+    }
+
+    .admin-bottom-nav__label {
+        font-size: 0.65rem;
+        font-weight: 500;
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        line-height: 1.2;
+    }
+
+    .admin-bottom-nav__item.active {
+        color: var(--color-primary);
+        background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    }
+
+    .admin-bottom-nav__item.active::before {
+        background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 35%, transparent);
+    }
+
+    .admin-bottom-nav__indicator {
+        position: absolute;
+        bottom: 0.25rem;
+        left: 0.4rem;
+        height: 2px;
+        width: calc((100% - 0.8rem) / var(--nav-count, 5));
+        border-radius: 999px;
+        background: var(--color-primary);
+        transform: translateX(calc(var(--active-index, 0) * (100% - 0.8rem) / var(--nav-count, 5)));
+        transition: transform 220ms ease;
+        pointer-events: none;
+    }
+
+    /* Mobile Slide Indicator */
+    .admin-bottom-nav__slide-indicator {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+    }
+
+    .admin-bottom-nav__slide-dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: color-mix(in srgb, var(--color-foreground) 30%, transparent);
+        transition: all 200ms ease;
+    }
+
+    .admin-bottom-nav__slide-dot.active {
+        background: var(--color-primary);
+        transform: scale(1.2);
+    }
+
+    /* Overlay */
+    .admin-nav-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
+        z-index: 55;
+        transition: opacity 200ms ease;
+    }
+
+    .admin-nav-overlay:not([hidden]) {
+        opacity: 1;
+    }
+
+    /* Responsive Visibility */
+    .desktop-only {
+        display: none;
+    }
+
+    .mobile-only {
+        display: block;
+    }
+
+    @media (min-width: 1024px) {
+        .desktop-only {
+            display: block;
+        }
+
+        .mobile-only {
+            display: none;
+        }
+
+        .admin-nav-toggle {
+            top: 1.5rem;
+            left: 1.5rem;
+        }
+
+        .admin-bottom-nav {
+            display: none;
+        }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+        .admin-bottom-nav {
+            width: min(100vw - 1rem, 480px);
+            bottom: 0.5rem;
+        }
+
+        .admin-bottom-nav__wrapper {
+            padding: 0.35rem;
+            gap: 0.2rem;
+        }
+
+        .admin-bottom-nav__item {
+            padding: 0.6rem 0.25rem;
+            min-height: 3rem;
+        }
+
+        .admin-bottom-nav__label {
+            font-size: 0.6rem;
+        }
+    }
+
+    /* Smooth animations */
+    .admin-sidebar,
+    .admin-nav-overlay {
+        transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Hide scrollbar but keep functionality */
+    .admin-sidebar__content::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .admin-sidebar__content::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .admin-sidebar__content::-webkit-scrollbar-thumb {
+        background: color-mix(in srgb, var(--color-foreground) 20%, transparent);
+        border-radius: 2px;
+    }
+
+    .admin-sidebar__content::-webkit-scrollbar-thumb:hover {
+        background: color-mix(in srgb, var(--color-foreground) 30%, transparent);
+    }
+</style>
+
+<script>
+    // Admin Navigation Logic with Mobile Gestures
+    document.addEventListener("DOMContentLoaded", () => {
+        const nav = document.querySelector("[data-admin-nav]");
+        const sidebar = nav?.querySelector("[data-sidebar]");
+        const toggle = nav?.querySelector("[data-nav-toggle]");
+        const closeBtn = nav?.querySelector("[data-sidebar-close]");
+        const overlay = nav?.querySelector("[data-nav-overlay]");
+        const bottomNav = nav?.querySelector("[data-bottom-nav]");
+        const scrollContainer = nav?.querySelector("[data-scroll-container]");
+        
+        const TAB_TRIGGER_SELECTOR = "[data-tab-trigger]";
+        const TAB_PANE_SELECTOR = ".tab-pane";
+
+        // Sidebar toggle functionality
+        function openSidebar() {
+            if (sidebar) {
+                sidebar.classList.add("admin-sidebar--open");
+            }
+            if (overlay) {
+                (overlay as HTMLElement).hidden = false;
+            }
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeSidebar() {
+            if (sidebar) {
+                sidebar.classList.remove("admin-sidebar--open");
+            }
+            if (overlay) {
+                (overlay as HTMLElement).hidden = true;
+            }
+            document.body.style.overflow = "";
+        }
+
+        function toggleSidebar() {
+            if (sidebar?.classList.contains("admin-sidebar--open")) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        }
+
+        // Event listeners
+        toggle?.addEventListener("click", toggleSidebar);
+        closeBtn?.addEventListener("click", closeSidebar);
+        overlay?.addEventListener("click", closeSidebar);
+
+        // Tab switching functionality
+        function setActiveTab(tabName: string) {
+            // Close sidebar on mobile after tab selection
+            if (window.innerWidth < 1024) {
+                closeSidebar();
+            }
+
+            // Hide all tab panes
+            document.querySelectorAll(TAB_PANE_SELECTOR).forEach((pane) => {
+                pane.classList.add("hidden");
+                pane.classList.remove("active");
+            });
+
+            // Show selected pane
+            const selectedPane = document.getElementById(tabName);
+            if (selectedPane) {
+                selectedPane.classList.remove("hidden");
+                selectedPane.classList.add("active");
+            }
+
+            // Update tab triggers
+            document.querySelectorAll(TAB_TRIGGER_SELECTOR).forEach((btn) => {
+                const button = btn as HTMLButtonElement;
+                const isTarget = button.getAttribute("data-tab") === tabName;
+                button.classList.toggle("active", isTarget);
+                if (button.hasAttribute("aria-selected")) {
+                    button.setAttribute("aria-selected", isTarget ? "true" : "false");
+                }
+            });
+
+            // Update sidebar indicator
+            updateSidebarIndicator(tabName);
+            
+            // Update bottom nav indicator
+            updateBottomNavIndicator(tabName);
+
+            // Handle analytics tab specific functionality
+            if (tabName === "analytics") {
+                startRealtimePolling();
+            }
+        }
+
+        function updateSidebarIndicator(tabName: string) {
+            const sidebarItems = document.querySelectorAll(".admin-sidebar__button");
+            let activeIndex = 0;
+            
+            sidebarItems.forEach((item, index) => {
+                if (item.getAttribute("data-tab") === tabName) {
+                    activeIndex = index;
+                }
+            });
+        }
+
+        function updateBottomNavIndicator(tabName: string) {
+            const bottomNav = document.querySelector(".admin-bottom-nav__wrapper");
+            if (!bottomNav) return;
+
+            const triggers = bottomNav.querySelectorAll<HTMLElement>("[data-tab-trigger]");
+            
+            let activeIndex = 0;
+            triggers.forEach((trigger, index) => {
+                if (trigger.getAttribute("data-tab") === tabName) {
+                    activeIndex = index;
+                }
+            });
+
+            (bottomNav as HTMLElement).style.setProperty("--active-index", String(activeIndex));
+            
+            // Update slide indicator
+            updateSlideIndicator(activeIndex);
+        }
+
+        function updateSlideIndicator(activeIndex: number) {
+            const slideDots = document.querySelectorAll("[data-slide-dot]");
+            slideDots.forEach((dot, index) => {
+                dot.classList.toggle("active", index === Math.floor(activeIndex / 4));
+            });
+        }
+
+        // Global function for tab switching
+        (window as any).switchTab = (tabName: string) => {
+            setActiveTab(tabName);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        };
+
+        // Tab trigger event listeners
+        document.querySelectorAll(TAB_TRIGGER_SELECTOR).forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const tabName = btn.getAttribute("data-tab");
+                if (tabName) {
+                    switchTab(tabName);
+                }
+            });
+        });
+
+        // Mobile swipe gestures for bottom navigation
+        if (scrollContainer) {
+            let startX = 0;
+            let currentX = 0;
+            let isDragging = false;
+
+            const handlePointerDown = (e: PointerEvent) => {
+                isDragging = true;
+                startX = e.clientX;
+                currentX = 0;
+                scrollContainer.setPointerCapture(e.pointerId);
+            };
+
+            const handlePointerMove = (e: PointerEvent) => {
+                if (!isDragging) return;
+                currentX = e.clientX - startX;
+                
+                // Apply transform with some constraints
+                const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+                const currentScroll = scrollContainer.scrollLeft;
+                const newScroll = Math.max(0, Math.min(maxScroll, currentScroll - currentX));
+                
+                scrollContainer.style.scrollBehavior = 'auto';
+                scrollContainer.scrollLeft = newScroll;
+            };
+
+            const handlePointerUp = (e: PointerEvent) => {
+                if (!isDragging) return;
+                isDragging = false;
+                scrollContainer.releasePointerCapture(e.pointerId);
+                
+                // Snap to nearest group of 4 items
+                const threshold = 50;
+                const itemWidth = scrollContainer.clientWidth / 4;
+                const currentScroll = scrollContainer.scrollLeft;
+                const groupIndex = Math.round(currentScroll / itemWidth);
+                const targetScroll = groupIndex * itemWidth;
+                
+                if (Math.abs(currentX) > threshold) {
+                    scrollContainer.style.scrollBehavior = 'smooth';
+                    scrollContainer.scrollTo({
+                        left: targetScroll,
+                        behavior: 'smooth'
+                    });
+                }
+            };
+
+            scrollContainer.addEventListener("pointerdown", handlePointerDown);
+            scrollContainer.addEventListener("pointermove", handlePointerMove);
+            scrollContainer.addEventListener("pointerup", handlePointerUp);
+            scrollContainer.addEventListener("pointercancel", handlePointerUp);
+        }
+
+        // Handle window resize
+        window.addEventListener("resize", () => {
+            if (window.innerWidth >= 1024) {
+                closeSidebar();
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                closeSidebar();
+            }
+        });
+
+        // Analytics functions
+        function startRealtimePolling() {
+            console.log("Analytics auto-refresh enabled");
+        }
+
+        // Initialize first tab if none is active
+        const activeTab = document.querySelector(".admin-sidebar__button.active, .admin-bottom-nav__item.active");
+        if (activeTab) {
+            const tabName = activeTab.getAttribute("data-tab");
+            if (tabName) {
+                setActiveTab(tabName);
+            }
+        }
+    });
+</script>

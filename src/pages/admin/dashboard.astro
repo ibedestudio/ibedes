@@ -7,6 +7,7 @@ import { GLOBAL } from "../../lib/variables";
 import AnalyticsCard from "../../components/admin/AnalyticsCard.astro";
 import TopPagesList from "../../components/admin/TopPagesList.astro";
 import EnhancedAnalytics from "../../components/admin/EnhancedAnalytics.astro";
+import ResponsiveAdminNav from "../../components/admin/ResponsiveAdminNav.astro";
 import { loadAffiliateProducts } from "../../lib/affiliates";
 import { formatRupiah } from "../../lib/utils";
 
@@ -826,33 +827,10 @@ const previewProducts = affiliateProducts.slice(0, 3);
         </div>
     </div>
 
-    <nav
-        class="admin-bottom-nav"
-        role="tablist"
-        aria-label="Navigasi dashboard"
-        style={`--nav-count: ${adminTabs.length}; --active-index: 0;`}
-    >
-        {
-            adminTabs.map((tab, index) => (
-                <button
-                    type="button"
-                    class={`admin-bottom-nav__item ${
-                        tab.id === "overview" ? "active" : ""
-                    }`}
-                    data-tab={tab.id}
-                    data-tab-trigger
-                    data-index={index}
-                    role="tab"
-                    aria-selected={tab.id === "overview"}
-                    aria-controls={tab.id}
-                    title={tab.tooltip}
-                >
-                    <i class={`fa-solid ${tab.icon}`} aria-hidden="true" />
-                </button>
-            ))
-        }
-        <span class="admin-bottom-nav__indicator" aria-hidden="true"></span>
-    </nav>
+    <ResponsiveAdminNav 
+        tabs={adminTabs} 
+        activeTab="overview"
+    />
 
     <script>
         // Extend Window interface for TypeScript
@@ -1707,6 +1685,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
         max-width: 1000px;
         margin: 0 auto;
         padding: 1rem 1rem 4.5rem;
+        padding-top: 5rem; /* Account for sidebar toggle button */
         --admin-font-xs: clamp(0.65rem, 1vw, 0.75rem);
         --admin-font-sm: clamp(0.75rem, 1.2vw, 0.85rem);
         --admin-font-base: clamp(0.85rem, 1.35vw, 0.95rem);
@@ -1722,6 +1701,14 @@ const previewProducts = affiliateProducts.slice(0, 3);
     @media (max-width: 640px) {
         .admin-shell {
             padding: 0.75rem 0.75rem 5.25rem;
+            padding-top: 4.5rem; /* Smaller top padding on mobile */
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .admin-shell {
+            padding-top: 6rem; /* More padding on desktop for toggle button */
+            padding-left: 6rem; /* Account for sidebar when open */
         }
     }
 
@@ -1894,94 +1881,7 @@ const previewProducts = affiliateProducts.slice(0, 3);
             color-mix(in srgb, var(--color-foreground) 12%, transparent);
     }
 
-    .admin-bottom-nav {
-        position: fixed;
-        bottom: 0.65rem;
-        left: 50%;
-        transform: translateX(-50%);
-        width: min(480px, calc(100% - 1.5rem));
-        padding: 0.35rem;
-        border-radius: var(--admin-radius);
-        background: color-mix(
-            in srgb,
-            var(--color-background) 96%,
-            rgba(0, 0, 0, 0.3)
-        );
-        border: var(--admin-border);
-        backdrop-filter: blur(18px);
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 0.2rem;
-        z-index: 25;
-        transition: opacity 300ms ease;
-    }
 
-    .admin-bottom-nav__item {
-        border: none;
-        border-radius: 0.75rem;
-        background: transparent;
-        color: color-mix(in srgb, var(--color-foreground) 70%, transparent);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.6rem;
-        aspect-ratio: 1;
-        transition: all 150ms ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .admin-bottom-nav__item::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: transparent;
-        border-radius: inherit;
-        transition: all 150ms ease;
-    }
-
-    .admin-bottom-nav__item:hover::before {
-        background: color-mix(in srgb, var(--color-foreground) 8%, transparent);
-    }
-
-    .admin-bottom-nav__item i {
-        font-size: 1rem;
-        position: relative;
-        z-index: 1;
-    }
-
-    .admin-bottom-nav__item.active {
-        color: var(--color-primary);
-        background: color-mix(in srgb, var(--color-primary) 12%, transparent);
-    }
-
-    .admin-bottom-nav__item.active::before {
-        background: color-mix(in srgb, var(--color-primary) 15%, transparent);
-        box-shadow: inset 0 0 0 1px
-            color-mix(in srgb, var(--color-primary) 35%, transparent);
-    }
-
-    .admin-bottom-nav__indicator {
-        position: absolute;
-        bottom: 0.2rem;
-        left: 0.35rem;
-        height: 2px;
-        width: calc((100% - 0.7rem) / var(--nav-count, 5));
-        border-radius: 999px;
-        background: var(--color-primary);
-        transform: translateX(
-            calc(var(--active-index, 0) * (100% - 0.7rem) / var(--nav-count, 5))
-        );
-        transition: transform 220ms ease;
-        pointer-events: none;
-    }
-
-    @media (min-width: 1024px) {
-        .admin-bottom-nav {
-            bottom: 1rem;
-            width: min(400px, calc(100% - 3rem));
-        }
-    }
 
     .sr-only {
         position: absolute;
